@@ -1,0 +1,13 @@
+Class: "MyClass"
+References:
+  - Class: MyFriendClass
+    Relationship: Friend
+  - Class: MyEnemyClass
+    Relationship: Enemy
+Definitions:
+  - ID: Definition1_ID
+    Name: Definition1_Name
+    Description: Definition1_Description
+  - ID: Definition2_ID
+    Name: Definition2_Name
+    Description: Definition2_Description
