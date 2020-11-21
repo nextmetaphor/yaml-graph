@@ -46,9 +46,13 @@ func Test_loadSpecificationFromFile(t *testing.T) {
 				{Class: "MyFriendClass", Relationship: "Friend"},
 				{Class: "MyEnemyClass", Relationship: "Enemy"},
 			},
-			Definitions: []Definition{
-				{"ID": "Definition1_ID", "Name": "Definition1_Name", "Description": "Definition1_Description"},
-				{"ID": "Definition2_ID", "Name": "Definition2_Name", "Description": "Definition2_Description"},
+			Definitions: map[string]Definition{
+				"Definition1_ID": Definition{
+					Fields: map[string]interface{}{"Name": "Definition1_Name", "Description": "Definition1_Description"},
+				},
+				"Definition2_ID": Definition{
+					Fields: map[string]interface{}{"Name": "Definition2_Name", "Description": "Definition2_Description"},
+				},
 			},
 		}, spec)
 	})
@@ -65,9 +69,13 @@ func Test_loadSpecificationFromFile(t *testing.T) {
 				{Class: "MyFriendClass", Relationship: "Friend"},
 				{Class: "MyEnemyClass", Relationship: "Enemy"},
 			},
-			Definitions: []Definition{
-				{"ID": "Definition1_ID", "Name": "Definition1_Name", "Description": "Definition1_Description"},
-				{"ID": "Definition2_ID", "Name": "Definition2_Name", "Description": "Definition2_Description"},
+			Definitions: map[string]Definition{
+				"Definition1_ID": {
+					Fields: map[string]interface{}{"Name": "Definition1_Name", "Description": "Definition1_Description"},
+				},
+				"Definition2_ID": {
+					Fields: map[string]interface{}{"Name": "Definition2_Name", "Description": "Definition2_Description"},
+				},
 			},
 		}, spec)
 	})

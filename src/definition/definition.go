@@ -27,7 +27,9 @@ type (
 	}
 
 	// Definition TODO
-	Definition map[string]interface{}
+	Definition struct {
+		Fields map[string]interface{} `yaml:"Fields"`
+	}
 
 	// Specification TODO
 	Specification struct {
@@ -41,7 +43,7 @@ type (
 		References []Reference `yaml:"References,omitempty"`
 
 		// Definitions TODO
-		Definitions []Definition `yaml:"Definitions,omitempty"`
+		Definitions map[string]Definition `yaml:"Definitions,omitempty"`
 	}
 )
 
