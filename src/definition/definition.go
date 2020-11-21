@@ -1,17 +1,19 @@
 package definition
 
 import (
-	"errors"
 	"fmt"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"os"
 )
 
 const (
 	logWarnCannotLoadYAMLFile           = "cannot load YAML file [%s]"
 	logWarnCannotParseYAMLFile          = "cannot parse YAML file [%s]"
 	logWarnNoDefinitionsFoundInYAMLFile = "no definitions found in YAML file [%s]"
+	logErrorCannotReadRootDirectory     = "cannot read root directory [%]"
+	logDebugFoundDefinitionSubdirectory = "found definition subdirectory [%s]"
 )
 
 type (
@@ -61,8 +63,27 @@ func loadSpecificationFromFile(filename string) (*Specification, error) {
 	// if no definitions are found, return an error and an nil Specification
 	if len(spec.Definitions) == 0 {
 		log.Warn().Err(err).Msg(fmt.Sprintf(logWarnNoDefinitionsFoundInYAMLFile, filename))
-		return nil, errors.New(fmt.Sprintf(logWarnNoDefinitionsFoundInYAMLFile, filename))
+		return nil, fmt.Errorf(logWarnNoDefinitionsFoundInYAMLFile, filename)
 	}
 
+	// TODO debug
 	return spec, nil
+}
+
+func getImmediateSubdirctories(rootDir string) (dir []os.FileInfo, err error) {
+	files, err := ioutil.ReadDir(rootDir)
+	if err != nil {
+		log.Error().Err(err).Msg(logErrorCannotReadRootDirectory)
+		return nil, err
+	}
+
+	for _, file := range files {
+		if file.IsDir() {
+			log.Debug().Msg(fmt.Sprintf(logDebugFoundDefinitionSubdirectory, file.Name()))
+
+			dir = append(dir, file)
+		}
+	}
+
+	return dir, nil
 }
