@@ -35,7 +35,7 @@ func Test_loadSpecificationFromFile(t *testing.T) {
 	})
 
 	t.Run("CompleteSpecification_Flow", func(t *testing.T) {
-		spec, err := loadSpecificationFromFile("./_test/Structured/CompleteDefinition_Flow.yaml")
+		spec, err := loadSpecificationFromFile("./_test/Structured/CompleteDefinition_NonFlow.yaml")
 
 		assert.Nil(t, err)
 		testString := "MyClass"
@@ -43,15 +43,23 @@ func Test_loadSpecificationFromFile(t *testing.T) {
 		assert.Equal(t, &Specification{
 			Class: &testString,
 			References: []Reference{
-				{Class: "MyFriendClass", Relationship: "Friend"},
-				{Class: "MyEnemyClass", Relationship: "Enemy"},
+				{Class: "MyFriendClass", ID: "Friend", Relationship: "Friend"},
+				{Class: "MyEnemyClass", ID: "Enemy", Relationship: "Enemy"},
 			},
 			Definitions: map[string]Definition{
-				"Definition1_ID": Definition{
-					Fields: map[string]interface{}{"Name": "Definition1_Name", "Description": "Definition1_Description"},
+				"Definition1_ID": {
+					Fields:     map[string]interface{}{"Name": "Definition1_Name", "Description": "Definition1_Description"},
+					References: nil,
 				},
-				"Definition2_ID": Definition{
+				"Definition2_ID": {
 					Fields: map[string]interface{}{"Name": "Definition2_Name", "Description": "Definition2_Description"},
+					References: []Reference{
+						{
+							Class:        "MyClass",
+							ID:           "Definition1_ID",
+							Relationship: "LINKED_CLASS",
+						},
+					},
 				},
 			},
 		}, spec)
@@ -66,15 +74,23 @@ func Test_loadSpecificationFromFile(t *testing.T) {
 		assert.Equal(t, &Specification{
 			Class: &testString,
 			References: []Reference{
-				{Class: "MyFriendClass", Relationship: "Friend"},
-				{Class: "MyEnemyClass", Relationship: "Enemy"},
+				{Class: "MyFriendClass", ID: "Friend", Relationship: "Friend"},
+				{Class: "MyEnemyClass", ID: "Enemy", Relationship: "Enemy"},
 			},
 			Definitions: map[string]Definition{
 				"Definition1_ID": {
-					Fields: map[string]interface{}{"Name": "Definition1_Name", "Description": "Definition1_Description"},
+					Fields:     map[string]interface{}{"Name": "Definition1_Name", "Description": "Definition1_Description"},
+					References: nil,
 				},
 				"Definition2_ID": {
 					Fields: map[string]interface{}{"Name": "Definition2_Name", "Description": "Definition2_Description"},
+					References: []Reference{
+						{
+							Class:        "MyClass",
+							ID:           "Definition1_ID",
+							Relationship: "LINKED_CLASS",
+						},
+					},
 				},
 			},
 		}, spec)

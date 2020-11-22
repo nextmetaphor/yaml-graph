@@ -1,8 +1,8 @@
 Class: "MyClass"
 References: [
-  { Class: "MyFriendClass", Relationship: "Friend" },
-  { Class: "MyEnemyClass", Relationship: "Enemy" }
+  { Class: "MyFriendClass", ID: "Friend", Relationship: "Friend" },
+  { Class: "MyEnemyClass", ID: "Enemy", Relationship: "Enemy" }
 ]
 Definitions:
   Definition1_ID: { Fields: { Name: "Definition1_Name", Description: "Definition1_Description" } }
-  Definition2_ID: { Fields: { Name: "Definition2_Name", Description: "Definition2_Description" } }
+  Definition2_ID: { Fields: { Name: "Definition2_Name", Description: "Definition2_Description" }, References: {Class: "MyClass", ID: "Definition1_ID", Relationship: "LINKED_CLASS"} }

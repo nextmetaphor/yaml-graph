@@ -22,13 +22,17 @@ type (
 		// Class TODO
 		Class string `yaml:"Class"`
 
+		// ID TODO
+		ID string `yaml:"ID"`
+
 		// Relationship TODO
 		Relationship string `yaml:"Relationship"`
 	}
 
 	// Definition TODO
 	Definition struct {
-		Fields map[string]interface{} `yaml:"Fields"`
+		Fields     map[string]interface{} `yaml:"Fields"`
+		References []Reference            `yaml:"References"`
 	}
 
 	// Specification TODO

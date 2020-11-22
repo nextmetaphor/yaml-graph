@@ -1,8 +1,10 @@
 Class: "MyClass"
 References:
   - Class: MyFriendClass
+    ID: Friend
     Relationship: Friend
   - Class: MyEnemyClass
+    ID: Enemy
     Relationship: Enemy
 Definitions:
   Definition1_ID:
@@ -13,3 +15,7 @@ Definitions:
     Fields:
       Name: Definition2_Name
       Description: Definition2_Description
+    References:
+      - Class: MyClass
+        ID: Definition1_ID
+        Relationship: LINKED_CLASS
