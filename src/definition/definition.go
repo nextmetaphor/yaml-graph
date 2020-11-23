@@ -6,14 +6,21 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
 const (
+	definitionSuffix                    = ".yaml"
 	logWarnCannotLoadYAMLFile           = "cannot load YAML file [%s]"
 	logWarnCannotParseYAMLFile          = "cannot parse YAML file [%s]"
 	logWarnNoDefinitionsFoundInYAMLFile = "no definitions found in YAML file [%s]"
 	logErrorCannotReadRootDirectory     = "cannot read root directory [%]"
 	logDebugFoundDefinitionSubdirectory = "found definition subdirectory [%s]"
+	logErrorCannotProcessFiles          = "cannot process files in root directory [%s]"
+	logWarnCannotProcessFile            = "cannot process files in directory [%s]"
+	logDebugProcessingFile              = "processing file [%s] in directory [%s]"
+	logDebugIgnoringFile                = "ignoring file [%s] in directory [%s]"
 )
 
 type (
@@ -49,6 +56,8 @@ type (
 		// Definitions TODO
 		Definitions map[string]Definition `yaml:"Definitions,omitempty"`
 	}
+
+	processFileFuncType = func(filePath string, fileInfo os.FileInfo) (err error)
 )
 
 func loadSpecificationFromFile(filename string) (*Specification, error) {
@@ -76,20 +85,29 @@ func loadSpecificationFromFile(filename string) (*Specification, error) {
 	return spec, nil
 }
 
-func getImmediateSubdirctories(rootDir string) (dir []os.FileInfo, err error) {
-	files, err := ioutil.ReadDir(rootDir)
+func processFiles(rootDir string, processFileFunc processFileFuncType) error {
+	err := filepath.Walk(rootDir,
+		func(filePath string, fileInfo os.FileInfo, err error) error {
+			if err != nil {
+				log.Warn().Err(err).Msgf(logWarnCannotProcessFile, filePath)
+				return err
+			}
+			if !fileInfo.IsDir() {
+				if strings.HasSuffix(fileInfo.Name(), definitionSuffix) {
+					log.Debug().Msg(fmt.Sprintf(logDebugProcessingFile, fileInfo.Name(), filePath))
+					return processFileFunc(filePath, fileInfo)
+
+				} else {
+					log.Debug().Msg(fmt.Sprintf(logDebugIgnoringFile, fileInfo.Name(), filePath))
+				}
+			}
+			return nil
+		})
+
 	if err != nil {
-		log.Error().Err(err).Msg(logErrorCannotReadRootDirectory)
-		return nil, err
+		log.Error().Err(err).Msg(fmt.Sprintf(logErrorCannotProcessFiles, rootDir))
+		return err
 	}
 
-	for _, file := range files {
-		if file.IsDir() {
-			log.Debug().Msg(fmt.Sprintf(logDebugFoundDefinitionSubdirectory, file.Name()))
-
-			dir = append(dir, file)
-		}
-	}
-
-	return dir, nil
+	return nil
 }

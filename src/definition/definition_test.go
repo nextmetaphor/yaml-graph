@@ -2,6 +2,7 @@ package definition
 
 import (
 	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
 )
 
@@ -95,4 +96,32 @@ func Test_loadSpecificationFromFile(t *testing.T) {
 			},
 		}, spec)
 	})
+}
+
+func Test_processFiles(t *testing.T) {
+	filesProcessed := map[string]string{}
+
+	processFileFunc := func(filePath string, fileInfo os.FileInfo) (err error) {
+		filesProcessed[fileInfo.Name()] = filePath
+
+		return nil
+	}
+
+	t.Run("MissingRootDir", func(t *testing.T) {
+		err := processFiles("./_test/NotThere", processFileFunc)
+
+		assert.NotNil(t, err)
+	})
+
+	t.Run("ValidRootDir", func(t *testing.T) {
+		err := processFiles("./_test/ProcessFiles", processFileFunc)
+
+		assert.Nil(t, err)
+		assert.Equal(t, map[string]string{
+			"1.2.1.yaml" : "_test/ProcessFiles/1/1.2/1.2.1/1.2.1.yaml",
+			"1.2.yaml" : "_test/ProcessFiles/1/1.2/1.2.yaml",
+			"2.yaml" : "_test/ProcessFiles/2/2.yaml",
+		}, filesProcessed)
+	})
+
 }
