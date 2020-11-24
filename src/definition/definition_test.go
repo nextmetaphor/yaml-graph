@@ -8,41 +8,41 @@ import (
 
 func Test_loadSpecificationFromFile(t *testing.T) {
 	t.Run("MissingSpecification", func(t *testing.T) {
-		spec, err := loadSpecificationFromFile("./_test/Structured/EmptyDefinition_zzz.yaml")
+		spec, err := LoadSpecificationFromFile("./_test/Structured/EmptyDefinition_zzz.yaml")
 
 		assert.NotNil(t, err)
 		assert.Nil(t, spec)
 	})
 
 	t.Run("EmptySpecification", func(t *testing.T) {
-		spec, err := loadSpecificationFromFile("./_test/Structured/EmptyDefinition.yaml")
+		spec, err := LoadSpecificationFromFile("./_test/Structured/EmptyDefinition.yaml")
 
 		assert.NotNil(t, err)
 		assert.Nil(t, spec)
 	})
 
 	t.Run("InvalidSpecification", func(t *testing.T) {
-		spec, err := loadSpecificationFromFile("./_test/Structured/InvalidYAMLStructure.yaml")
+		spec, err := LoadSpecificationFromFile("./_test/Structured/InvalidYAMLStructure.yaml")
 
 		assert.NotNil(t, err)
 		assert.Nil(t, spec)
 	})
 
 	t.Run("InvalidYAML", func(t *testing.T) {
-		spec, err := loadSpecificationFromFile("./_test/Structured/InvalidYAML.yaml")
+		spec, err := LoadSpecificationFromFile("./_test/Structured/InvalidYAML.yaml")
 
 		assert.NotNil(t, err)
 		assert.Nil(t, spec)
 	})
 
 	t.Run("CompleteSpecification_Flow", func(t *testing.T) {
-		spec, err := loadSpecificationFromFile("./_test/Structured/CompleteDefinition_NonFlow.yaml")
+		spec, err := LoadSpecificationFromFile("./_test/Structured/CompleteDefinition_NonFlow.yaml")
 
 		assert.Nil(t, err)
 		testString := "MyClass"
 
 		assert.Equal(t, &Specification{
-			Class: &testString,
+			Class: testString,
 			References: []Reference{
 				{Class: "MyFriendClass", ID: "Friend", Relationship: "Friend"},
 				{Class: "MyEnemyClass", ID: "Enemy", Relationship: "Enemy"},
@@ -67,13 +67,13 @@ func Test_loadSpecificationFromFile(t *testing.T) {
 	})
 
 	t.Run("CompleteSpecification_NonFlow", func(t *testing.T) {
-		spec, err := loadSpecificationFromFile("./_test/Structured/CompleteDefinition_NonFlow.yaml")
+		spec, err := LoadSpecificationFromFile("./_test/Structured/CompleteDefinition_NonFlow.yaml")
 
 		assert.Nil(t, err)
 		testString := "MyClass"
 
 		assert.Equal(t, &Specification{
-			Class: &testString,
+			Class: testString,
 			References: []Reference{
 				{Class: "MyFriendClass", ID: "Friend", Relationship: "Friend"},
 				{Class: "MyEnemyClass", ID: "Enemy", Relationship: "Enemy"},
@@ -108,19 +108,19 @@ func Test_processFiles(t *testing.T) {
 	}
 
 	t.Run("MissingRootDir", func(t *testing.T) {
-		err := processFiles("./_test/NotThere", processFileFunc)
+		err := ProcessFiles("./_test/NotThere", processFileFunc)
 
 		assert.NotNil(t, err)
 	})
 
 	t.Run("ValidRootDir", func(t *testing.T) {
-		err := processFiles("./_test/ProcessFiles", processFileFunc)
+		err := ProcessFiles("./_test/ProcessFiles", processFileFunc)
 
 		assert.Nil(t, err)
 		assert.Equal(t, map[string]string{
-			"1.2.1.yaml" : "_test/ProcessFiles/1/1.2/1.2.1/1.2.1.yaml",
-			"1.2.yaml" : "_test/ProcessFiles/1/1.2/1.2.yaml",
-			"2.yaml" : "_test/ProcessFiles/2/2.yaml",
+			"1.2.1.yaml": "_test/ProcessFiles/1/1.2/1.2.1/1.2.1.yaml",
+			"1.2.yaml":   "_test/ProcessFiles/1/1.2/1.2.yaml",
+			"2.yaml":     "_test/ProcessFiles/2/2.yaml",
 		}, filesProcessed)
 	})
 

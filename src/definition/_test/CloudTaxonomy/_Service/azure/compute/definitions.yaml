@@ -1,0 +1,11 @@
+Class: "Service"
+References: [
+  { Class: "Provider", ID: "azure", Relationship: "PROVIDED_BY" },
+  { Class: "Category", ID: "compute", Relationship: "TYPE_OF" }
+]
+Definitions:
+  app-service:
+    Fields:
+      Name: "App Service"
+      Description: "A fully managed platform for building, deploying and scaling your web apps"
+      Link: "https://azure.microsoft.com/en-gb/services/app-service/"

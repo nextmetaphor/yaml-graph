@@ -1,0 +1,61 @@
+Class: "Attribute"
+Definitions:
+  agility:
+    Fields:
+      Name: "agility"
+      Description: "Get what you need when you need it"
+
+  disaster-recovery:
+    Fields:
+      Name: "Disaster Recovery"
+      description: "TODO"
+
+  efficiency:
+    Fields:
+      Name: "efficiency"
+      description: "Pay only for what you use"
+
+  elasticity:
+    Fields:
+      Name: "elasticity"
+      description: "Architected to scale on demand"
+
+  fault-tolerant:
+    Fields:
+      Name: "Fault Tolerant"
+      description: "TODO"
+
+  global-presence:
+    Fields:
+      Name: "Global Presence"
+      description: "Deployed to world-wide points of presence"
+
+  high-availability:
+    Fields:
+      Name: "High Availability"
+      description: "built to withstand local and regional failure"
+
+  managed-services:
+    Fields:
+      Name: "Managed Services"
+      description: "Use already-supported architectural building blocks"
+
+  observability:
+    Fields:
+      Name: "Observability"
+      description: "Provides clear visibility into operational status"
+
+  repeatability:
+    Fields:
+      Name: "repeatability"
+      description: "Automate everything as code"
+
+  scalabilty:
+    Fields:
+      Name: "Scalability"
+      description: "TODO"
+
+  security:
+    Fields:
+      Name: "Security"
+      description: "Multiple levels of protection build into every layer"
