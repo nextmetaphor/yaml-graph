@@ -19,8 +19,8 @@ const (
 
 var (
 	parseCmd = &cobra.Command{
-		Use:   "parse",
-		Short: "Parse definition files into graph",
+		Use:   commandParseUse,
+		Short: commandParseUseShort,
 		Run:   parse,
 	}
 
@@ -29,7 +29,7 @@ var (
 
 func init() {
 	rootCmd.AddCommand(parseCmd)
-	parseCmd.Flags().StringVarP(&sourceDir, "source", "s", "definition/_test/CloudTaxonomy", "Source directory to read from")
+	parseCmd.Flags().StringVarP(&sourceDir, flagSourceName, flagSourceShorthand, flagSourceDefault, flagSourceUsage)
 }
 
 func parse(cmd *cobra.Command, args []string) {
@@ -38,7 +38,7 @@ func parse(cmd *cobra.Command, args []string) {
 	driver, session, err := graph.Init(dbURL, username, password)
 	if err != nil {
 		log.Error().Err(err).Msg(logErrorGraphDatabaseConnectionFailed)
-		os.Exit(2)
+		os.Exit(exitCodeParseCmdFailed)
 	}
 
 	defer driver.Close()
@@ -69,7 +69,7 @@ func parse(cmd *cobra.Command, args []string) {
 		spec, err := definition.LoadSpecificationFromFile(filePath)
 		if (err == nil) && (spec != nil) {
 			log.Debug().Msg(fmt.Sprintf(logDebugSuccessfullyParsedFile, filePath))
-			graph.CreateSpecificationEdge(session, *spec)
+			graph.CreateSpecificationEdge(session, *spec, nil)
 
 		} else {
 			log.Warn().Msgf(logWarnSkippingFile, filePath, err)

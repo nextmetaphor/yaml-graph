@@ -36,7 +36,7 @@ func Test_loadSpecificationFromFile(t *testing.T) {
 	})
 
 	t.Run("CompleteSpecification_Flow", func(t *testing.T) {
-		spec, err := LoadSpecificationFromFile("./_test/Structured/CompleteDefinition_NonFlow.yaml")
+		spec, err := LoadSpecificationFromFile("./_test/Structured/CompleteDefinition_Flow.yaml")
 
 		assert.Nil(t, err)
 		testString := "MyClass"
@@ -82,6 +82,15 @@ func Test_loadSpecificationFromFile(t *testing.T) {
 				"Definition1_ID": {
 					Fields:     map[string]interface{}{"Name": "Definition1_Name", "Description": "Definition1_Description"},
 					References: nil,
+					SubDefinitions: map[string]Specification{"child_of": {
+						Class:      "ChildClass",
+						References: nil,
+						Definitions: map[string]Definition{"ChildClass1": {
+							Fields:         map[string]interface{}{"Name": "ChildClass1", "Description": "ChildClassDescription1"},
+							References:     nil,
+							SubDefinitions: nil,
+						}},
+					}},
 				},
 				"Definition2_ID": {
 					Fields: map[string]interface{}{"Name": "Definition2_Name", "Description": "Definition2_Description"},

@@ -41,17 +41,18 @@ type (
 
 	// Definition TODO
 	Definition struct {
-		Fields     Fields      `yaml:"Fields"`
-		References []Reference `yaml:"References"`
+		Fields         Fields                   `yaml:"Fields"`
+		References     []Reference              `yaml:"References"`
+		SubDefinitions map[string]Specification `yaml:"SubDefinitions"`
 	}
 
 	// Specification TODO
 	Specification struct {
-		// Class allows the class for the definitions within the document to be specified.
+		// Class allows the class for all of the definitions within the document to be specified.
 		Class string `yaml:"Class,omitempty"`
 
-		// References allows relationships to other classes to be specified. If this is not specified,
-		// the parent directories are used to specify these references
+		// References allows relationships to other classes for all of the definitions within the document to be
+		// specified.
 		References []Reference `yaml:"References,omitempty"`
 
 		// Definitions TODO

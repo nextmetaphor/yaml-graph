@@ -9,3 +9,33 @@ Definitions:
       Name: "App Service"
       Description: "A fully managed platform for building, deploying and scaling your web apps"
       Link: "https://azure.microsoft.com/en-gb/services/app-service/"
+
+  azure-function:
+    Fields:
+      Name: "Azure Function"
+      Description: "Azure Function"
+      Link: "https://azure.microsoft.com/en-gb/services/functions/"
+
+  azure-kubernetes-service:
+    Fields:
+      Name: "Azure Kubernetes Service (AKS)"
+      description: "Azure Kubernetes Service"
+      Link: "https://azure.microsoft.com/en-gb/services/kubernetes-service/"
+
+  container-instance:
+    Fields:
+      Name: "Container Instance"
+      description: "Azure Container Instance"
+      link: "https://azure.microsoft.com/en-gb/services/container-instances/"
+
+  virtual-machine:
+    Fields:
+      Name: "Virtual Machine"
+      description: "Azure Virtual Machine"
+      link: "https://azure.microsoft.com/en-gb/services/virtual-machines/"
+
+  virtual-machine-scale-set:
+    Fields:
+      Name: "Virtual Machine Scale Set"
+      description: "Azure Virtual Machine Scale Set"
+      link: "https://azure.microsoft.com/en-gb/services/virtual-machine-scale-sets/"

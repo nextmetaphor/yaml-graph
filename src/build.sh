@@ -10,4 +10,4 @@ printf "\n### golint ###\n"
 golint ./...
 
 printf "### go build ###\n"
-go build -i -o ygrph
+go build -i -o yaml-graph

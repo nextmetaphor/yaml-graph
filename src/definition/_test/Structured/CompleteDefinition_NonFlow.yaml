@@ -11,6 +11,14 @@ Definitions:
     Fields:
       Name: Definition1_Name
       Description: Definition1_Description
+    SubDefinitions:
+      child_of:
+        Class: "ChildClass"
+        Definitions:
+          ChildClass1:
+            Fields:
+              Name: ChildClass1
+              Description: ChildClassDescription1
   Definition2_ID:
     Fields:
       Name: Definition2_Name

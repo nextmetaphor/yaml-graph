@@ -10,9 +10,9 @@ func init() {
 }
 
 var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Print the version number of " + appName,
+	Use:   commandVersionUse,
+	Short: commandVersionShort,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("yaml-graph " + appVersion)
+		fmt.Println(commandVersionLong)
 	},
 }
