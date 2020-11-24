@@ -1,0 +1,21 @@
+Class: "Tenancy"
+Definitions:
+  managed-hosted:
+    Fields:
+      Name: "Managed Hosted"
+      Description: "Hosted and Managed Services"
+
+  saas:
+    Fields:
+      Name: "Saas"
+      Description: "Software as a Service"
+
+  serverless:
+    Fields:
+      Name: "Serverless"
+      Description: "Purely serverless technology"
+
+  unmanaged-hosted:
+    Fields:
+      Name: "Unmanaged Hosted"
+      Description: "Unmanaged Hosted Services: Operational Considerations are Required"

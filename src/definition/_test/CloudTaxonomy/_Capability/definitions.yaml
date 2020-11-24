@@ -1,0 +1,19 @@
+Class: "Capability"
+References: [
+  {Class: "Category", ID: "compute", Relationship: "TYPE_OF"},
+]
+Definitions:
+  bare-metal-server:
+    Fields:
+      Name: "Bare Metal Server"
+      Description: "Bare metal server"
+
+  dedicated-virtual-server:
+    Fields:
+      Name: "Dedicated Virtual Server"
+      Description: "Dedicated virtual server"
+
+  shared-virtual-server:
+    Fields:
+      Name: "Shared Virtual Server"
+      Description: "Shared virtual server"
