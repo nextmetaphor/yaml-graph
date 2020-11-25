@@ -18,4 +18,4 @@ Definitions:
   storage:
     Fields:
       Name: "storage"
-      description: "Storage"
+      Description: "Storage"

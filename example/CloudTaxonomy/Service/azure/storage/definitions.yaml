@@ -1,0 +1,29 @@
+Class: "Service"
+References: [
+  { Class: "Provider", ID: "azure", Relationship: "PROVIDED_BY" },
+  { Class: "Category", ID: "storage", Relationship: "TYPE_OF" }
+]
+Definitions:
+  archive-storage:
+    Fields:
+      Name: "Archive Storage"
+      Description: "Azure Archive Storage"
+      Link: "https://azure.microsoft.com/en-gb/services/storage/archive/"
+
+  blob-storage:
+    Fields:
+      Name: "Blob Storage"
+      Description: "Azure Blob Storage"
+      Link: "https://azure.microsoft.com/en-gb/services/storage/blobs/"
+
+  disk-storage:
+    Fields:
+      Name: "Disk Storage"
+      Description: "Azure Disk Storage"
+      Link: "https://azure.microsoft.com/en-gb/services/storage/disks/"
+
+  file-storage:
+    Fields:
+      Name: "File Storage"
+      Description: "Azure File Storage"
+      Link: "https://azure.microsoft.com/en-gb/services/storage/files/"

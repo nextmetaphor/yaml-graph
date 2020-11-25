@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	definitionSuffix                     = ".yaml"
+	definitionFormat                     = ".%s"
 	logDebugCannotLoadYAMLFile           = "cannot load YAML file [%s]"
 	logDebugCannotParseYAMLFile          = "cannot parse YAML file [%s]"
 	logDebugNoDefinitionsFoundInYAMLFile = "no definitions found in YAML file [%s]"
@@ -89,7 +89,7 @@ func LoadSpecificationFromFile(filename string) (*Specification, error) {
 }
 
 // ProcessFiles TODO
-func ProcessFiles(rootDir string, processFileFunc processFileFuncType) error {
+func ProcessFiles(rootDir, fileExtension string, processFileFunc processFileFuncType) error {
 	err := filepath.Walk(rootDir,
 		func(filePath string, fileInfo os.FileInfo, err error) error {
 			if err != nil {
@@ -97,7 +97,7 @@ func ProcessFiles(rootDir string, processFileFunc processFileFuncType) error {
 				return err
 			}
 			if !fileInfo.IsDir() {
-				if strings.HasSuffix(fileInfo.Name(), definitionSuffix) {
+				if strings.HasSuffix(fileInfo.Name(), fmt.Sprintf(definitionFormat, fileExtension)) {
 					log.Debug().Msg(fmt.Sprintf(logDebugProcessingFile, fileInfo.Name(), filePath))
 					return processFileFunc(filePath, fileInfo)
 				}

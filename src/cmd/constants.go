@@ -19,6 +19,11 @@ const (
 	commandParseUse      = "parse"
 	commandParseUseShort = "Parse definition files into graph representation"
 
+	flagFileExtension          = "ext"
+	flagFileExtensionShorthand = "e"
+	flagFileExtensionDefault   = "yaml"
+	flagFileExtensionUsage     = "file extension for definitions"
+
 	flagDBURLName      = "dbURL"
 	flagDBURLShorthand = "d"
 	flagDBURLDefault   = "bolt://localhost:7687"
@@ -41,8 +46,7 @@ const (
 
 	flagSourceName      = "source"
 	flagSourceShorthand = "s"
-	flagSourceDefault   = "definition/_test/CloudTaxonomy"
-	flagSourceUsage     = "Source directory to read from"
+	flagSourceUsage     = "Source directory to read definitions from (required)"
 
 	exitCodeRootCmdFailed  = 1
 	exitCodeParseCmdFailed = 2

@@ -117,13 +117,13 @@ func Test_processFiles(t *testing.T) {
 	}
 
 	t.Run("MissingRootDir", func(t *testing.T) {
-		err := ProcessFiles("./_test/NotThere", processFileFunc)
+		err := ProcessFiles("./_test/NotThere", "yaml", processFileFunc)
 
 		assert.NotNil(t, err)
 	})
 
 	t.Run("ValidRootDir", func(t *testing.T) {
-		err := ProcessFiles("./_test/ProcessFiles", processFileFunc)
+		err := ProcessFiles("./_test/ProcessFiles", "yaml", processFileFunc)
 
 		assert.Nil(t, err)
 		assert.Equal(t, map[string]string{
