@@ -1,6 +1,8 @@
 # yaml-graph
 golang-based utility to help define and build graph representations of data models from simple YAML files.
 
+*Note: this utility is currently still in development and is subject to breaking changes. The only representation currently supported uses the [neo4j](https://neo4j.com) graph database; additional future representations planned include [d3](https://d3js.org/) and [pdf](https://www.adobe.com/devnet/pdf/pdf_reference.html).*  
+
 ## Getting Started
 
 ### Prerequisites
