@@ -20,10 +20,13 @@ import (
 	"fmt"
 	"github.com/nextmetaphor/yaml-graph/definition"
 	"github.com/stretchr/testify/assert"
+	"regexp"
+	"strings"
 	"testing"
 )
 
 func Test_getDefinitionCypherString(t *testing.T) {
+
 	t.Run("ZeroFields", func(t *testing.T) {
 		cypher := getDefinitionCypherString("class1", definition.Fields{})
 		assert.Equal(t, fmt.Sprintf(mergeCypherPrefix, "class1"), cypher)
@@ -38,8 +41,37 @@ func Test_getDefinitionCypherString(t *testing.T) {
 	t.Run("TwoFields", func(t *testing.T) {
 		cypher := getDefinitionCypherString("class1", definition.Fields{
 			"name1": "value1", "name2": "value2"})
-		assert.Equal(t, fmt.Sprintf(mergeCypherPrefix, "class1")+" SET "+fmt.Sprintf(mergeCypherField,
-			"name1", "name1")+","+fmt.Sprintf(mergeCypherField,
-			"name2", "name2"), cypher)
+
+		// can't guarantee order here, so match with a regexp
+		fieldRegExp := "n\\.name1=\\$name1|n\\.name2=\\$name2"
+		cypherRegExp := regexp.QuoteMeta(fmt.Sprintf(mergeCypherPrefix, "class1")) +
+			" SET (" + fieldRegExp + "),(" + fieldRegExp + ")"
+
+		re, err := regexp.MatchString(cypherRegExp, cypher)
+		assert.Nil(t, err)
+		assert.True(t, re)
+
+		assert.True(t, strings.Contains(cypher, "n.name1=$name1"))
+		assert.True(t, strings.Contains(cypher, "n.name2=$name2"))
 	})
+
+	t.Run("ThreeFields", func(t *testing.T) {
+
+		cypher := getDefinitionCypherString("class1", definition.Fields{
+			"name1": "value1", "name2": "value2", "name3": "value3"})
+
+		// can't guarantee order here, so match with a regexp
+		fieldRegExp := "n\\.name1=\\$name1|n\\.name2=\\$name2|n\\.name3=\\$name3"
+		cypherRegExp := regexp.QuoteMeta(fmt.Sprintf(mergeCypherPrefix, "class1")) +
+			" SET (" + fieldRegExp + "),(" + fieldRegExp + "),(" + fieldRegExp + ")"
+
+		re, err := regexp.MatchString(cypherRegExp, cypher)
+		assert.Nil(t, err)
+		assert.True(t, re)
+
+		assert.True(t, strings.Contains(cypher, "n.name1=$name1"))
+		assert.True(t, strings.Contains(cypher, "n.name2=$name2"))
+		assert.True(t, strings.Contains(cypher, "n.name3=$name3"))
+	})
+
 }
