@@ -1,0 +1,34 @@
+Class: "Animal"
+References:
+  - Class: "Parent"
+    ID: "id1"
+    Relationship: "ParentRelationship"
+Definitions:
+  Definition3_ID:
+    Fields:
+      Name: "Definition3_Name"
+      Description: "Definition3_Description"
+    SubDefinitions:
+      subclassed_by:
+        Class: "SubChildClass"
+        Definitions:
+          SubChildClass1:
+            Fields:
+              Name: "SubChildClass1"
+              Description: "SubChildClassDescription1"
+            SubDefinitions:
+              further_subclassed_by:
+                Class: "SubSubChildClass"
+                Definitions:
+                  SubSubChildClass1:
+                    Fields:
+                      Name: "SubSubChildClass1"
+                      Description: "SubSubChildClassDescription1"
+  Definition4_ID:
+    Fields:
+      Name: "Definition4_Name"
+      Description: "Definition4_Description"
+    References:
+      - Class: "AnotherClass"
+        ID: "DefinitionX_ID"
+        Relationship: "Tenuous Link"
