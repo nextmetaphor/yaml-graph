@@ -1,0 +1,36 @@
+Class: "Category"
+SectionNameField: "Name"
+SectionNamePrefix: "## MY LORDS, ALLOW ME TO PRESENT... "
+SectionNameSuffix: "<br>\n"
+SectionHeader: "And so it begins<br>\n"
+DetailFields: ["Name", "Description", "FavouritePinkFloydSong"]
+DetailFieldKeyPrefix: "**"
+DetailFieldKeySuffix: "**: "
+DetailFieldValuePrefix: "*"
+DetailFieldValueSuffix: "*<br>\n"
+ChildSection:
+  - Class: "Service"
+    SectionNameField: "Name"
+    SectionNamePrefix: "### SERVICE: "
+    SectionNameSuffix: ""
+    DetailFields: ["Name", "Description"]
+    DetailFieldKeyPrefix: "**"
+    DetailFieldKeySuffix: "**: "
+    DetailFieldValuePrefix: "*"
+    DetailFieldValueSuffix: "*<br>\n"
+    ParentRelationship: "TYPE_OF"
+    ChildSection: []
+    SectionFooter: ""
+  - Class: "Capability"
+    SectionNameField: "Name"
+    SectionNamePrefix: "### CAPABILITY:"
+    SectionNameSuffix: ""
+    DetailFields: ["Name", "Description"]
+    DetailFieldKeyPrefix: "**"
+    DetailFieldKeySuffix: "**: "
+    DetailFieldValuePrefix: "*"
+    DetailFieldValueSuffix: "*<br>\n"
+    ParentRelationship: "TYPE_OF"
+    ChildSection: []
+    SectionFooter: ""
+SectionFooter: "<bl><br>\n"

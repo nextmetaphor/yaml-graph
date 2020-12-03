@@ -45,8 +45,9 @@ var (
 
 func init() {
 	rootCmd.AddCommand(parseCmd)
-	parseCmd.Flags().StringVarP(&sourceDir, flagSourceName, flagSourceShorthand, "", flagSourceUsage)
-	parseCmd.MarkFlagRequired(flagSourceName)
+
+	parseCmd.PersistentFlags().StringVarP(&sourceDir, flagSourceName, flagSourceShorthand, "", flagSourceUsage)
+	parseCmd.MarkPersistentFlagRequired(flagSourceName)
 }
 
 func parse(cmd *cobra.Command, args []string) {
@@ -94,5 +95,4 @@ func parse(cmd *cobra.Command, args []string) {
 
 		return nil
 	})
-
 }

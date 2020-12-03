@@ -35,6 +35,12 @@ const (
 	commandParseUse      = "parse"
 	commandParseUseShort = "Parse definition files into graph representation"
 
+	commandReportUse      = "report"
+	commandReportUseShort = "Generate markdown document from definition files"
+
+	commandExcelUse      = "excel"
+	commandExcelUseShort = "Generate XLSX document from definition files"
+
 	flagFileExtension          = "ext"
 	flagFileExtensionShorthand = "e"
 	flagFileExtensionDefault   = "yaml"
@@ -64,6 +70,11 @@ const (
 	flagSourceShorthand = "s"
 	flagSourceUsage     = "Source directory to read definitions from (required)"
 
-	exitCodeRootCmdFailed  = 1
-	exitCodeParseCmdFailed = 2
+	flagReportDefinitionName      = "definition"
+	flagReportDefinitionShorthand = "r"
+	flagReportDefinitionUsage     = "Report definition file (required)"
+
+	exitCodeRootCmdFailed   = 1
+	exitCodeParseCmdFailed  = 2
+	exitCodeReportCmdFailed = 3
 )
