@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 	"github.com/nextmetaphor/yaml-graph/graph"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
@@ -101,6 +102,8 @@ func loadReportConf() (ms *MarkdownSection, err error) {
 }
 
 func report(cmd *cobra.Command, args []string) {
+	zerolog.SetGlobalLevel(zerolog.Level(logLevel))
+
 	// first load the report configuration
 	markdownSection, err := loadReportConf()
 	if err != nil {
@@ -122,28 +125,14 @@ func report(cmd *cobra.Command, args []string) {
 	recurseSection(session, *markdownSection, nil, nil)
 }
 
-// TODO move this graph package
-func executeCypher(session neo4j.Session, cypher string, param map[string]interface{}) (res neo4j.Result, err error) {
-	//log.Debug().Msgf(logDebugCypherDetails, cypher, param)
-
-	if res, err = session.Run(cypher, param); err != nil {
-		fmt.Println("Error running cypher ")
-		fmt.Println(err)
-		//log.Error().Err(err).Msg(logErrorCannotRunCypher)
-
-		return nil, err
-	}
-	return
-}
-
 func recurseSection(session neo4j.Session, section MarkdownSection, parentClass, parentID *string) error {
 	var res neo4j.Result
 	var err error
 
 	if (parentClass == nil) || (parentID == nil) {
-		res, err = executeCypher(session, fmt.Sprintf(rootCypher, section.Class), nil)
+		res, err = graph.ExecuteCypher(session, fmt.Sprintf(rootCypher, section.Class), nil)
 	} else {
-		res, err = executeCypher(session, fmt.Sprintf(childCypher, section.Class, section.ParentRelationship, *parentClass,
+		res, err = graph.ExecuteCypher(session, fmt.Sprintf(childCypher, section.Class, section.ParentRelationship, *parentClass,
 			*parentID), nil)
 	}
 

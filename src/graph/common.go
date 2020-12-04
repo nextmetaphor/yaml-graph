@@ -41,8 +41,8 @@ const (
 )
 
 // DeleteAll TODO
-func DeleteAll(session neo4j.Session) error {
-	return executeCypher(session, deleteAllCypher, nil)
+func DeleteAll(session neo4j.Session) (neo4j.Result, error) {
+	return ExecuteCypher(session, deleteAllCypher, nil)
 }
 
 // Init TODO
@@ -66,22 +66,17 @@ func Init(dbURL, username, password string) (driver neo4j.Driver, session neo4j.
 	return
 }
 
-func executeCypher(session neo4j.Session, cypher string, param map[string]interface{}) error {
-	var res neo4j.Result
-	var err error
-
+// ExecuteCypher TODO
+func ExecuteCypher(session neo4j.Session, cypher string, param map[string]interface{}) (res neo4j.Result, err error) {
 	log.Debug().Msgf(logDebugCypherDetails, cypher, param)
 
 	if res, err = session.Run(cypher, param); err != nil {
 		log.Error().Err(err).Msg(logErrorCannotRunCypher)
 
-		return err
+		return nil, err
 	}
 
-	if res.Err() != nil {
-		log.Warn().Err(res.Err()).Msg(logWarnCypherReturnedError)
-	}
-	return res.Err()
+	return
 }
 
 func getDefinitionCypherString(class string, fields definition.Fields) (cypher string) {
@@ -113,10 +108,10 @@ func CreateSpecification(session neo4j.Session, spec definition.Specification) {
 		definitionCypher := getDefinitionCypherString(class, spec.Definitions[definitionID].Fields)
 
 		if spec.Definitions[definitionID].Fields == nil {
-			executeCypher(session, definitionCypher, map[string]interface{}{"ID": definitionID})
+			ExecuteCypher(session, definitionCypher, map[string]interface{}{"ID": definitionID})
 		} else {
 			spec.Definitions[definitionID].Fields["ID"] = definitionID
-			executeCypher(session, definitionCypher, spec.Definitions[definitionID].Fields)
+			ExecuteCypher(session, definitionCypher, spec.Definitions[definitionID].Fields)
 		}
 
 		// now recurse through the subdefinitions
@@ -137,19 +132,19 @@ func CreateSpecificationEdge(session neo4j.Session, spec definition.Specificatio
 		for _, ref := range spec.References {
 			// create the Specification-scoped references
 			referenceCypher := getEdgeCypherString(class, definitionID, ref)
-			executeCypher(session, referenceCypher, nil)
+			ExecuteCypher(session, referenceCypher, nil)
 		}
 
 		for _, ref := range spec.Definitions[definitionID].References {
 			// create any Definition-scoped references
 			referenceCypher := getEdgeCypherString(class, definitionID, ref)
-			executeCypher(session, referenceCypher, nil)
+			ExecuteCypher(session, referenceCypher, nil)
 		}
 
 		// if we have a parentReference then create an appropriate relationship
 		if parentReference != nil {
 			referenceCypher := getEdgeCypherString(class, definitionID, *parentReference)
-			executeCypher(session, referenceCypher, nil)
+			ExecuteCypher(session, referenceCypher, nil)
 		}
 
 		// recurse through the subdefinitions
