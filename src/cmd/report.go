@@ -86,18 +86,20 @@ func init() {
 	reportCmd.MarkFlagRequired(flagReportDefinitionName)
 }
 
-func loadReportConf() (ms *MarkdownSection, err error) {
-	yamlFile, err := ioutil.ReadFile(reportDefinition)
+func loadReportConf(cfgPath string) (ms *MarkdownSection, err error) {
+	yamlFile, err := ioutil.ReadFile(cfgPath)
 	if err != nil {
-		log.Error().Err(err).Msgf(logErrorCouldNotOpenReportConfiguration, reportDefinition)
+		log.Error().Err(err).Msgf(logErrorCouldNotOpenReportConfiguration, cfgPath)
 		return nil, err
 	}
 	err = yaml.Unmarshal(yamlFile, &ms)
 	if err != nil {
-		log.Error().Err(err).Msgf(logErrorCouldNotUnmarshalReportConfiguration, reportDefinition)
+		log.Error().Err(err).Msgf(logErrorCouldNotUnmarshalReportConfiguration, cfgPath)
+		return nil, err
 	}
 
-	log.Debug().Msgf(logDebugSuccessfullyUnmarshalledReportConfiguration, reportDefinition)
+	log.Debug().Msgf(logDebugSuccessfullyUnmarshalledReportConfiguration, cfgPath)
+	fmt.Println(ms)
 	return ms, nil
 }
 
@@ -105,7 +107,7 @@ func report(cmd *cobra.Command, args []string) {
 	zerolog.SetGlobalLevel(zerolog.Level(logLevel))
 
 	// first load the report configuration
-	markdownSection, err := loadReportConf()
+	markdownSection, err := loadReportConf(reportDefinition)
 	if err != nil {
 		log.Error().Err(err).Msg(logErrorGraphDatabaseConnectionFailed)
 		os.Exit(exitCodeReportCmdFailed)
