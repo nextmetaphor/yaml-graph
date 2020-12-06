@@ -35,4 +35,12 @@ func Test_loadReportConf(t *testing.T) {
 		assert.Nil(t, err)
 		assert.NotNil(t, ms)
 	})
+
+	t.Run("MissingConfiguration", func(t *testing.T) {
+		ms, err := loadReportConf("./_test/wheres-my-config.yaml")
+
+		assert.NotNil(t, err)
+		assert.Nil(t, ms)
+	})
+
 }
