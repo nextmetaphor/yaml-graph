@@ -38,8 +38,8 @@ const (
 	commandReportUse      = "report"
 	commandReportUseShort = "Generate markdown document from definition files"
 
-	commandExcelUse      = "excel"
-	commandExcelUseShort = "Generate XLSX document from definition files"
+	commandGraphUse      = "graph"
+	commandGraphUseShort = "Generate HTML graph from definition files"
 
 	flagFileExtension          = "ext"
 	flagFileExtensionShorthand = "e"

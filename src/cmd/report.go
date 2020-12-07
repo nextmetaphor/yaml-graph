@@ -81,7 +81,7 @@ var (
 func init() {
 	rootCmd.AddCommand(reportCmd)
 
-	rootCmd.PersistentFlags().StringVarP(&reportDefinition, flagReportDefinitionName, flagReportDefinitionShorthand,
+	reportCmd.PersistentFlags().StringVarP(&reportDefinition, flagReportDefinitionName, flagReportDefinitionShorthand,
 		"", flagReportDefinitionUsage)
 	reportCmd.MarkFlagRequired(flagReportDefinitionName)
 }

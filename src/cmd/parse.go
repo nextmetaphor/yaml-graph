@@ -40,13 +40,13 @@ var (
 		Run:   parse,
 	}
 
-	sourceDir string
+	parseSourceDir string
 )
 
 func init() {
 	rootCmd.AddCommand(parseCmd)
 
-	parseCmd.PersistentFlags().StringVarP(&sourceDir, flagSourceName, flagSourceShorthand, "", flagSourceUsage)
+	parseCmd.PersistentFlags().StringVarP(&parseSourceDir, flagSourceName, flagSourceShorthand, "", flagSourceUsage)
 	parseCmd.MarkPersistentFlagRequired(flagSourceName)
 }
 
@@ -65,7 +65,7 @@ func parse(cmd *cobra.Command, args []string) {
 	graph.DeleteAll(session)
 
 	// First create the nodes...
-	definition.ProcessFiles(sourceDir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
+	definition.ProcessFiles(parseSourceDir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
 		log.Debug().Msg(fmt.Sprintf(logDebugAboutToParseFile, filePath))
 
 		spec, err := definition.LoadSpecificationFromFile(filePath)
@@ -81,7 +81,7 @@ func parse(cmd *cobra.Command, args []string) {
 	})
 
 	// ...then create the edges
-	definition.ProcessFiles(sourceDir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
+	definition.ProcessFiles(parseSourceDir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
 		log.Debug().Msg(fmt.Sprintf(logDebugAboutToParseFile, filePath))
 
 		spec, err := definition.LoadSpecificationFromFile(filePath)
