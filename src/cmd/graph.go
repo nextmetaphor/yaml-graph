@@ -24,8 +24,13 @@ import (
 )
 
 const (
-	nodeString = "{\"id\": \"%s-%s\",\"class\": \"%s\",\"description\": \"%s\"},"
-	linkString = "{\"source\": \"%s-%s\",\"target\": \"%s-%s\"},"
+	nodeHeaderString      = "{\"nodes\": ["
+	perNodeStringFirst    = "{\"id\": \"%s-%s\",\"class\": \"%s\",\"description\": \"%s\"}"
+	perNodeStringNotFirst = ",{\"id\": \"%s-%s\",\"class\": \"%s\",\"description\": \"%s\"}"
+	linkHeaderString      = "],\"links\": ["
+	perLinkStringFirst    = "{\"source\": \"%s-%s\",\"target\": \"%s-%s\"}"
+	perLinkStringNotFirst = ",{\"source\": \"%s-%s\",\"target\": \"%s-%s\"}"
+	linkFooterString      = "]}"
 )
 
 var (
@@ -50,19 +55,31 @@ func graphFunc(cmd *cobra.Command, args []string) {
 
 	d := parser.LoadDictionary(graphSourceDir, fileExtension)
 
-	fmt.Print("{\"nodes\": [")
-	for class := range d {
-		for id := range d[class] {
-			fmt.Print(fmt.Sprintf(nodeString, class, id, class, d[class][id].Fields["Name"]))
+	fmt.Print(nodeHeaderString)
+	firstElement := true
+	for class, definitions := range d {
+		for id, definition := range definitions {
+			if firstElement {
+				fmt.Print(fmt.Sprintf(perNodeStringFirst, class, id, class, definition.Fields["Name"]))
+			} else {
+				fmt.Print(fmt.Sprintf(perNodeStringNotFirst, class, id, class, definition.Fields["Name"]))
+			}
+			firstElement = false
 		}
 	}
-	fmt.Print("],\"links\": [")
-	for class := range d {
-		for id := range d[class] {
-			for _, ref := range d[class][id].References {
-				fmt.Print(fmt.Sprintf(linkString, class, id, ref.Class, ref.ID))
+	fmt.Print(linkHeaderString)
+	firstElement = true
+	for class, definitions := range d {
+		for id, definition := range definitions {
+			for _, ref := range definition.References {
+				if firstElement {
+					fmt.Print(fmt.Sprintf(perLinkStringFirst, class, id, ref.Class, ref.ID))
+				} else {
+					fmt.Print(fmt.Sprintf(perLinkStringNotFirst, class, id, ref.Class, ref.ID))
+				}
+				firstElement = false
 			}
 		}
 	}
-	fmt.Print("]}")
+	fmt.Print(linkFooterString)
 }
