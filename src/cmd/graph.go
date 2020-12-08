@@ -28,8 +28,8 @@ const (
 	perNodeStringFirst    = "{\"id\": \"%s-%s\",\"class\": \"%s\",\"description\": \"%s\"}"
 	perNodeStringNotFirst = ",{\"id\": \"%s-%s\",\"class\": \"%s\",\"description\": \"%s\"}"
 	linkHeaderString      = "],\"links\": ["
-	perLinkStringFirst    = "{\"source\": \"%s-%s\",\"target\": \"%s-%s\"}"
-	perLinkStringNotFirst = ",{\"source\": \"%s-%s\",\"target\": \"%s-%s\"}"
+	perLinkStringFirst    = "{\"source\": \"%s-%s\",\"target\": \"%s-%s\", \"relationship\": \"%s\"}"
+	perLinkStringNotFirst = ",{\"source\": \"%s-%s\",\"target\": \"%s-%s\", \"relationship\": \"%s\"}"
 	linkFooterString      = "]}"
 )
 
@@ -73,9 +73,9 @@ func graphFunc(cmd *cobra.Command, args []string) {
 		for id, definition := range definitions {
 			for _, ref := range definition.References {
 				if firstElement {
-					fmt.Print(fmt.Sprintf(perLinkStringFirst, class, id, ref.Class, ref.ID))
+					fmt.Print(fmt.Sprintf(perLinkStringFirst, class, id, ref.Class, ref.ID, ref.Relationship))
 				} else {
-					fmt.Print(fmt.Sprintf(perLinkStringNotFirst, class, id, ref.Class, ref.ID))
+					fmt.Print(fmt.Sprintf(perLinkStringNotFirst, class, id, ref.Class, ref.ID, ref.Relationship))
 				}
 				firstElement = false
 			}
