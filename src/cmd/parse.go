@@ -50,7 +50,7 @@ func init() {
 	parseCmd.MarkPersistentFlagRequired(flagSourceName)
 }
 
-func parse(cmd *cobra.Command, args []string) {
+func parse(_ *cobra.Command, _ []string) {
 	zerolog.SetGlobalLevel(zerolog.Level(logLevel))
 
 	driver, session, err := graph.Init(dbURL, username, password)

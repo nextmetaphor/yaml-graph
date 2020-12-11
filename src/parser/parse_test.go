@@ -152,3 +152,332 @@ func Test_loadSpecification(t *testing.T) {
 		})
 	})
 }
+
+func Test_validateDictionary(t *testing.T) {
+	t.Run("ValidSpecification", func(t *testing.T) {
+		d := Dictionary{
+			"Band": {
+				"Pink Floyd": {
+					Fields: definition.Fields{
+						"Name": "Pink Floyd",
+					},
+				},
+			},
+			"Person": {
+				"David": {
+					Fields: definition.Fields{
+						"Name":        "David",
+						"Description": "Guitar",
+					},
+					References: []definition.Reference{
+						{
+							Class:        "Person",
+							ID:           "Richard",
+							Relationship: "Friend",
+						},
+						{
+							Class:        "Person",
+							ID:           "Nick",
+							Relationship: "Friend",
+						},
+						{
+							Class:        "Person",
+							ID:           "Nick",
+							Relationship: "Bandmate",
+						},
+						{
+							Class:        "Band",
+							ID:           "Pink Floyd",
+							Relationship: "Member",
+						},
+					},
+				},
+				"Roger": {
+					Fields: definition.Fields{
+						"Name":        "Roger",
+						"Description": "Bass",
+					},
+					References: []definition.Reference{
+						{
+							Class:        "Person",
+							ID:           "Nick",
+							Relationship: "Friend",
+						},
+					},
+				},
+				"Richard": {
+					Fields: definition.Fields{
+						"Name":        "Richard",
+						"Description": "Keyboards",
+					},
+					References: []definition.Reference{
+						{
+							Class:        "Person",
+							ID:           "David",
+							Relationship: "Friend",
+						},
+						{
+							Class:        "Band",
+							ID:           "Pink Floyd",
+							Relationship: "Member",
+						},
+					},
+				},
+				"Nick": {
+					Fields: definition.Fields{
+						"Name":        "Nick",
+						"Description": "Drums",
+					},
+					References: []definition.Reference{
+						{
+							Class:        "Person",
+							ID:           "Roger",
+							Relationship: "Friend",
+						},
+						{
+							Class:        "Person",
+							ID:           "David",
+							Relationship: "Friend",
+						},
+						{
+							Class:        "Person",
+							ID:           "David",
+							Relationship: "Bandmate",
+						},
+						{
+							Class:        "Band",
+							ID:           "Pink Floyd",
+							Relationship: "Member",
+						},
+					},
+				},
+			},
+		}
+
+		e := ValidateDictionary(d)
+		assert.Nil(t, e)
+	})
+
+	t.Run("InvalidSpecification_missingClass", func(t *testing.T) {
+		d := Dictionary{
+			"Band": {
+				"Pink Floyd": {
+					Fields: definition.Fields{
+						"Name": "Pink Floyd",
+					},
+				},
+			},
+			"Person": {
+				"David": {
+					Fields: definition.Fields{
+						"Name":        "David",
+						"Description": "Guitar",
+					},
+					References: []definition.Reference{
+						{
+							Class:        "Person",
+							ID:           "Richard",
+							Relationship: "Friend",
+						},
+						{
+							Class:        "Person",
+							ID:           "Nick",
+							Relationship: "Friend",
+						},
+						{
+							Class:        "Person",
+							ID:           "Nick",
+							Relationship: "Bandmate",
+						},
+						{
+							Class:        "Band",
+							ID:           "Pink Floyd",
+							Relationship: "Member",
+						},
+						{
+							Class:        "Instrument",
+							ID:           "Guitar",
+							Relationship: "Plays",
+						},
+					},
+				},
+				"Roger": {
+					Fields: definition.Fields{
+						"Name":        "Roger",
+						"Description": "Bass",
+					},
+					References: []definition.Reference{
+						{
+							Class:        "Person",
+							ID:           "Nick",
+							Relationship: "Friend",
+						},
+					},
+				},
+				"Richard": {
+					Fields: definition.Fields{
+						"Name":        "Richard",
+						"Description": "Keyboards",
+					},
+					References: []definition.Reference{
+						{
+							Class:        "Person",
+							ID:           "David",
+							Relationship: "Friend",
+						},
+						{
+							Class:        "Band",
+							ID:           "Pink Floyd",
+							Relationship: "Member",
+						},
+						{
+							Class:        "Band",
+							ID:           "Zee",
+							Relationship: "Member",
+						},
+					},
+				},
+				"Nick": {
+					Fields: definition.Fields{
+						"Name":        "Nick",
+						"Description": "Drums",
+					},
+					References: []definition.Reference{
+						{
+							Class:        "Person",
+							ID:           "Roger",
+							Relationship: "Friend",
+						},
+						{
+							Class:        "Person",
+							ID:           "David",
+							Relationship: "Friend",
+						},
+						{
+							Class:        "Person",
+							ID:           "David",
+							Relationship: "Bandmate",
+						},
+						{
+							Class:        "Band",
+							ID:           "Pink Floyd",
+							Relationship: "Member",
+						},
+					},
+				},
+			},
+		}
+
+		e := ValidateDictionary(d)
+		assert.NotNil(t, e)
+	})
+
+	t.Run("InvalidSpecification_missingDefinition", func(t *testing.T) {
+		d := Dictionary{
+			"Band": {
+				"Pink Floyd": {
+					Fields: definition.Fields{
+						"Name": "Pink Floyd",
+					},
+				},
+			},
+			"Person": {
+				"David": {
+					Fields: definition.Fields{
+						"Name":        "David",
+						"Description": "Guitar",
+					},
+					References: []definition.Reference{
+						{
+							Class:        "Person",
+							ID:           "Richard",
+							Relationship: "Friend",
+						},
+						{
+							Class:        "Person",
+							ID:           "Nick",
+							Relationship: "Friend",
+						},
+						{
+							Class:        "Person",
+							ID:           "Nick",
+							Relationship: "Bandmate",
+						},
+						{
+							Class:        "Band",
+							ID:           "Pink Floyd",
+							Relationship: "Member",
+						},
+					},
+				},
+				"Roger": {
+					Fields: definition.Fields{
+						"Name":        "Roger",
+						"Description": "Bass",
+					},
+					References: []definition.Reference{
+						{
+							Class:        "Person",
+							ID:           "Nick",
+							Relationship: "Friend",
+						},
+					},
+				},
+				"Richard": {
+					Fields: definition.Fields{
+						"Name":        "Richard",
+						"Description": "Keyboards",
+					},
+					References: []definition.Reference{
+						{
+							Class:        "Person",
+							ID:           "David",
+							Relationship: "Friend",
+						},
+						{
+							Class:        "Band",
+							ID:           "Pink Floyd",
+							Relationship: "Member",
+						},
+						{
+							Class:        "Band",
+							ID:           "Zee",
+							Relationship: "Member",
+						},
+					},
+				},
+				"Nick": {
+					Fields: definition.Fields{
+						"Name":        "Nick",
+						"Description": "Drums",
+					},
+					References: []definition.Reference{
+						{
+							Class:        "Person",
+							ID:           "Roger",
+							Relationship: "Friend",
+						},
+						{
+							Class:        "Person",
+							ID:           "David",
+							Relationship: "Friend",
+						},
+						{
+							Class:        "Person",
+							ID:           "David",
+							Relationship: "Bandmate",
+						},
+						{
+							Class:        "Band",
+							ID:           "Pink Floyd",
+							Relationship: "Member",
+						},
+					},
+				},
+			},
+		}
+
+		e := ValidateDictionary(d)
+		assert.NotNil(t, e)
+	})
+}

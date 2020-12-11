@@ -17,8 +17,17 @@
 package parser
 
 import (
+	"fmt"
 	"github.com/nextmetaphor/yaml-graph/definition"
+	"github.com/rs/zerolog/log"
 	"os"
+)
+
+const (
+	logWarnCannotFindClass      = "cannot find class [%s]"
+	logWarnCannotFindDefinition = "cannot find definition ID [%s] for class [%s]"
+
+	errorDefinitionErrorsFound = "there were %d error(s) found in the definition files"
 )
 
 type (
@@ -96,4 +105,33 @@ func LoadDictionary(sourceDir, fileExtension string) Dictionary {
 	})
 
 	return d
+}
+
+// ValidateDictionary TODO
+func ValidateDictionary(d Dictionary) error {
+	errorsFound := 0
+
+	// TODO this should be amended to accept a 'schema' definition per class to allow each definition to
+	// be verified against it. e.g. ensure that only certain fields have been provided etc
+
+	// for each definition in the dictionary, ensure that the references are valid
+	for _, definitions := range d {
+		for _, definition := range definitions {
+			for _, ref := range definition.References {
+				if d[ref.Class] == nil {
+					log.Warn().Msg(fmt.Sprintf(logWarnCannotFindClass, ref.Class))
+					errorsFound++
+				} else if d[ref.Class][ref.ID] == nil {
+					log.Warn().Msg(fmt.Sprintf(logWarnCannotFindDefinition, ref.ID, ref.Class))
+					errorsFound++
+				}
+			}
+		}
+	}
+
+	if errorsFound > 0 {
+		return fmt.Errorf(errorDefinitionErrorsFound, errorsFound)
+	}
+
+	return nil
 }

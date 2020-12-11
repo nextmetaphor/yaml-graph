@@ -41,6 +41,9 @@ const (
 	commandGraphUse      = "graph"
 	commandGraphUseShort = "Generate HTML graph from definition files"
 
+	commandValidateUse      = "validate"
+	commandValidateUseShort = "Validate definition files"
+
 	flagFileExtension          = "ext"
 	flagFileExtensionShorthand = "e"
 	flagFileExtensionDefault   = "yaml"
@@ -74,7 +77,8 @@ const (
 	flagReportDefinitionShorthand = "r"
 	flagReportDefinitionUsage     = "Report definition file (required)"
 
-	exitCodeRootCmdFailed   = 1
-	exitCodeParseCmdFailed  = 2
-	exitCodeReportCmdFailed = 3
+	exitCodeRootCmdFailed     = 1
+	exitCodeParseCmdFailed    = 2
+	exitCodeReportCmdFailed   = 3
+	exitCodeValidateCmdFailed = 4
 )

@@ -44,7 +44,7 @@ const (
 type (
 	// MarkdownSection TODO
 	MarkdownSection struct {
-		// Class indicates the class of defintion to use for the section
+		// Class indicates the class of definition to use for the section
 		Class string `yaml:"Class"`
 		// SectionNameField indicates the field to use for the section name
 		SectionNameField string `yaml:"SectionNameField"`
@@ -92,7 +92,7 @@ func loadReportConf(cfgPath string) (ms *MarkdownSection, err error) {
 		log.Error().Err(err).Msgf(logErrorCouldNotOpenReportConfiguration, cfgPath)
 		return nil, err
 	}
-	err = yaml.Unmarshal(yamlFile, &ms)
+	err = yaml.UnmarshalStrict(yamlFile, &ms)
 	if err != nil {
 		log.Error().Err(err).Msgf(logErrorCouldNotUnmarshalReportConfiguration, cfgPath)
 		return nil, err
@@ -103,7 +103,7 @@ func loadReportConf(cfgPath string) (ms *MarkdownSection, err error) {
 	return ms, nil
 }
 
-func report(cmd *cobra.Command, args []string) {
+func report(_ *cobra.Command, _ []string) {
 	zerolog.SetGlobalLevel(zerolog.Level(logLevel))
 
 	// first load the report configuration
