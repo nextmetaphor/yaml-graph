@@ -24,6 +24,10 @@ import (
 )
 
 const (
+	logDebugAboutToParseFile       = "about to parse file [%s]"
+	logDebugSuccessfullyParsedFile = "successfully parsed file [%s]"
+	logWarnSkippingFile            = "skipping file [%s] due to error [%s]"
+
 	logWarnCannotFindClass      = "cannot find class [%s]"
 	logWarnCannotFindDefinition = "cannot find definition ID [%s] for class [%s]"
 
@@ -91,14 +95,15 @@ func loadSpecification(s definition.Specification, d Dictionary, parentRef *defi
 func LoadDictionary(sourceDir, fileExtension string) Dictionary {
 	d := make(Dictionary)
 	definition.ProcessFiles(sourceDir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
-		//log.Debug().Msg(fmt.Sprintf(logDebugAboutToParseFile, filePath))
+		log.Debug().Msg(fmt.Sprintf(logDebugAboutToParseFile, filePath))
 
 		spec, err := definition.LoadSpecificationFromFile(filePath)
 		if (err == nil) && (spec != nil) {
+			log.Debug().Msg(fmt.Sprintf(logDebugSuccessfullyParsedFile, filePath))
 			loadSpecification(*spec, d, nil)
 
 		} else {
-			//log.Warn().Msgf(logWarnSkippingFile, filePath, err)
+			log.Warn().Msgf(logWarnSkippingFile, filePath, err)
 		}
 
 		return nil
