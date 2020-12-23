@@ -10,3 +10,9 @@ build:	## build yaml-graph using a docker build container
 
 test:	## test yaml-graph using a docker test container
 	docker run --rm $(docker_dir_args) golang:latest ./test.sh
+
+docker-build:	## build yaml-graph docker image
+	docker build --tag nextmetaphor/yaml-graph:latest .
+
+docker-run: docker-build
+	docker run -it -p7474:7474 -p7687:7687 -v $(PWD)/example/CloudTaxonomy:/home/ymlgraph/definitions nextmetaphor/yaml-graph
