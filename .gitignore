@@ -1,7 +1,7 @@
 .idea
 .DS_Store
 profile.cov
-yaml-graph
+src/yaml-graph
 ygrph
 example.md
 .buildcache
