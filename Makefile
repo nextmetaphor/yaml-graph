@@ -19,4 +19,4 @@ docker-build: build	## build yaml-graph docker image
 	docker build --tag nextmetaphor/yaml-graph:latest docker
 
 docker-run: docker-build
-	docker run -it -p7474:7474 -p7687:7687 -v $(PWD)/example/CloudTaxonomy:/home/ymlgraph/definitions nextmetaphor/yaml-graph
+	docker run -it -p7474:7474 -p7687:7687 -v $(PWD)/example-definitions/CloudTaxonomy:/home/ymlgraph/definitions nextmetaphor/yaml-graph

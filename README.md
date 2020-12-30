@@ -1,75 +1,61 @@
 # yaml-graph
 golang-based utility to help define and build graph representations of data models from simple YAML files.
 
-*Note: this utility is currently still in development and is subject to breaking changes. The only representation currently supported uses the [neo4j](https://neo4j.com) graph database; additional future representations planned include [d3](https://d3js.org/) and [pdf](https://www.adobe.com/devnet/pdf/pdf_reference.html).*  
+*Note: this utility is currently still in early development and is subject to breaking changes. The only representation currently supported uses the [neo4j](https://neo4j.com) graph database; additional future representations planned include [d3](https://d3js.org/) visualisations and [markdown](https://daringfireball.net/projects/markdown/) reports.*  
 
 ## Install
 
 ### Prerequisites
-* Local [golang](https://golang.org/) installation: for building purposes
-* Local [Docker](https://www.docker.com/) installation: to host a local [neo4j](https://neo4j.com) database
-* Running [neo4j]() database container, which should be started with `docker run -p7474:7474 -p7687:7687 --env=NEO4J_AUTH=none neo4j`
+* Local [Docker](https://www.docker.com/) installation: compilation, test and execution of `yaml-graph` is implemented within a Docker container
+* Local [make](https://www.gnu.org/software/make/) installation: a `makefile` is used to co-ordinate the activities listed above
 
-### Build Steps
-To build `yaml-graph`, follow the steps below.
+### Building
+`yaml-graph` is compiled and packaged into a Docker container, complete with a [neo4j](https://neo4j.com) installation for ease as follows:
 ```bash
 # clone the yaml-graph repository
 $ git clone git@github.com:nextmetaphor/yaml-graph.git
-Cloning into 'yaml-graph'...
-remote: Enumerating objects: 149, done.
-remote: Counting objects: 100% (149/149), done.
-remote: Compressing objects: 100% (88/88), done.
-remote: Total 149 (delta 55), reused 122 (delta 31), pack-reused 0
-Receiving objects: 100% (149/149), 34.36 KiB | 429.00 KiB/s, done.
-Resolving deltas: 100% (55/55), done.
 
-# move into the src directory
-$ cd yaml-graph/src/
-$ cd yaml-graph/src/
-src $
+# move into the root of the repository
+$ cd yaml-graph
 
-# execute the build.sh script
-$ ./build.sh 
-### go fmt ###
-### go vet ###
-
-### golint ###
-### go build ###
+# invoke the docker-build target in the makefile
+$ make docker-build
 ``` 
 
-## Testing
-To test `yaml-graph`, follow the steps below.
+## Usage
+
+### Running
+When running a `yaml-graph` Docker container, a directory on the host machine containing the YAML definitions needs to be specified to mount within the container. In the example below, this is set to `$(PWD)/example-definitions/CloudTaxonomy` which is a sample directory provided in this repository for example purposes only.
 ```bash
-# move into the src directory of the yaml-graph repository
-$ cd yaml-graph/src/
-
-# execute the test.sh script
-src $ ./test.sh 
-
-### go test ###
-?   	github.com/nextmetaphor/yaml-graph	[no test files]
-?   	github.com/nextmetaphor/yaml-graph/cmd	[no test files]
-ok  	github.com/nextmetaphor/yaml-graph/definition	0.345s	coverage: 30.3% of statements in ./...
-ok  	github.com/nextmetaphor/yaml-graph/graph	0.191s	coverage: 15.1% of statements in ./...
-
-### go tool cover ###
+docker run -it -p7474:7474 -p7687:7687 -v $(PWD)/example-definitions/CloudTaxonomy:/home/ymlgraph/definitions nextmetaphor/yaml-graph
 ```
 
-## Deployment
+From within the Docker container, the definition directory provided will then be mounted at `/home/ymlgraph/definitions`. This directory will need to be specified for the majority of the `yaml-graph` operations, as demonstrated below. 
+
 
 ### Command Line Options
-Use the `--help` flag to examine the various command line options available.
+From within the running container, use the `--help` flag to examine the various command line options available.
 
 ```bash
-$ yaml-graph --help
+                       _                             _
+ _   _  __ _ _ __ ___ | |       __ _ _ __ __ _ _ __ | |__
+| | | |/ _` | '_ ` _ \| |_____ / _` | '__/ _` | '_ \| '_ \
+| |_| | (_| | | | | | | |_____| (_| | | | (_| | |_) | | | |
+ \__, |\__,_|_| |_| |_|_|      \__, |_|  \__,_| .__/|_| |_|
+ |___/                         |___/          |_|
+
+yaml-graph $ yaml-graph --help
 Define data in YAML then generate graph representations to model relationships
 
 Usage:
   yaml-graph [command]
 
 Available Commands:
+  graph       Generate HTML graph from definition files
   help        Help about any command
   parse       Parse definition files into graph representation
+  report      Generate markdown document from definition files
+  validate    Validate definition files
   version     Print the version number of yaml-graph
 
 Flags:
@@ -83,13 +69,26 @@ Flags:
 Use "yaml-graph [command] --help" for more information about a command.
 ```
 
-### Running
-The `yaml-graph` repository has a directory which contains a number of sample definitions then can be used for test
-purposes. Generate a graph representation of this data set as follows.
+### Validate Definitions
+To validate the YAML definitions, execute the following command:
 ```bash
-# note: execute the command below from the src directory from which the code was built
-$ ./yaml-graph parse -s ../example/CloudTaxonomy
+yaml-graph $ yaml-graph validate -s definitions/
+{"level":"warn","time":"2020-12-30T07:32:30Z","message":"skipping file [definitions/category-service-report.yaml] due to error [no definitions found in YAML file [definitions/category-service-report.yaml]]"}
+successfully validated definitions
 ```
 
-## Validation
+### Parse Definitions
+To parse the YAML definitions into a graph representation, execute the following command:
+```bash
+yaml-graph $ yaml-graph parse -s definitions
+{"level":"warn","time":"2020-12-30T07:33:17Z","message":"skipping file [definitions/category-service-report.yaml] due to error [no definitions found in YAML file [definitions/category-service-report.yaml]]"}
+{"level":"warn","time":"2020-12-30T07:33:18Z","message":"skipping file [definitions/category-service-report.yaml] due to error [no definitions found in YAML file [definitions/category-service-report.yaml]]"}
+```
+
+### Visualise Graph Representation
 Examine the graph database structure at http://localhost:7474/browser/ using the CYPHER of `match (n) return n`
+
+## Licence
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+This project is licenced under the terms of the [Apache 2.0 License](LICENCE.md) licence.
