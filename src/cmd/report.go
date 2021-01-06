@@ -83,7 +83,7 @@ func init() {
 
 	reportCmd.PersistentFlags().StringVarP(&reportDefinition, flagReportDefinitionName, flagReportDefinitionShorthand,
 		"", flagReportDefinitionUsage)
-	reportCmd.MarkFlagRequired(flagReportDefinitionName)
+	reportCmd.MarkPersistentFlagRequired(flagReportDefinitionName)
 }
 
 func loadReportConf(cfgPath string) (ms *MarkdownSection, err error) {
@@ -99,7 +99,6 @@ func loadReportConf(cfgPath string) (ms *MarkdownSection, err error) {
 	}
 
 	log.Debug().Msgf(logDebugSuccessfullyUnmarshalledReportConfiguration, cfgPath)
-	fmt.Println(ms)
 	return ms, nil
 }
 

@@ -46,8 +46,7 @@ var (
 func init() {
 	rootCmd.AddCommand(graphCmd)
 
-	graphCmd.PersistentFlags().StringVarP(&graphSourceDir, flagSourceName, flagSourceShorthand, "", flagSourceUsage)
-	graphCmd.MarkPersistentFlagRequired(flagSourceName)
+	graphCmd.PersistentFlags().StringVarP(&graphSourceDir, flagSourceName, flagSourceShorthand, flagSourceDefault, flagSourceUsage)
 }
 
 func graphFunc(cmd *cobra.Command, args []string) {

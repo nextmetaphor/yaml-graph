@@ -72,6 +72,7 @@ const (
 	flagSourceName      = "source"
 	flagSourceShorthand = "s"
 	flagSourceUsage     = "Source directory to read definitions from (required)"
+	flagSourceDefault   = "definition"
 
 	flagReportDefinitionName      = "definition"
 	flagReportDefinitionShorthand = "r"

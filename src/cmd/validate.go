@@ -42,8 +42,7 @@ var (
 func init() {
 	rootCmd.AddCommand(validateCmd)
 
-	validateCmd.PersistentFlags().StringVarP(&validateSourceDir, flagSourceName, flagSourceShorthand, "", flagSourceUsage)
-	validateCmd.MarkPersistentFlagRequired(flagSourceName)
+	validateCmd.PersistentFlags().StringVarP(&validateSourceDir, flagSourceName, flagSourceShorthand, flagSourceDefault, flagSourceUsage)
 }
 
 func validate(_ *cobra.Command, _ []string) {

@@ -46,8 +46,7 @@ var (
 func init() {
 	rootCmd.AddCommand(parseCmd)
 
-	parseCmd.PersistentFlags().StringVarP(&parseSourceDir, flagSourceName, flagSourceShorthand, "", flagSourceUsage)
-	parseCmd.MarkPersistentFlagRequired(flagSourceName)
+	parseCmd.PersistentFlags().StringVarP(&parseSourceDir, flagSourceName, flagSourceShorthand, flagSourceDefault, flagSourceUsage)
 }
 
 func parse(_ *cobra.Command, _ []string) {
