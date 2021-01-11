@@ -27,35 +27,35 @@ import (
 )
 
 const (
-	logDebugAboutToParseFile              = "about to parse file [%s]"
-	logDebugSuccessfullyParsedFile        = "successfully parsed file [%s]"
+	logDebugAboutToLoadFile               = "about to load file [%s]"
+	logDebugSuccessfullyLoadedFile        = "successfully loaded file [%s]"
 	logWarnSkippingFile                   = "skipping file [%s] due to error [%s]"
 	logErrorGraphDatabaseConnectionFailed = "graph database connection failed"
 )
 
 var (
-	parseCmd = &cobra.Command{
-		Use:   commandParseUse,
-		Short: commandParseUseShort,
-		Run:   parse,
+	loadCmd = &cobra.Command{
+		Use:   commandLoadUse,
+		Short: commandLoadUseShort,
+		Run:   load,
 	}
 
-	parseSourceDir string
+	loadSourceDir string
 )
 
 func init() {
-	rootCmd.AddCommand(parseCmd)
+	rootCmd.AddCommand(loadCmd)
 
-	parseCmd.PersistentFlags().StringVarP(&parseSourceDir, flagSourceName, flagSourceShorthand, flagSourceDefault, flagSourceUsage)
+	loadCmd.PersistentFlags().StringVarP(&loadSourceDir, flagSourceName, flagSourceShorthand, flagSourceDefault, flagSourceUsage)
 }
 
-func parse(_ *cobra.Command, _ []string) {
+func load(_ *cobra.Command, _ []string) {
 	zerolog.SetGlobalLevel(zerolog.Level(logLevel))
 
 	driver, session, err := graph.Init(dbURL, username, password)
 	if err != nil {
 		log.Error().Err(err).Msg(logErrorGraphDatabaseConnectionFailed)
-		os.Exit(exitCodeParseCmdFailed)
+		os.Exit(exitCodeLoadCmdFailed)
 	}
 
 	defer driver.Close()
@@ -64,12 +64,12 @@ func parse(_ *cobra.Command, _ []string) {
 	graph.DeleteAll(session)
 
 	// First create the nodes...
-	definition.ProcessFiles(parseSourceDir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
-		log.Debug().Msg(fmt.Sprintf(logDebugAboutToParseFile, filePath))
+	definition.ProcessFiles(loadSourceDir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
+		log.Debug().Msg(fmt.Sprintf(logDebugAboutToLoadFile, filePath))
 
 		spec, err := definition.LoadSpecificationFromFile(filePath)
 		if (err == nil) && (spec != nil) {
-			log.Debug().Msg(fmt.Sprintf(logDebugSuccessfullyParsedFile, filePath))
+			log.Debug().Msg(fmt.Sprintf(logDebugSuccessfullyLoadedFile, filePath))
 			graph.CreateSpecification(session, *spec)
 
 		} else {
@@ -80,12 +80,12 @@ func parse(_ *cobra.Command, _ []string) {
 	})
 
 	// ...then create the edges
-	definition.ProcessFiles(parseSourceDir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
-		log.Debug().Msg(fmt.Sprintf(logDebugAboutToParseFile, filePath))
+	definition.ProcessFiles(loadSourceDir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
+		log.Debug().Msg(fmt.Sprintf(logDebugAboutToLoadFile, filePath))
 
 		spec, err := definition.LoadSpecificationFromFile(filePath)
 		if (err == nil) && (spec != nil) {
-			log.Debug().Msg(fmt.Sprintf(logDebugSuccessfullyParsedFile, filePath))
+			log.Debug().Msg(fmt.Sprintf(logDebugSuccessfullyLoadedFile, filePath))
 			graph.CreateSpecificationEdge(session, *spec, nil)
 
 		} else {

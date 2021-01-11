@@ -32,8 +32,8 @@ const (
 	commandVersionShort = "Print the version number of " + appName
 	commandVersionLong  = appName + " " + appVersion
 
-	commandParseUse      = "parse"
-	commandParseUseShort = "Parse definition files into graph representation"
+	commandLoadUse      = "load"
+	commandLoadUseShort = "Load definition files into graph representation"
 
 	commandReportUse      = "report"
 	commandReportUseShort = "Generate markdown document from definition files"
@@ -79,7 +79,7 @@ const (
 	flagReportDefinitionUsage     = "Report definition file (required)"
 
 	exitCodeRootCmdFailed     = 1
-	exitCodeParseCmdFailed    = 2
+	exitCodeLoadCmdFailed     = 2
 	exitCodeReportCmdFailed   = 3
 	exitCodeValidateCmdFailed = 4
 )
