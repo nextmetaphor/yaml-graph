@@ -1,0 +1,8 @@
+Class: "Category"
+NameField: "Name"
+DetailFields: []
+ChildLevel:
+  - Class: "Service"
+    NameField: "Name"
+    DetailFields: [""]
+    ParentRelationship: "TYPE_OF"

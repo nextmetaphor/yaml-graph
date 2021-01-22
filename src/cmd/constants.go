@@ -44,6 +44,9 @@ const (
 	commandValidateUse      = "validate"
 	commandValidateUseShort = "Validate definition files"
 
+	commandJSONUse      = "json"
+	commandJSONUseShort = "generate JSON tree"
+
 	flagFileExtension          = "ext"
 	flagFileExtensionShorthand = "e"
 	flagFileExtensionDefault   = "yaml"
@@ -78,8 +81,13 @@ const (
 	flagReportDefinitionShorthand = "r"
 	flagReportDefinitionUsage     = "Report definition file (required)"
 
+	flagJSONDefinitionName      = "json"
+	flagJSONDefinitionShorthand = "j"
+	flagJSONDefinitionUsage     = "JSON definition file (required)"
+
 	exitCodeRootCmdFailed     = 1
 	exitCodeLoadCmdFailed     = 2
 	exitCodeReportCmdFailed   = 3
 	exitCodeValidateCmdFailed = 4
+	exitCodeJSONCmdFailed     = 5
 )
