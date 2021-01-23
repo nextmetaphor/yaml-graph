@@ -17,6 +17,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 	"github.com/nextmetaphor/yaml-graph/graph"
@@ -29,17 +30,8 @@ import (
 )
 
 const (
-	classSection = "\"class\": \"%s\","
-	nameSection  = "\"name\": \"%s\""
-
-	childrenLevelPrefix = ",\"children\": ["
-	childrenLevelSuffix = "]"
-
 	rootJSONCypher  = "match (n:%s) return n"
 	childJSONCypher = "match (n:%s)-[:%s]-(p:%s {ID:\"%s\"}) return n"
-
-	//markdownSection     = "%s%s%s"       //prefix section suffix
-	//markdownDetailField = "%s%s%s%s%s%s" //field key (prefix value suffix) + field value (prefix value suffix)
 
 	logErrorExecutingJSONCypher                       = "error executing cypher"
 	logErrorCouldNotOpenJSONConfiguration             = "could not open JSON configuration [%s]"
@@ -52,8 +44,10 @@ type (
 	JSONLevel struct {
 		// Class indicates the class of definition to use for the node
 		Class string `yaml:"Class"`
-
+		// NameField indicates which field to use as the "name" element
 		NameField string `yaml:"NameField"`
+		// Colour field is used to add a "colour" element for every
+		Colour string `yaml:"Colour"`
 
 		// DetailFields indicates which fields which will be extracted
 		DetailFields []string `yaml:"DetailFields"`
@@ -63,11 +57,20 @@ type (
 	}
 )
 
+type (
+	jsonNode struct {
+		Class    string      `json:"class"`
+		Colour   string      `json:"colour"`
+		Name     string      `json:"name"`
+		Children []*jsonNode `json:"children"`
+	}
+)
+
 var (
 	jsonCmd = &cobra.Command{
 		Use:   commandJSONUse,
 		Short: commandJSONUseShort,
-		Run:   json,
+		Run:   jsonFunc,
 	}
 
 	jsonDefinition string
@@ -97,10 +100,10 @@ func loadJSONConf(cfgPath string) (ms *JSONLevel, err error) {
 	return ms, nil
 }
 
-func json(_ *cobra.Command, _ []string) {
+func jsonFunc(_ *cobra.Command, _ []string) {
 	zerolog.SetGlobalLevel(zerolog.Level(logLevel))
 
-	// first load the json configuration
+	// first load the jsonFunc configuration
 	jsonLevel, err := loadJSONConf(jsonDefinition)
 	if err != nil {
 		log.Error().Err(err).Msg(logErrorGraphDatabaseConnectionFailed)
@@ -118,14 +121,24 @@ func json(_ *cobra.Command, _ []string) {
 	defer session.Close()
 
 	// now recurse through the sections
-	fmt.Print("{" + fmt.Sprintf(nameSection, "root") + childrenLevelPrefix)
-	recurseLevel(session, *jsonLevel, nil, nil)
-	fmt.Print(childrenLevelSuffix + "}")
+	rootNode := new(jsonNode)
+	rootNode.Colour = "#4dc2ca"
+
+	j, _ := recurseLevel(session, *jsonLevel, nil, nil)
+	rootNode.Children = append(rootNode.Children, j...)
+
+	jb, e := json.Marshal(rootNode)
+	if e == nil {
+		fmt.Print(string(jb))
+	} else {
+		fmt.Print(e)
+	}
 }
 
-func recurseLevel(session neo4j.Session, level JSONLevel, parentClass, parentID *string) error {
+func recurseLevel(session neo4j.Session, level JSONLevel, parentClass, parentID *string) ([]*jsonNode, error) {
 	var res neo4j.Result
 	var err error
+	var nodes []*jsonNode
 
 	if (parentClass == nil) || (parentID == nil) {
 		res, err = graph.ExecuteCypher(session, fmt.Sprintf(rootJSONCypher, level.Class), nil)
@@ -136,37 +149,36 @@ func recurseLevel(session neo4j.Session, level JSONLevel, parentClass, parentID 
 
 	if (err != nil) || (res.Err() != nil) {
 		log.Error().Err(err).Msgf(logErrorExecutingJSONCypher)
-		return err
+		return nil, err
 	}
 
-	firstResult := true
 	for res.Next() {
 		record := res.Record()
 		for _, kv := range record.Values() {
 			node, isNode := kv.(neo4j.Node)
 			if isNode {
-				if firstResult {
-					fmt.Print("{")
-				} else {
-					fmt.Print(",{")
+				jNode := new(jsonNode)
+				nodes = append(nodes, jNode)
+				jNode.Class = level.Class
+				if node.Props()[level.NameField] != nil {
+					jNode.Name = node.Props()[level.NameField].(string)
 				}
-				firstResult = false
-
-				fmt.Print(fmt.Sprintf(classSection, level.Class))
-				fmt.Print(fmt.Sprintf(nameSection, node.Props()[level.NameField]))
+				jNode.Colour = level.Colour
+				jNode.Children = []*jsonNode{}
 
 				// TODO recursion, really?
 				for _, childLevel := range level.ChildLevel {
 					nodeID := node.Props()["ID"].(string)
-					fmt.Print(childrenLevelPrefix)
-					recurseLevel(session, childLevel, &(level.Class), &nodeID)
-					fmt.Print(childrenLevelSuffix)
+					childNodes, err := recurseLevel(session, childLevel, &(level.Class), &nodeID)
+					if err != nil {
+						log.Error().Err(err).Msgf(logErrorExecutingJSONCypher)
+						return nil, err
+					}
+					jNode.Children = append(jNode.Children, childNodes...)
 				}
-
-				fmt.Print("}")
 			}
 		}
 	}
 
-	return err
+	return nodes, err
 }
