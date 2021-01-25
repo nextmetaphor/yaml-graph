@@ -254,7 +254,7 @@ func Test_validateDictionary(t *testing.T) {
 			},
 		}
 
-		e := ValidateDictionary(d)
+		e := ValidateDictionary(d, nil)
 		assert.Nil(t, e)
 	})
 
@@ -368,7 +368,7 @@ func Test_validateDictionary(t *testing.T) {
 			},
 		}
 
-		e := ValidateDictionary(d)
+		e := ValidateDictionary(d, nil)
 		assert.NotNil(t, e)
 	})
 
@@ -477,7 +477,7 @@ func Test_validateDictionary(t *testing.T) {
 			},
 		}
 
-		e := ValidateDictionary(d)
+		e := ValidateDictionary(d, nil)
 		assert.NotNil(t, e)
 	})
 }

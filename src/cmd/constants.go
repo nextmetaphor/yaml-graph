@@ -81,6 +81,10 @@ const (
 	flagReportDefinitionShorthand = "r"
 	flagReportDefinitionUsage     = "Report definition file (required)"
 
+	flagDefinitionFormatName      = "format"
+	flagDefinitionFormatShorthand = "f"
+	flagDefinitionFormatUsage     = "Definition format file"
+
 	flagJSONDefinitionName      = "json"
 	flagJSONDefinitionShorthand = "j"
 	flagJSONDefinitionUsage     = "JSON definition file (required)"

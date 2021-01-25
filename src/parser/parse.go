@@ -28,8 +28,9 @@ const (
 	logDebugSuccessfullyParsedFile = "successfully parsed file [%s]"
 	logWarnSkippingFile            = "skipping file [%s] due to error [%s]"
 
-	logWarnCannotFindClass      = "cannot find class [%s]"
-	logWarnCannotFindDefinition = "cannot find definition ID [%s] for class [%s]"
+	logWarnCannotFindClass       = "cannot find class [%s]"
+	logWarnCannotFindDefinition  = "cannot find definition ID [%s] for class [%s]"
+	logWarnMandatoryFieldMissing = "mandatory field [%s] missing in definition ID [%s] for class [%s]"
 
 	errorDefinitionErrorsFound = "there were %d error(s) found in the definition files"
 )
@@ -44,6 +45,20 @@ type (
 	// Dictionary is a map of classes, keyed by class name; the value is a map of definitions keyed by
 	// definition ID
 	Dictionary map[string]map[string]*DictionaryDefinition
+)
+
+type (
+	// DefinitionFormat TODO
+	DefinitionFormat struct {
+		// ClassFormat is a map of classes keyed by class name; the value is format of each class
+		ClassFormat map[string]*ClassDefinitionFormat `yaml:"Class"`
+	}
+
+	// ClassDefinitionFormat TODO
+	ClassDefinitionFormat struct {
+		MandatoryFields []string `yaml:"MandatoryFields"`
+		OptionalFields  []string `yaml:"OptionalFields"`
+	}
 )
 
 func loadSpecification(s definition.Specification, d Dictionary, parentRef *definition.Reference) {
@@ -113,11 +128,22 @@ func LoadDictionary(sourceDir, fileExtension string) Dictionary {
 }
 
 // ValidateDictionary TODO
-func ValidateDictionary(d Dictionary) error {
+func ValidateDictionary(d Dictionary, df *DefinitionFormat) error {
 	errorsFound := 0
 
-	// TODO this should be amended to accept a 'schema' definition per class to allow each definition to
-	// be verified against it. e.g. ensure that only certain fields have been provided etc
+	if df != nil {
+		for class, classFormat := range df.ClassFormat {
+			for dID, definition := range d[class] {
+				// validate each of the mandatory fields
+				for _, f := range classFormat.MandatoryFields {
+					if definition.Fields[f] == nil {
+						log.Warn().Msg(fmt.Sprintf(logWarnMandatoryFieldMissing, f, dID, class))
+						errorsFound++
+					}
+				}
+			}
+		}
+	}
 
 	// for each definition in the dictionary, ensure that the references are valid
 	for _, definitions := range d {
