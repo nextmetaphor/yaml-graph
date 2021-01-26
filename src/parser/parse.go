@@ -21,6 +21,7 @@ import (
 	"github.com/nextmetaphor/yaml-graph/definition"
 	"github.com/rs/zerolog/log"
 	"os"
+	"strings"
 )
 
 const (
@@ -28,9 +29,10 @@ const (
 	logDebugSuccessfullyParsedFile = "successfully parsed file [%s]"
 	logWarnSkippingFile            = "skipping file [%s] due to error [%s]"
 
-	logWarnCannotFindClass       = "cannot find class [%s]"
-	logWarnCannotFindDefinition  = "cannot find definition ID [%s] for class [%s]"
-	logWarnMandatoryFieldMissing = "mandatory field [%s] missing in definition ID [%s] for class [%s]"
+	logWarnCannotFindClass          = "cannot find class [%s]"
+	logWarnCannotFindDefinition     = "cannot find definition ID [%s] for class [%s]"
+	logWarnMandatoryFieldMissing    = "mandatory field [%s] missing in definition ID [%s] for class [%s]"
+	logWarnMandatoryFieldNotAString = "mandatory field [%s] is not a string in definition ID [%s] for class [%s]"
 
 	errorDefinitionErrorsFound = "there were %d error(s) found in the definition files"
 )
@@ -139,6 +141,17 @@ func ValidateDictionary(d Dictionary, df *DefinitionFormat) error {
 					if definition.Fields[f] == nil {
 						log.Warn().Msg(fmt.Sprintf(logWarnMandatoryFieldMissing, f, dID, class))
 						errorsFound++
+					} else {
+						s, ok := definition.Fields[f].(string)
+						if ok {
+							if strings.TrimSpace(s) == "" {
+								log.Warn().Msg(fmt.Sprintf(logWarnMandatoryFieldMissing, f, dID, class))
+								errorsFound++
+							}
+						} else {
+							log.Warn().Msg(fmt.Sprintf(logWarnMandatoryFieldNotAString, f, dID, class))
+							errorsFound++
+						}
 					}
 				}
 			}
@@ -161,6 +174,7 @@ func ValidateDictionary(d Dictionary, df *DefinitionFormat) error {
 	}
 
 	if errorsFound > 0 {
+		log.Error().Msg(fmt.Sprintf(errorDefinitionErrorsFound, errorsFound))
 		return fmt.Errorf(errorDefinitionErrorsFound, errorsFound)
 	}
 
