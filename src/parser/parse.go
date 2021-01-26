@@ -33,6 +33,7 @@ const (
 	logWarnCannotFindDefinition     = "cannot find definition ID [%s] for class [%s]"
 	logWarnMandatoryFieldMissing    = "mandatory field [%s] missing in definition ID [%s] for class [%s]"
 	logWarnMandatoryFieldNotAString = "mandatory field [%s] is not a string in definition ID [%s] for class [%s]"
+	logWarnAdditionalFieldFound     = "field [%s] is not a valid field in definition ID [%s] for class [%s]"
 
 	errorDefinitionErrorsFound = "there were %d error(s) found in the definition files"
 )
@@ -56,10 +57,15 @@ type (
 		ClassFormat map[string]*ClassDefinitionFormat `yaml:"Class"`
 	}
 
+	// ClassField TODO
+	ClassField struct {
+		Description string `yaml:"Description,omitempty"`
+	}
+
 	// ClassDefinitionFormat TODO
 	ClassDefinitionFormat struct {
-		MandatoryFields []string `yaml:"MandatoryFields"`
-		OptionalFields  []string `yaml:"OptionalFields"`
+		MandatoryFields map[string]ClassField `yaml:"MandatoryFields"`
+		OptionalFields  map[string]ClassField `yaml:"OptionalFields"`
 	}
 )
 
@@ -136,8 +142,18 @@ func ValidateDictionary(d Dictionary, df *DefinitionFormat) error {
 	if df != nil {
 		for class, classFormat := range df.ClassFormat {
 			for dID, definition := range d[class] {
-				// validate each of the mandatory fields
-				for _, f := range classFormat.MandatoryFields {
+				// first check that each field in the definition is either a mandatory or optional field...
+				for defField := range definition.Fields {
+					_, isMandatoryField := classFormat.MandatoryFields[defField]
+					_, isOptionalField := classFormat.OptionalFields[defField]
+					if !isMandatoryField && !isOptionalField {
+						log.Warn().Msg(fmt.Sprintf(logWarnAdditionalFieldFound, defField, dID, class))
+						errorsFound++
+					}
+				}
+
+				// ...then validate each of the mandatory fields exists within the definition
+				for f := range classFormat.MandatoryFields {
 					if definition.Fields[f] == nil {
 						log.Warn().Msg(fmt.Sprintf(logWarnMandatoryFieldMissing, f, dID, class))
 						errorsFound++
