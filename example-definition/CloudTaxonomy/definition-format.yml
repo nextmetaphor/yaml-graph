@@ -1,37 +1,37 @@
 Class:
   Attribute:
     MandatoryFields:
-      - Name
-      - Description
+      Name:
+      Description:
     OptionalFields:
 
   Capability:
     MandatoryFields:
-      - Name
-      - Description
+      Name:
+      Description:
     OptionalFields:
 
   Category:
     MandatoryFields:
-      - Name
-      - Description
+      Name:
+      Description:
     OptionalFields:
 
   Provider:
     MandatoryFields:
-      - Name
-      - Description
+      Name:
+      Description:
     OptionalFields:
 
   Service:
     MandatoryFields:
-      - Name
-      - Description
-      - Link
+      Name:
+      Description:
+      Link:
     OptionalFields:
 
   Tenancy:
     MandatoryFields:
-      - Name
-      - Description
+      Name:
+      Description:
     OptionalFields:
