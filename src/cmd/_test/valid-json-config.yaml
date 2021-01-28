@@ -6,3 +6,4 @@ ChildLevel:
     NameField: "Name"
     DetailFields: [""]
     ParentRelationship: "TYPE_OF"
+    Colour: "yellow"

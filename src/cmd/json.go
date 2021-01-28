@@ -46,8 +46,10 @@ type (
 		Class string `yaml:"Class"`
 		// NameField indicates which field to use as the "name" element
 		NameField string `yaml:"NameField"`
-		// Colour field is used to add a "colour" element for every
+		// Colour field is used to add a "colour" element
 		Colour string `yaml:"Colour"`
+		// Size field is used to add a "colour" element
+		Size int `yaml:"Size"`
 
 		// DetailFields indicates which fields which will be extracted
 		DetailFields []string `yaml:"DetailFields"`
@@ -59,10 +61,12 @@ type (
 
 type (
 	jsonNode struct {
-		Class    string      `json:"class"`
-		Colour   string      `json:"colour"`
-		Name     string      `json:"name"`
-		Children []*jsonNode `json:"children"`
+		Class        string            `json:"class"`
+		Name         string            `json:"name"`
+		Colour       string            `json:"colour"`
+		Size         int               `json:"size"`
+		DetailFields map[string]string `json:"detail-fields"`
+		Children     []*jsonNode       `json:"children"`
 	}
 )
 
@@ -164,7 +168,15 @@ func recurseLevel(session neo4j.Session, level JSONLevel, parentClass, parentID 
 					jNode.Name = node.Props()[level.NameField].(string)
 				}
 				jNode.Colour = level.Colour
+				jNode.Size = level.Size
+				jNode.DetailFields = map[string]string{}
 				jNode.Children = []*jsonNode{}
+
+				for _, detailField := range level.DetailFields {
+					if node.Props()[detailField] != nil {
+						jNode.DetailFields[detailField] = node.Props()[detailField].(string)
+					}
+				}
 
 				// TODO recursion, really?
 				for _, childLevel := range level.ChildLevel {
