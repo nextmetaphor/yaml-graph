@@ -1,0 +1,8 @@
+Class: "Category"
+Fields: ["Name", "Description"]
+OrderField: "Name"
+ChildSection:
+  - Class: "Service"
+    Fields: ["Name", "Description"]
+    OrderField: "Name"
+    ParentRelationship: "TYPE_OF"

@@ -29,8 +29,8 @@ import (
 )
 
 const (
-	rootCypher  = "match (n:%s) return n order by n.%s"
-	childCypher = "match (n:%s)-[:%s]-(p:%s {ID:\"%s\"}) return n order by n.%s"
+	rootReportCypher  = "match (n:%s) return n order by n.%s"
+	childReportCypher = "match (n:%s)-[:%s]-(p:%s {ID:\"%s\"}) return n order by n.%s"
 
 	markdownSection     = "%s%s%s"       //prefix section suffix
 	markdownDetailField = "%s%s%s%s%s%s" //field key (prefix value suffix) + field value (prefix value suffix)
@@ -131,9 +131,9 @@ func recurseSection(session neo4j.Session, section MarkdownSection, parentClass,
 	var err error
 
 	if (parentClass == nil) || (parentID == nil) {
-		res, err = graph.ExecuteCypher(session, fmt.Sprintf(rootCypher, section.Class, section.SectionNameField), nil)
+		res, err = graph.ExecuteCypher(session, fmt.Sprintf(rootReportCypher, section.Class, section.SectionNameField), nil)
 	} else {
-		res, err = graph.ExecuteCypher(session, fmt.Sprintf(childCypher, section.Class, section.ParentRelationship, *parentClass,
+		res, err = graph.ExecuteCypher(session, fmt.Sprintf(childReportCypher, section.Class, section.ParentRelationship, *parentClass,
 			*parentID, section.SectionNameField), nil)
 	}
 

@@ -22,7 +22,7 @@ import (
 
 const (
 	appName    = "yaml-graph"
-	appVersion = "0.1"
+	appVersion = "0.2"
 
 	commandRootUse      = appName
 	commandRootUseShort = appName + ": generate graphs from YAML definition files"
@@ -46,6 +46,9 @@ const (
 
 	commandJSONUse      = "json"
 	commandJSONUseShort = "generate JSON tree"
+
+	commandTemplateUse      = "template"
+	commandTemplateUseShort = "generate templated document"
 
 	flagFileExtension          = "ext"
 	flagFileExtensionShorthand = "e"
@@ -89,9 +92,14 @@ const (
 	flagJSONDefinitionShorthand = "j"
 	flagJSONDefinitionUsage     = "JSON definition file (required)"
 
+	flagTemplateName      = "template"
+	flagTemplateShorthand = "t"
+	flagTemplateUsage     = "output template file (required)"
+
 	exitCodeRootCmdFailed     = 1
 	exitCodeLoadCmdFailed     = 2
 	exitCodeReportCmdFailed   = 3
 	exitCodeValidateCmdFailed = 4
 	exitCodeJSONCmdFailed     = 5
+	exitCodeTemplateCmdFailed = 6
 )
