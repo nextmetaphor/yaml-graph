@@ -75,6 +75,7 @@ var (
 	}
 
 	templateName, templateFormat string
+	loadDefinitions              bool
 )
 
 func init() {
@@ -87,6 +88,11 @@ func init() {
 	templateCmd.PersistentFlags().StringVarP(&templateFormat, flagDefinitionFormatName, flagDefinitionFormatShorthand,
 		"", flagDefinitionFormatUsage)
 	templateCmd.MarkPersistentFlagRequired(flagDefinitionFormatName)
+
+	templateCmd.PersistentFlags().BoolVarP(&loadDefinitions, flagLoadDefinitionsName, "", false, flagLoadDefinitionsUsage)
+
+	templateCmd.PersistentFlags().StringVarP(&loadSourceDir, flagSourceName, flagSourceShorthand, flagSourceDefault, flagSourceUsage)
+
 }
 
 func loadTemplateConf(cfgPath string) (ms *TemplateSection, err error) {
@@ -105,8 +111,13 @@ func loadTemplateConf(cfgPath string) (ms *TemplateSection, err error) {
 	return ms, nil
 }
 
-func doTemplate(_ *cobra.Command, _ []string) {
+func doTemplate(c *cobra.Command, s []string) {
 	zerolog.SetGlobalLevel(zerolog.Level(logLevel))
+
+	if loadDefinitions {
+		// TODO this is horrible - refactor
+		load(c, s)
+	}
 
 	// first load the template configuration
 	templateSection, err := loadTemplateConf(templateFormat)

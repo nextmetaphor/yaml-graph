@@ -86,7 +86,7 @@ const (
 
 	flagDefinitionFormatName      = "format"
 	flagDefinitionFormatShorthand = "f"
-	flagDefinitionFormatUsage     = "Definition format file"
+	flagDefinitionFormatUsage     = "Definition format file (required)"
 
 	flagJSONDefinitionName      = "json"
 	flagJSONDefinitionShorthand = "j"
@@ -95,6 +95,9 @@ const (
 	flagTemplateName      = "template"
 	flagTemplateShorthand = "t"
 	flagTemplateUsage     = "output template file (required)"
+
+	flagLoadDefinitionsName  = "load"
+	flagLoadDefinitionsUsage = "load definitions"
 
 	exitCodeRootCmdFailed     = 1
 	exitCodeLoadCmdFailed     = 2
