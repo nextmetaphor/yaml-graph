@@ -61,10 +61,6 @@ type (
 		// ReferencedDefinitions is a map of definitions keyed by relationship
 		ReferencedDefinitions map[string][]templateDefinition
 	}
-
-	templateData struct {
-		definitions []templateDefinition
-	}
 )
 
 var (
@@ -73,9 +69,6 @@ var (
 		Short: commandTemplateUseShort,
 		Run:   doTemplate,
 	}
-
-	templateName, templateFormat string
-	loadDefinitions              bool
 )
 
 func init() {

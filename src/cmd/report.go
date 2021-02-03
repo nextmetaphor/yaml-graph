@@ -74,8 +74,6 @@ var (
 		Short: commandReportUseShort,
 		Run:   report,
 	}
-
-	reportDefinition string
 )
 
 func init() {

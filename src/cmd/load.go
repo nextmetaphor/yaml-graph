@@ -39,8 +39,6 @@ var (
 		Short: commandLoadUseShort,
 		Run:   load,
 	}
-
-	loadSourceDir string
 )
 
 func init() {

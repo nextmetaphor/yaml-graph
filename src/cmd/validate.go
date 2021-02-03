@@ -42,8 +42,6 @@ var (
 		Short: commandValidateUseShort,
 		Run:   validate,
 	}
-
-	validateSourceDir, definitionFormatFile string
 )
 
 func init() {

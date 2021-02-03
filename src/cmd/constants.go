@@ -106,3 +106,47 @@ const (
 	exitCodeJSONCmdFailed     = 5
 	exitCodeTemplateCmdFailed = 6
 )
+
+var (
+	// variable for flagSourceName parameter
+	graphSourceDir string
+
+	// variable for flagJSONDefinitionName parameter
+	jsonDefinition string
+
+	// variable for flagSourceName parameter
+	loadSourceDir string
+
+	// variable for flagReportDefinitionName parameter
+	reportDefinition string
+
+	// variable for flagFileExtension parameter
+	fileExtension string
+
+	// variable for flagUsernameName parameter
+	username string
+
+	// variable for flagPasswordName parameter
+	password string
+
+	// variable for flagDBURLName parameter
+	dbURL string
+
+	// variable for flagLogLevelName parameter
+	logLevel int8
+
+	// variable for flagTemplateName parameter
+	templateName string
+
+	// variable for flagDefinitionFormatName parameter
+	templateFormat string
+
+	// variable for flagLoadDefinitionsName parameter
+	loadDefinitions bool
+
+	// variable for flagSourceName parameter
+	validateSourceDir string
+
+	// variable for flagDefinitionFormatName parameter
+	definitionFormatFile string
+)

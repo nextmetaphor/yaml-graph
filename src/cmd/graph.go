@@ -39,8 +39,6 @@ var (
 		Short: commandGraphUseShort,
 		Run:   graphFunc,
 	}
-
-	graphSourceDir string
 )
 
 func init() {

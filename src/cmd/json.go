@@ -76,8 +76,6 @@ var (
 		Short: commandJSONUseShort,
 		Run:   jsonFunc,
 	}
-
-	jsonDefinition string
 )
 
 func init() {

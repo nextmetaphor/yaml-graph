@@ -27,12 +27,6 @@ var (
 		Short: commandRootUseShort,
 		Long:  commandRootUseLong,
 	}
-
-	fileExtension string
-	username      string
-	password      string
-	dbURL         string
-	logLevel      int8
 )
 
 func init() {
