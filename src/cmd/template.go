@@ -33,6 +33,7 @@ const (
 	rootTemplateCypher  = "match (n:%s) return n order by n.%s"
 	childTemplateCypher = "match (n:%s)-[:%s]-(p:%s {ID:\"%s\"}) return n order by n.%s"
 
+	logErrorExecutingCypher                               = "error executing cypher"
 	logErrorCouldNotOpenTemplateConfiguration             = "could not open template configuration [%s]"
 	logErrorCouldNotUnmarshalTemplateConfiguration        = "could not unmarshal template configuration [%s]"
 	logErrorParsingTemplateDefinitions                    = "error parsing template definitions"
