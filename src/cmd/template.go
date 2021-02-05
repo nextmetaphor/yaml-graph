@@ -137,8 +137,6 @@ func doTemplate(c *cobra.Command, s []string) {
 		os.Exit(exitCodeTemplateCmdFailed)
 	}
 
-	//fmt.Println(definitions)
-
 	template := template.Must(template.ParseFiles(templateName))
 
 	template.Execute(os.Stdout, definitions)

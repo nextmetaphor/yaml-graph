@@ -31,8 +31,6 @@ const (
 	logDebugCannotLoadYAMLFile           = "cannot load YAML file [%s]"
 	logDebugCannotParseYAMLFile          = "cannot parse YAML file [%s]"
 	logDebugNoDefinitionsFoundInYAMLFile = "no definitions found in YAML file [%s]"
-	logErrorCannotReadRootDirectory      = "cannot read root directory [%]"
-	logDebugFoundDefinitionSubdirectory  = "found definition subdirectory [%s]"
 	logErrorCannotProcessFiles           = "cannot process files in root directory [%s]"
 	logWarnCannotProcessFile             = "cannot process files in directory [%s]"
 	logDebugProcessingFile               = "processing file [%s] in directory [%s]"

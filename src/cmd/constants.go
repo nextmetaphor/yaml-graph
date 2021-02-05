@@ -101,10 +101,9 @@ const (
 
 	exitCodeRootCmdFailed     = 1
 	exitCodeLoadCmdFailed     = 2
-	exitCodeReportCmdFailed   = 3
-	exitCodeValidateCmdFailed = 4
-	exitCodeJSONCmdFailed     = 5
-	exitCodeTemplateCmdFailed = 6
+	exitCodeValidateCmdFailed = 3
+	exitCodeJSONCmdFailed     = 4
+	exitCodeTemplateCmdFailed = 5
 )
 
 var (
