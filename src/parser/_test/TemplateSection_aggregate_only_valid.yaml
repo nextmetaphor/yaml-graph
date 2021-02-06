@@ -1,0 +1,28 @@
+SectionClass:
+  Class: class1
+  Fields:
+    - field1
+    - field2
+    - field3
+  OrderFields:
+    - field1
+    - field3
+
+AggregateClasses:
+  - Class: departmentClass
+    Fields:
+      - d_field1
+      - d_field2
+      - d_field3
+    Relationship: belongs_to
+    OrderFields:
+      - d_field1
+      - d_field3
+
+  - Class: clubClass
+    Fields:
+      - c_field1
+      - c_field2
+    Relationship: member_of
+    OrderFields:
+      - c_field1

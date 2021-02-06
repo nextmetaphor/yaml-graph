@@ -1,0 +1,57 @@
+SectionClass:
+  Class: class1
+  Fields:
+    - c1_field1
+    - c1_field2
+    - c1_field3
+  OrderFields:
+    - c1_field1
+    - c1_field3
+
+AggregateClasses:
+  - Class: departmentClass1
+    Fields:
+      - d1_field1
+      - d1_field2
+      - d1_field3
+    Relationship: belongs_to_1
+    OrderFields:
+      - d1_field1
+      - d1_field3
+
+  - Class: clubClass1
+    Fields:
+      - cl1_field1
+      - cl1_field2
+    Relationship: member_of_1
+    OrderFields:
+      - cl1_field1
+
+CompositeSections:
+  - SectionClass:
+      Class: class2
+      Fields:
+        - c2_field1
+        - c2_field2
+        - c2_field3
+      OrderFields:
+        - c2_field1
+        - c2_field3
+    AggregateClasses:
+      - Class: departmentClass2
+        Fields:
+          - d2_field1
+          - d2_field2
+          - d2_field3
+        Relationship: belongs_to_2
+        OrderFields:
+          - d2_field1
+          - d2_field3
+
+      - Class: clubClass2
+        Fields:
+          - cl2_field1
+          - cl2_field2
+        Relationship: member_of_2
+        OrderFields:
+          - cl2_field1

@@ -1,0 +1,9 @@
+SectionClass:
+  Class: class1
+  Fields:
+    - field1
+    - field2
+    - field3
+  NoOrderFields:
+    - field1
+    - field3
