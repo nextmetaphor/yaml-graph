@@ -18,9 +18,13 @@ package parser
 
 import (
 	"fmt"
+	"github.com/neo4j/neo4j-go-driver/neo4j"
+	"github.com/nextmetaphor/yaml-graph/graph"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v2"
+	"html/template"
 	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -36,6 +40,9 @@ const (
 	logErrorParsingTemplateDefinitions                    = "error parsing template definitions"
 	logErrorParsingTemplate                               = "error parsing template"
 	logDebugSuccessfullyUnmarshalledTemplateConfiguration = "successfully unmarshalled template configuration [%s]"
+	logErrorGraphDatabaseConnectionFailed                 = "graph database connection failed"
+	logErrorNilDefinitionID                               = "definition ID is nil"
+	logErrorNonStringDefinitionID                         = "definition ID is not a string"
 )
 
 type (
@@ -64,13 +71,20 @@ type (
 		CompositeSections []TemplateSection `yaml:"CompositeSections,omitempty"`
 	}
 
-	templateDefinition struct {
+	// ClassFieldIdentifier TODO
+	ClassFieldIdentifier struct {
+		Class string
+		Field string
+	}
+
+	// SectionDefinition TODO
+	SectionDefinition struct {
 		Class  string
 		ID     string
-		Fields map[string]string
+		Fields map[ClassFieldIdentifier]string
 
-		// ReferencedDefinitions is a map of definitions keyed by relationship
-		ReferencedDefinitions map[string][]templateDefinition
+		// CompositeSectionDefinitions is a map of definitions keyed by relationship
+		CompositeSectionDefinitions map[string][]SectionDefinition
 	}
 )
 
@@ -111,4 +125,103 @@ func loadTemplateConf(cfgPath string) (ms *TemplateSection, err error) {
 
 	log.Debug().Msgf(logDebugSuccessfullyUnmarshalledTemplateConfiguration, cfgPath)
 	return ms, nil
+}
+
+func parseTemplate(dbURL, username, password, templateConf, templatePath string) error {
+	// first load the template configuration
+	templateSection, err := loadTemplateConf(templateConf)
+	if err != nil {
+		log.Error().Err(err).Msg(logErrorGraphDatabaseConnectionFailed)
+		return err
+	}
+
+	// then connect to the graph database
+	driver, session, err := graph.Init(dbURL, username, password)
+	if err != nil {
+		log.Error().Err(err).Msg(logErrorGraphDatabaseConnectionFailed)
+		return err
+	}
+
+	defer driver.Close()
+	defer session.Close()
+
+	// now recurse through the sections
+	definitions, err := recurseTemplateSection(session, *templateSection, nil, nil)
+	if err != nil {
+		log.Error().Err(err).Msg(logErrorParsingTemplateDefinitions)
+		return err
+	}
+
+	template := template.Must(template.ParseFiles(templatePath))
+	return template.Execute(os.Stdout, definitions)
+}
+
+func recurseTemplateSection(session neo4j.Session, section TemplateSection, parentClass, parentID *string) ([]SectionDefinition, error) {
+	var res neo4j.Result
+	var err error
+	var definitions []SectionDefinition
+	var cypher string
+
+	if parentClass == nil || parentID == nil {
+		cypher = getCypherForSelector("", "", section.SectionClass)
+	} else {
+		cypher = getCypherForSelector(*parentClass, *parentID, section.SectionClass)
+	}
+
+	res, err = graph.ExecuteCypher(session,  cypher,nil)
+	if (err != nil) || (res.Err() != nil) {
+		log.Error().Err(err).Msgf(logErrorExecutingCypher)
+		return definitions, err
+	}
+
+	for res.Next() {
+		record := res.Record()
+		for _, kv := range record.Values() {
+			node, isNode := kv.(neo4j.Node)
+			if isNode {
+				definition := SectionDefinition{
+					Class:                       section.SectionClass.Class,
+					Fields:                      map[ClassFieldIdentifier]string{},
+					CompositeSectionDefinitions: map[string][]SectionDefinition{},
+				}
+
+				if node.Props()["ID"] != nil {
+					if definitionID, ok := node.Props()["ID"].(string); ok {
+						definition.ID = definitionID
+					} else {
+						log.Warn().Msg(logErrorNonStringDefinitionID)
+					}
+				} else {
+					log.Warn().Msg(logErrorNilDefinitionID)
+				}
+
+				for _, key := range section.SectionClass.Fields {
+					keyValue, keyOK := node.Props()[key].(string)
+					if keyOK {
+						definition.Fields[ClassFieldIdentifier{
+							Class: section.SectionClass.Class,
+							Field: key,
+						}] = keyValue
+					}
+				}
+
+				// recurse through any child sections
+				//// TODO recursion, really?
+				//for _, childSection := range section.ChildSection {
+				//	nodeID := node.Props()["ID"].(string)
+				//	childDefinitions, err := recurseTemplateSection(session, childSection, &(section.Class), &nodeID)
+				//	if err != nil {
+				//		log.Err(err).Msg(logErrorParsingTemplateDefinitions)
+				//		return definitions, err
+				//	}
+				//	definition.ReferencedDefinitions[childSection.ParentRelationship] = childDefinitions
+				//}
+				//
+
+				definitions = append(definitions, definition)
+			}
+		}
+	}
+
+	return definitions, err
 }

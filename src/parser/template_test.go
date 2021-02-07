@@ -17,6 +17,7 @@
 package parser
 
 import (
+	"github.com/nextmetaphor/yaml-graph/graph"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -189,5 +190,81 @@ func Test_loadTemplateConf(t *testing.T) {
 				CompositeSections: nil,
 			}},
 		}, tc)
+	})
+}
+
+func Test_recurseTemplateSection(t *testing.T) {
+	t.Run("MinimalConfiguration", func(t *testing.T) {
+
+		// first load the template configuration
+		tc, err := loadTemplateConf("_test/template/TemplateSection_minimal_valid.yaml")
+		assert.Nil(t, err)
+
+		// then connect to the graph database
+		driver, session, err := graph.Init("bolt://localhost:7687", "username", "password")
+		assert.Nil(t, err)
+		assert.NotNil(t, tc)
+
+		defer driver.Close()
+		defer session.Close()
+
+		definitions, err := recurseTemplateSection(session, *tc, nil, nil)
+		assert.Nil(t, err)
+		assert.Equal(t, []SectionDefinition{
+			{
+				Class: "Provider",
+				ID:    "aws",
+				Fields: map[ClassFieldIdentifier]string{
+					ClassFieldIdentifier{Class: "Provider", Field: "Name"}:        "AWS",
+					ClassFieldIdentifier{Class: "Provider", Field: "Description"}: "Amazon Web Services",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Provider",
+				ID:    "alibaba",
+				Fields: map[ClassFieldIdentifier]string{
+					ClassFieldIdentifier{Class: "Provider", Field: "Name"}:        "Alibaba",
+					ClassFieldIdentifier{Class: "Provider", Field: "Description"}: "Alibaba Cloud",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Provider",
+				ID:    "azure",
+				Fields: map[ClassFieldIdentifier]string{
+					ClassFieldIdentifier{Class: "Provider", Field: "Name"}:        "Azure",
+					ClassFieldIdentifier{Class: "Provider", Field: "Description"}: "Microsoft Azure",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Provider",
+				ID:    "gcp",
+				Fields: map[ClassFieldIdentifier]string{
+					ClassFieldIdentifier{Class: "Provider", Field: "Name"}:        "GCP",
+					ClassFieldIdentifier{Class: "Provider", Field: "Description"}: "Google Cloud Platform",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Provider",
+				ID:    "ibm",
+				Fields: map[ClassFieldIdentifier]string{
+					ClassFieldIdentifier{Class: "Provider", Field: "Name"}:        "IBM",
+					ClassFieldIdentifier{Class: "Provider", Field: "Description"}: "IBM",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Provider",
+				ID:    "oracle",
+				Fields: map[ClassFieldIdentifier]string{
+					ClassFieldIdentifier{Class: "Provider", Field: "Name"}:        "Oracle Cloud",
+					ClassFieldIdentifier{Class: "Provider", Field: "Description"}: "Oracle Cloud",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			}},
+			definitions)
 	})
 }

@@ -1,0 +1,7 @@
+SectionClass:
+  Class: Provider
+  Fields:
+    - Name
+    - Description
+  OrderFields:
+    - Name
