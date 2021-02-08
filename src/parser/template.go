@@ -23,16 +23,21 @@ import (
 	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v2"
 	"html/template"
+	"io"
 	"io/ioutil"
-	"os"
 	"strings"
 )
 
 const (
-	orderClauseSingular = "%s.%s"
-	orderClauseMultiple = "%s,%s.%s"
-	rootTemplateCypher  = "match (%s:%s) return %s order by %s"
-	childTemplateCypher = "match (%s:%s)-[:%s]-(%s:%s {ID:\"%s\"}) return %s order by %s"
+	orderClauseSingular        = "%s.%s"
+	orderClauseMultiple        = "%s,%s.%s"
+	baseTemplateCypher         = "match %s return %s order by %s"
+	rootCypherMatchClause      = "(%s:%s)"
+	compositeCypherMatchClause = "(%s:%s)-[:%s]-(%s:%s {ID:\"%s\"})"
+	aggregateCypherMatchClause = " match (%s:%s)-[:%s]-(%s:%s)"
+	aggregateCypherOrderClause = ",%s"
+
+	classFieldIdentifier = "%s.%s"
 
 	logErrorExecutingCypher                               = "error executing cypher"
 	logErrorCouldNotOpenTemplateConfiguration             = "could not open template configuration [%s]"
@@ -71,44 +76,56 @@ type (
 		CompositeSections []TemplateSection `yaml:"CompositeSections,omitempty"`
 	}
 
-	// ClassFieldIdentifier TODO
-	ClassFieldIdentifier struct {
-		Class string
-		Field string
-	}
-
 	// SectionDefinition TODO
 	SectionDefinition struct {
-		Class  string
-		ID     string
-		Fields map[ClassFieldIdentifier]string
+		Class string
+		ID    string
+		// Fields key must be in format Class.Field
+		Fields map[string]string
 
 		// CompositeSectionDefinitions is a map of definitions keyed by relationship
 		CompositeSectionDefinitions map[string][]SectionDefinition
 	}
 )
 
-func getOrderClause(selector ClassFieldSelector) (orderClause string) {
-	for i, field := range selector.OrderFields {
+func getOrderClause(section TemplateSection) (orderClause string) {
+	for i, field := range section.SectionClass.OrderFields {
 		if i == 0 {
-			orderClause = fmt.Sprintf(orderClauseSingular, selector.Class, field)
+			orderClause = fmt.Sprintf(orderClauseSingular, section.SectionClass.Class, field)
 		} else {
-			orderClause = fmt.Sprintf(orderClauseMultiple, orderClause, selector.Class, field)
+			orderClause = fmt.Sprintf(orderClauseMultiple, orderClause, section.SectionClass.Class, field)
 		}
 	}
 
 	return
 }
 
-func getCypherForSelector(parentClass string, parentID string, selector ClassFieldSelector) string {
+func getCypherForSection(parentClass string, parentID string, section TemplateSection) string {
+	var matchClause, returnClause, orderClause string
+
+	sectionClass := section.SectionClass.Class
 	parentClass = strings.TrimSpace(parentClass)
 
+	returnClause = section.SectionClass.Class
+	orderClause = getOrderClause(section)
+
 	if parentClass == "" {
-		return fmt.Sprintf(rootTemplateCypher, selector.Class, selector.Class, selector.Class,
-			getOrderClause(selector))
+		matchClause = fmt.Sprintf(rootCypherMatchClause, sectionClass, sectionClass)
+	} else {
+		matchClause = fmt.Sprintf(compositeCypherMatchClause, sectionClass, sectionClass,
+			section.SectionClass.Relationship, parentClass, parentClass, strings.TrimSpace(parentID))
 	}
-	return fmt.Sprintf(childTemplateCypher, selector.Class, selector.Class, selector.Relationship,
-		parentClass, parentClass, strings.TrimSpace(parentID), selector.Class, getOrderClause(selector))
+
+	for _, aggregateClass := range section.AggregateClasses {
+		aggregateMatchClause := fmt.Sprintf(aggregateCypherMatchClause, sectionClass, sectionClass,
+			aggregateClass.Relationship, aggregateClass.Class, aggregateClass.Class)
+		matchClause = matchClause + aggregateMatchClause
+
+		aggregateReturnClause := fmt.Sprintf(aggregateCypherOrderClause, aggregateClass.Class)
+		returnClause = returnClause + aggregateReturnClause
+	}
+
+	return fmt.Sprintf(baseTemplateCypher, matchClause, returnClause, orderClause)
 }
 
 func loadTemplateConf(cfgPath string) (ms *TemplateSection, err error) {
@@ -127,7 +144,7 @@ func loadTemplateConf(cfgPath string) (ms *TemplateSection, err error) {
 	return ms, nil
 }
 
-func parseTemplate(dbURL, username, password, templateConf, templatePath string) error {
+func parseTemplate(dbURL, username, password, templateConf, templatePath string, writer io.Writer) error {
 	// first load the template configuration
 	templateSection, err := loadTemplateConf(templateConf)
 	if err != nil {
@@ -153,7 +170,16 @@ func parseTemplate(dbURL, username, password, templateConf, templatePath string)
 	}
 
 	template := template.Must(template.ParseFiles(templatePath))
-	return template.Execute(os.Stdout, definitions)
+	return template.Execute(writer, definitions)
+}
+
+func contains(a []string, x string) bool {
+	for _, n := range a {
+		if x == n {
+			return true
+		}
+	}
+	return false
 }
 
 func recurseTemplateSection(session neo4j.Session, section TemplateSection, parentClass, parentID *string) ([]SectionDefinition, error) {
@@ -163,12 +189,12 @@ func recurseTemplateSection(session neo4j.Session, section TemplateSection, pare
 	var cypher string
 
 	if parentClass == nil || parentID == nil {
-		cypher = getCypherForSelector("", "", section.SectionClass)
+		cypher = getCypherForSection("", "", section)
 	} else {
-		cypher = getCypherForSelector(*parentClass, *parentID, section.SectionClass)
+		cypher = getCypherForSection(*parentClass, *parentID, section)
 	}
 
-	res, err = graph.ExecuteCypher(session,  cypher,nil)
+	res, err = graph.ExecuteCypher(session, cypher, nil)
 	if (err != nil) || (res.Err() != nil) {
 		log.Error().Err(err).Msgf(logErrorExecutingCypher)
 		return definitions, err
@@ -176,51 +202,66 @@ func recurseTemplateSection(session neo4j.Session, section TemplateSection, pare
 
 	for res.Next() {
 		record := res.Record()
+
+		// create definition here: class+aggregate combinations are returned by the subsequent loop
+		definition := SectionDefinition{
+			Class:                       section.SectionClass.Class,
+			Fields:                      map[string]string{},
+			CompositeSectionDefinitions: map[string][]SectionDefinition{},
+		}
 		for _, kv := range record.Values() {
 			node, isNode := kv.(neo4j.Node)
 			if isNode {
-				definition := SectionDefinition{
-					Class:                       section.SectionClass.Class,
-					Fields:                      map[ClassFieldIdentifier]string{},
-					CompositeSectionDefinitions: map[string][]SectionDefinition{},
+				// TODO dangerous - refactor
+				nodeClass := node.Labels()[0]
+
+				if nodeClass == section.SectionClass.Class {
+					if node.Props()["ID"] != nil {
+						if definitionID, ok := node.Props()["ID"].(string); ok {
+							definition.ID = definitionID
+						} else {
+							log.Warn().Msg(logErrorNonStringDefinitionID)
+						}
+					} else {
+						log.Warn().Msg(logErrorNilDefinitionID)
+					}
 				}
 
-				if node.Props()["ID"] != nil {
-					if definitionID, ok := node.Props()["ID"].(string); ok {
-						definition.ID = definitionID
-					} else {
-						log.Warn().Msg(logErrorNonStringDefinitionID)
+				if nodeClass == section.SectionClass.Class {
+					for _, key := range section.SectionClass.Fields {
+						keyValue, keyOK := node.Props()[key].(string)
+						if keyOK {
+							definition.Fields[fmt.Sprintf(classFieldIdentifier, nodeClass, key)] = keyValue
+						}
 					}
 				} else {
-					log.Warn().Msg(logErrorNilDefinitionID)
-				}
-
-				for _, key := range section.SectionClass.Fields {
-					keyValue, keyOK := node.Props()[key].(string)
-					if keyOK {
-						definition.Fields[ClassFieldIdentifier{
-							Class: section.SectionClass.Class,
-							Field: key,
-						}] = keyValue
+					for _, a := range section.AggregateClasses {
+						if nodeClass == a.Class {
+							for _, key := range a.Fields {
+								keyValue, keyOK := node.Props()[key].(string)
+								if keyOK {
+									definition.Fields[fmt.Sprintf(classFieldIdentifier, nodeClass, key)] = keyValue
+								}
+							}
+						}
 					}
 				}
 
-				// recurse through any child sections
-				//// TODO recursion, really?
-				//for _, childSection := range section.ChildSection {
-				//	nodeID := node.Props()["ID"].(string)
-				//	childDefinitions, err := recurseTemplateSection(session, childSection, &(section.Class), &nodeID)
-				//	if err != nil {
-				//		log.Err(err).Msg(logErrorParsingTemplateDefinitions)
-				//		return definitions, err
-				//	}
-				//	definition.ReferencedDefinitions[childSection.ParentRelationship] = childDefinitions
-				//}
-				//
+				//recurse through any child sections
+				// TODO recursion, really?
+				for _, childSection := range section.CompositeSections {
 
-				definitions = append(definitions, definition)
+					childDefinitions, err := recurseTemplateSection(session, childSection, &(section.SectionClass.Class), &definition.ID)
+					if err != nil {
+						log.Err(err).Msg(logErrorParsingTemplateDefinitions)
+						return definitions, err
+					}
+					definition.CompositeSectionDefinitions[childSection.SectionClass.Relationship] = childDefinitions
+				}
 			}
 		}
+
+		definitions = append(definitions, definition)
 	}
 
 	return definitions, err

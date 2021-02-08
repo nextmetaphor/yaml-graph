@@ -1,0 +1,15 @@
+SectionClass:
+  Class: Provider
+  Fields:
+    - Name
+    - Description
+  OrderFields:
+    - Name
+CompositeSections:
+  - SectionClass:
+      Class: Service
+      Fields:
+        - Name
+      Relationship: PROVIDED_BY
+      OrderFields:
+        - Name

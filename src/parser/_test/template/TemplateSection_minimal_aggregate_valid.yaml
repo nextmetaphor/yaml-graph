@@ -1,0 +1,13 @@
+SectionClass:
+  Class: Service
+  Fields:
+    - Name
+  OrderFields:
+    - Name
+AggregateClasses:
+  - Class: Category
+    Fields:
+      - Name
+    Relationship: TYPE_OF
+    OrderFields:
+      - Name

@@ -1,0 +1,52 @@
+
+    Amazon Web Services
+    Alibaba Cloud
+    Microsoft Azure
+                Service: App Service
+                Category: compute
+            
+                Service: Application Gateway
+                Category: networking
+            
+                Service: Archive Storage
+                Category: storage
+            
+                Service: Azure Function
+                Category: compute
+            
+                Service: Azure Kubernetes Service (AKS)
+                Category: compute
+            
+                Service: Blob Storage
+                Category: storage
+            
+                Service: Container Instance
+                Category: compute
+            
+                Service: Content Delivery Network
+                Category: networking
+            
+                Service: Disk Storage
+                Category: storage
+            
+                Service: File Storage
+                Category: storage
+            
+                Service: Load Balancer
+                Category: networking
+            
+                Service: VPN Gateway
+                Category: networking
+            
+                Service: Virtual Machine
+                Category: compute
+            
+                Service: Virtual Machine Scale Set
+                Category: compute
+            
+                Service: Virtual Network
+                Category: networking
+            
+    Google Cloud Platform
+    IBM
+    Oracle Cloud

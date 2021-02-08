@@ -17,49 +17,70 @@
 package parser
 
 import (
+	"bufio"
+	"bytes"
+	"fmt"
 	"github.com/nextmetaphor/yaml-graph/graph"
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 	"testing"
 )
 
 func Test_getOrderClause(t *testing.T) {
 	t.Run("SingleOrderClause", func(t *testing.T) {
-		clause := getOrderClause(ClassFieldSelector{
-			Class:        "class1",
-			Fields:       nil,
-			Relationship: "",
-			OrderFields:  []string{"field1"},
-		})
+		clause := getOrderClause(
+			TemplateSection{
+				SectionClass: ClassFieldSelector{
+					Class:        "class1",
+					Fields:       nil,
+					Relationship: "",
+					OrderFields:  []string{"field1"},
+				},
+				AggregateClasses:  nil,
+				CompositeSections: nil,
+			})
 
 		assert.Equal(t, "class1.field1", clause)
 	})
 
 	t.Run("MultipleOrderClause", func(t *testing.T) {
-		clause := getOrderClause(ClassFieldSelector{
-			Class:        "class2",
-			Fields:       nil,
-			Relationship: "",
-			OrderFields:  []string{"field1", "field2"},
+		clause := getOrderClause(TemplateSection{
+			SectionClass: ClassFieldSelector{
+				Class:        "class2",
+				Fields:       nil,
+				Relationship: "",
+				OrderFields:  []string{"field1", "field2"},
+			},
+			AggregateClasses:  nil,
+			CompositeSections: nil,
 		})
 
 		assert.Equal(t, "class2.field1,class2.field2", clause)
 	})
 	t.Run("NilOrderClause", func(t *testing.T) {
-		clause := getOrderClause(ClassFieldSelector{
-			Class:        "class3",
-			Fields:       nil,
-			Relationship: "",
-			OrderFields:  nil,
+		clause := getOrderClause(TemplateSection{
+			SectionClass: ClassFieldSelector{
+				Class:        "class3",
+				Fields:       nil,
+				Relationship: "",
+				OrderFields:  nil,
+			},
+			AggregateClasses:  nil,
+			CompositeSections: nil,
 		})
 
 		assert.Equal(t, "", clause)
 	})
 	t.Run("EmptyOrderClause", func(t *testing.T) {
-		clause := getOrderClause(ClassFieldSelector{
-			Class:        "class4",
-			Fields:       nil,
-			Relationship: "",
-			OrderFields:  []string{},
+		clause := getOrderClause(TemplateSection{
+			SectionClass: ClassFieldSelector{
+				Class:        "class4",
+				Fields:       nil,
+				Relationship: "",
+				OrderFields:  []string{},
+			},
+			AggregateClasses:  nil,
+			CompositeSections: nil,
 		})
 
 		assert.Equal(t, "", clause)
@@ -68,24 +89,32 @@ func Test_getOrderClause(t *testing.T) {
 
 func Test_getCypherForSelector(t *testing.T) {
 	t.Run("ParentClass", func(t *testing.T) {
-		cypher := getCypherForSelector("parent", "parentID",
-			ClassFieldSelector{
-				Class:        "child",
-				Fields:       nil,
-				Relationship: "inherits_from",
-				OrderFields:  []string{"field1", "field2"},
+		cypher := getCypherForSection("parent", "parentID",
+			TemplateSection{
+				SectionClass: ClassFieldSelector{
+					Class:        "child",
+					Fields:       nil,
+					Relationship: "inherits_from",
+					OrderFields:  []string{"field1", "field2"},
+				},
+				AggregateClasses:  nil,
+				CompositeSections: nil,
 			})
 
 		assert.Equal(t, "match (child:child)-[:inherits_from]-(parent:parent {ID:\"parentID\"}) return child "+
 			"order by child.field1,child.field2", cypher)
 	})
 	t.Run("NoParentClass", func(t *testing.T) {
-		cypher := getCypherForSelector("", "",
-			ClassFieldSelector{
-				Class:        "myclass",
-				Fields:       nil,
-				Relationship: "",
-				OrderFields:  []string{"field1", "field2"},
+		cypher := getCypherForSection("", "",
+			TemplateSection{
+				SectionClass: ClassFieldSelector{
+					Class:        "myclass",
+					Fields:       nil,
+					Relationship: "",
+					OrderFields:  []string{"field1", "field2"},
+				},
+				AggregateClasses:  nil,
+				CompositeSections: nil,
 			})
 
 		assert.Equal(t, "match (myclass:myclass) return myclass order by myclass.field1,myclass.field2", cypher)
@@ -214,57 +243,665 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "aws",
-				Fields: map[ClassFieldIdentifier]string{
-					ClassFieldIdentifier{Class: "Provider", Field: "Name"}:        "AWS",
-					ClassFieldIdentifier{Class: "Provider", Field: "Description"}: "Amazon Web Services",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "AWS",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Amazon Web Services",
 				},
 				CompositeSectionDefinitions: map[string][]SectionDefinition{},
 			},
 			{
 				Class: "Provider",
 				ID:    "alibaba",
-				Fields: map[ClassFieldIdentifier]string{
-					ClassFieldIdentifier{Class: "Provider", Field: "Name"}:        "Alibaba",
-					ClassFieldIdentifier{Class: "Provider", Field: "Description"}: "Alibaba Cloud",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Alibaba",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Alibaba Cloud",
 				},
 				CompositeSectionDefinitions: map[string][]SectionDefinition{},
 			},
 			{
 				Class: "Provider",
 				ID:    "azure",
-				Fields: map[ClassFieldIdentifier]string{
-					ClassFieldIdentifier{Class: "Provider", Field: "Name"}:        "Azure",
-					ClassFieldIdentifier{Class: "Provider", Field: "Description"}: "Microsoft Azure",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Azure",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Microsoft Azure",
 				},
 				CompositeSectionDefinitions: map[string][]SectionDefinition{},
 			},
 			{
 				Class: "Provider",
 				ID:    "gcp",
-				Fields: map[ClassFieldIdentifier]string{
-					ClassFieldIdentifier{Class: "Provider", Field: "Name"}:        "GCP",
-					ClassFieldIdentifier{Class: "Provider", Field: "Description"}: "Google Cloud Platform",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "GCP",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Google Cloud Platform",
 				},
 				CompositeSectionDefinitions: map[string][]SectionDefinition{},
 			},
 			{
 				Class: "Provider",
 				ID:    "ibm",
-				Fields: map[ClassFieldIdentifier]string{
-					ClassFieldIdentifier{Class: "Provider", Field: "Name"}:        "IBM",
-					ClassFieldIdentifier{Class: "Provider", Field: "Description"}: "IBM",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "IBM",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "IBM",
 				},
 				CompositeSectionDefinitions: map[string][]SectionDefinition{},
 			},
 			{
 				Class: "Provider",
 				ID:    "oracle",
-				Fields: map[ClassFieldIdentifier]string{
-					ClassFieldIdentifier{Class: "Provider", Field: "Name"}:        "Oracle Cloud",
-					ClassFieldIdentifier{Class: "Provider", Field: "Description"}: "Oracle Cloud",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Oracle Cloud",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Oracle Cloud",
 				},
 				CompositeSectionDefinitions: map[string][]SectionDefinition{},
 			}},
 			definitions)
 	})
+	t.Run("MinimalAggregateConfiguration", func(t *testing.T) {
+
+		// first load the template configuration
+		tc, err := loadTemplateConf("_test/template/TemplateSection_minimal_aggregate_valid.yaml")
+		assert.Nil(t, err)
+
+		// then connect to the graph database
+		driver, session, err := graph.Init("bolt://localhost:7687", "username", "password")
+		assert.Nil(t, err)
+		assert.NotNil(t, tc)
+
+		defer driver.Close()
+		defer session.Close()
+
+		definitions, err := recurseTemplateSection(session, *tc, nil, nil)
+		assert.Nil(t, err)
+
+		fmt.Println(definitions)
+		assert.Equal(t, []SectionDefinition{
+			{
+				Class: "Service",
+				ID:    "app-service",
+				Fields: map[string]string{
+
+					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "App Service",
+					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Service",
+				ID:    "application-gateway",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Application Gateway",
+					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Service",
+				ID:    "archive-storage",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Archive Storage",
+					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Service",
+				ID:    "azure-function",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Azure Function",
+					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Service",
+				ID:    "azure-kubernetes-service",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Azure Kubernetes Service (AKS)",
+					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Service",
+				ID:    "blob-storage",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Blob Storage",
+					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Service",
+				ID:    "container-instance",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Container Instance",
+					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Service",
+				ID:    "content-delivery-network",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Content Delivery Network",
+					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Service",
+				ID:    "disk-storage",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Disk Storage",
+					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Service",
+				ID:    "file-storage",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "File Storage",
+					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Service",
+				ID:    "load-balancer",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Load Balancer",
+					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Service",
+				ID:    "vpn-gateway",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "VPN Gateway",
+					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Service",
+				ID:    "virtual-machine",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Virtual Machine",
+					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Service",
+				ID:    "virtual-machine-scale-set",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Virtual Machine Scale Set",
+					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+			{
+				Class: "Service",
+				ID:    "virtual-network",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Virtual Network",
+					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{},
+			},
+		},
+
+			definitions)
+	})
+
+	t.Run("MinimalCompositeConfiguration", func(t *testing.T) {
+
+		// first load the template configuration
+		tc, err := loadTemplateConf("_test/template/TemplateSection_minimal_composite_valid.yaml")
+		assert.Nil(t, err)
+
+		// then connect to the graph database
+		driver, session, err := graph.Init("bolt://localhost:7687", "username", "password")
+		assert.Nil(t, err)
+		assert.NotNil(t, tc)
+
+		defer driver.Close()
+		defer session.Close()
+
+		definitions, err := recurseTemplateSection(session, *tc, nil, nil)
+		assert.Nil(t, err)
+
+		fmt.Println(definitions)
+		assert.Equal(t, []SectionDefinition{
+			{
+				Class: "Provider",
+				ID:    "aws",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "AWS",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Amazon Web Services",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{
+					"PROVIDED_BY": nil,
+				},
+			},
+			{
+				Class: "Provider",
+				ID:    "alibaba",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Alibaba",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Alibaba Cloud",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{
+					"PROVIDED_BY": nil,
+				},
+			},
+			{
+				Class: "Provider",
+				ID:    "azure",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Azure",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Microsoft Azure",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{
+					"PROVIDED_BY": {
+						{
+							Class: "Service",
+							ID:    "app-service",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "App Service",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "application-gateway",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Application Gateway",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "archive-storage",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Archive Storage",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "azure-function",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Azure Function",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "azure-kubernetes-service",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Azure Kubernetes Service (AKS)",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "blob-storage",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Blob Storage",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "container-instance",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Container Instance",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "content-delivery-network",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Content Delivery Network",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "disk-storage",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Disk Storage",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "file-storage",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "File Storage",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "load-balancer",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Load Balancer",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "vpn-gateway",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "VPN Gateway",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "virtual-machine",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Virtual Machine",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "virtual-machine-scale-set",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Virtual Machine Scale Set",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "virtual-network",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Virtual Network",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+					},
+				},
+			},
+			{
+				Class: "Provider",
+				ID:    "gcp",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "GCP",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Google Cloud Platform",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{
+					"PROVIDED_BY": nil,
+				},
+			},
+			{
+				Class: "Provider",
+				ID:    "ibm",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "IBM",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "IBM",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{
+					"PROVIDED_BY": nil,
+				},
+			},
+			{
+				Class: "Provider",
+				ID:    "oracle",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Oracle Cloud",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Oracle Cloud",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{
+					"PROVIDED_BY": nil,
+				},
+			},
+		},
+			definitions)
+	})
+	t.Run("MinimalCompositeAggregateConfiguration", func(t *testing.T) {
+
+		// first load the template configuration
+		tc, err := loadTemplateConf("_test/template/TemplateSection_minimal_composite_aggregate_valid.yaml")
+		assert.Nil(t, err)
+
+		// then connect to the graph database
+		driver, session, err := graph.Init("bolt://localhost:7687", "username", "password")
+		assert.Nil(t, err)
+		assert.NotNil(t, tc)
+
+		defer driver.Close()
+		defer session.Close()
+
+		definitions, err := recurseTemplateSection(session, *tc, nil, nil)
+		assert.Nil(t, err)
+
+		fmt.Println(definitions)
+		assert.Equal(t, []SectionDefinition{
+			{
+				Class: "Provider",
+				ID:    "aws",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "AWS",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Amazon Web Services",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{
+					"PROVIDED_BY": nil,
+				},
+			},
+			{
+				Class: "Provider",
+				ID:    "alibaba",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Alibaba",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Alibaba Cloud",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{
+					"PROVIDED_BY": nil,
+				},
+			},
+			{
+				Class: "Provider",
+				ID:    "azure",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Azure",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Microsoft Azure",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{
+					"PROVIDED_BY": {
+						{
+							Class: "Service",
+							ID:    "app-service",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "App Service",
+								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "application-gateway",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Application Gateway",
+								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "archive-storage",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Archive Storage",
+								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "azure-function",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Azure Function",
+								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "azure-kubernetes-service",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Azure Kubernetes Service (AKS)",
+								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "blob-storage",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Blob Storage",
+								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "container-instance",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Container Instance",
+								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "content-delivery-network",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Content Delivery Network",
+								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "disk-storage",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Disk Storage",
+								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "file-storage",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "File Storage",
+								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "load-balancer",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Load Balancer",
+								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "vpn-gateway",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "VPN Gateway",
+								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "virtual-machine",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Virtual Machine",
+								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "virtual-machine-scale-set",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Virtual Machine Scale Set",
+								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+						{
+							Class: "Service",
+							ID:    "virtual-network",
+							Fields: map[string]string{
+								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Virtual Network",
+								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
+							},
+							CompositeSectionDefinitions: map[string][]SectionDefinition{},
+						},
+					},
+				},
+			},
+			{
+				Class: "Provider",
+				ID:    "gcp",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "GCP",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Google Cloud Platform",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{
+					"PROVIDED_BY": nil,
+				},
+			},
+			{
+				Class: "Provider",
+				ID:    "ibm",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "IBM",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "IBM",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{
+					"PROVIDED_BY": nil,
+				},
+			},
+			{
+				Class: "Provider",
+				ID:    "oracle",
+				Fields: map[string]string{
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Oracle Cloud",
+					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Oracle Cloud",
+				},
+				CompositeSectionDefinitions: map[string][]SectionDefinition{
+					"PROVIDED_BY": nil,
+				},
+			},
+		},
+			definitions)
+	})
+}
+
+func Test_parseTemplate(t *testing.T) {
+	t.Run("ParseCompositeAggregateTemplate", func(t *testing.T) {
+		var writer bytes.Buffer
+		bufferWriter := bufio.NewWriter(&writer)
+
+		err := parseTemplate("bolt://localhost:7687", "username", "password", "_test/template/TemplateSection_minimal_composite_aggregate_valid.yaml", "_test/template/output-template.gotmpl", bufferWriter)
+		assert.Nil(t, err)
+
+		expectedBytes, err := ioutil.ReadFile("_test/template/output-template.result")
+		assert.Nil(t, err)
+
+		bufferWriter.Flush()
+		assert.Equal(t, expectedBytes, writer.Bytes())})
 }

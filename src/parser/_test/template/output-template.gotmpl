@@ -1,0 +1,15 @@
+{{- range $provider := . -}}
+    {{- $providerDescription := index $provider.Fields "Provider.Description"}}
+    {{ $providerDescription }}
+
+    {{- range $key,$value := $provider.CompositeSectionDefinitions -}}
+        {{- if eq $key "PROVIDED_BY" -}}
+            {{- range $childSection := $value -}}
+                {{- $serviceName := index $childSection.Fields "Service.Name" -}}
+                {{- $categoryName := index $childSection.Fields "Category.Name"}}
+                Service: {{ $serviceName }}
+                Category: {{ $categoryName }}
+            {{end -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
