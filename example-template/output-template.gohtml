@@ -1,0 +1,72 @@
+<!doctype html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Provider, Service and Categories</title>
+</head>
+
+<style>
+    input {
+        display: none;
+    }
+
+    label {
+        display: block;
+        padding: 8px 22px;
+        margin: 0 0 1px 0;
+        cursor: pointer;
+        background: #6AAB95;
+        border-radius: 3px;
+        color: #FFF;
+        transition: ease .5s;
+    }
+
+    label:hover {
+        background: #4E8774;
+    }
+
+    .content {
+        background: #E2E5F6;
+        padding: 10px 25px;
+        border: 1px solid #A7A7A7;
+        margin: 0 0 1px 0;
+        border-radius: 3px;
+    }
+
+    input + label + .content {
+        display: none;
+    }
+
+    input:checked + label + .content {
+        display: block;
+    }
+</style>
+
+<body>
+{{- range $provider := . -}}
+    {{- $providerClass := $provider.Class -}}
+    {{- $providerID := $provider.ID -}}
+    {{- $providerUID := (print $providerClass "-" $providerID)}}
+    {{- $providerName := index $provider.Fields "Provider.Name"}}
+    <input type="checkbox" id="{{$providerUID}}"/>
+    <label for="{{$providerUID}}">{{$providerName}}</label>
+
+    <div class="content">
+        {{- range $key,$value := $provider.CompositeSectionDefinitions -}}
+            {{- if eq $key "PROVIDED_BY" -}}
+                {{- range $childSection := $value -}}
+                    {{- $serviceName := index $childSection.Fields "Service.Name" -}}
+                    {{- $categoryName := index $childSection.Fields "Category.Name"}}
+                    <div>Service: {{ $serviceName }}</div>
+                    <div>Category: {{ $categoryName }}</div>
+                {{end -}}
+            {{- end -}}
+        {{- end -}}
+    </div>
+{{end}}
+
+</body>
+
+</html>

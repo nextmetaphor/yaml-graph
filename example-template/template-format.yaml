@@ -1,8 +1,22 @@
-Class: "Category"
-Fields: ["Name", "Description"]
-OrderField: "Name"
-ChildSection:
-  - Class: "Service"
-    Fields: ["Name", "Description"]
-    OrderField: "Name"
-    ParentRelationship: "TYPE_OF"
+SectionClass:
+  Class: Provider
+  Fields:
+    - Name
+    - Description
+  OrderFields:
+    - Name
+CompositeSections:
+  - SectionClass:
+      Class: Service
+      Fields:
+        - Name
+      Relationship: PROVIDED_BY
+      OrderFields:
+        - Name
+    AggregateClasses:
+      - Class: Category
+        Fields:
+          - Name
+        Relationship: TYPE_OF
+        OrderFields:
+          - Name

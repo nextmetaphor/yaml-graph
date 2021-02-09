@@ -80,10 +80,6 @@ const (
 	flagSourceUsage     = "Source directory to read definitions from (required)"
 	flagSourceDefault   = "definition"
 
-	flagReportDefinitionName      = "definition"
-	flagReportDefinitionShorthand = "r"
-	flagReportDefinitionUsage     = "Report definition file (required)"
-
 	flagDefinitionFormatName      = "format"
 	flagDefinitionFormatShorthand = "f"
 	flagDefinitionFormatUsage     = "Definition format file (required)"

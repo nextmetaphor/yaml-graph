@@ -896,12 +896,13 @@ func Test_parseTemplate(t *testing.T) {
 		var writer bytes.Buffer
 		bufferWriter := bufio.NewWriter(&writer)
 
-		err := parseTemplate("bolt://localhost:7687", "username", "password", "_test/template/TemplateSection_minimal_composite_aggregate_valid.yaml", "_test/template/output-template.gotmpl", bufferWriter)
+		err := ParseTemplate("bolt://localhost:7687", "username", "password", "_test/template/TemplateSection_minimal_composite_aggregate_valid.yaml", "_test/template/output-template.gotmpl", bufferWriter)
 		assert.Nil(t, err)
 
 		expectedBytes, err := ioutil.ReadFile("_test/template/output-template.result")
 		assert.Nil(t, err)
 
 		bufferWriter.Flush()
-		assert.Equal(t, expectedBytes, writer.Bytes())})
+		assert.Equal(t, expectedBytes, writer.Bytes())
+	})
 }
