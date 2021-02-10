@@ -34,7 +34,7 @@ const (
 	baseTemplateCypher         = "match %s return %s order by %s"
 	rootCypherMatchClause      = "(%s:%s)"
 	compositeCypherMatchClause = "(%s:%s)-[:%s]-(%s:%s {ID:\"%s\"})"
-	aggregateCypherMatchClause = " match (%s:%s)-[:%s]-(%s:%s)"
+	aggregateCypherMatchClause = " optional match (%s:%s)-[:%s]-(%s:%s)"
 	aggregateCypherOrderClause = ",%s"
 
 	classFieldIdentifier = "%s.%s"
