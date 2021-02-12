@@ -144,6 +144,7 @@ func loadTemplateConf(cfgPath string) (ms *TemplateSection, err error) {
 	return ms, nil
 }
 
+// ParseTemplate TODO
 func ParseTemplate(dbURL, username, password, templateConf, templatePath string, writer io.Writer) error {
 	// first load the template configuration
 	templateSection, err := loadTemplateConf(templateConf)

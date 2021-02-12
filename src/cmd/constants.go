@@ -22,21 +22,18 @@ import (
 
 const (
 	appName    = "yaml-graph"
-	appVersion = "0.2"
+	appVersion = "0.3.0"
 
 	commandRootUse      = appName
 	commandRootUseShort = appName + ": generate graphs from YAML definition files"
 	commandRootUseLong  = "Define data in YAML then generate graph representations to model relationships"
 
-	commandVersionUse   = "version"
-	commandVersionShort = "Print the version number of " + appName
-	commandVersionLong  = appName + " " + appVersion
+	commandVersionUse    = "version"
+	commandVersionShort  = "Print the version number of " + appName
+	commandVersionString = appVersion
 
 	commandLoadUse      = "load"
 	commandLoadUseShort = "Load definition files into graph representation"
-
-	commandReportUse      = "report"
-	commandReportUseShort = "Generate markdown document from definition files"
 
 	commandGraphUse      = "graph"
 	commandGraphUseShort = "Generate HTML graph from definition files"

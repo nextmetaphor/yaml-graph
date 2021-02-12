@@ -29,6 +29,6 @@ var versionCmd = &cobra.Command{
 	Use:   commandVersionUse,
 	Short: commandVersionShort,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(commandVersionLong)
+		fmt.Println(commandVersionString)
 	},
 }

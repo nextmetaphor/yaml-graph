@@ -16,4 +16,4 @@ RUN ln -s /opt/yaml-graph/yaml-graph /usr/bin/yaml-graph
 
 # as ymlgraph execute the entrypoint script, starting neo4j in the background
 USER ymlgraph
-ENTRYPOINT ["bash", "-c", "/opt/yaml-graph/docker-entrypoint.sh; cd ~; clear; cat /opt/yaml-graph/logo.txt; bash"]
+ENTRYPOINT ["bash", "-c", "/opt/yaml-graph/docker-entrypoint.sh; cd ~; clear; cat /opt/yaml-graph/logo.txt; yaml-graph version; echo; bash"]
