@@ -64,6 +64,7 @@ type (
 
 	// ClassDefinitionFormat TODO
 	ClassDefinitionFormat struct {
+		Description     string                `yaml:"Description,omitempty"`
 		MandatoryFields map[string]ClassField `yaml:"MandatoryFields"`
 		OptionalFields  map[string]ClassField `yaml:"OptionalFields"`
 	}
