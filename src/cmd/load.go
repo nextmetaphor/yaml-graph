@@ -44,7 +44,7 @@ var (
 func init() {
 	rootCmd.AddCommand(loadCmd)
 
-	loadCmd.PersistentFlags().StringVarP(&loadSourceDir, flagSourceName, flagSourceShorthand, flagSourceDefault, flagSourceUsage)
+	loadCmd.PersistentFlags().StringSliceVarP(&loadSourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault}, flagSourceUsage)
 }
 
 func load(_ *cobra.Command, _ []string) {
@@ -62,34 +62,38 @@ func load(_ *cobra.Command, _ []string) {
 	graph.DeleteAll(session)
 
 	// First create the nodes...
-	definition.ProcessFiles(loadSourceDir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
-		log.Debug().Msg(fmt.Sprintf(logDebugAboutToLoadFile, filePath))
+	for _, dir := range loadSourceDir {
+		definition.ProcessFiles(dir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
+			log.Debug().Msg(fmt.Sprintf(logDebugAboutToLoadFile, filePath))
 
-		spec, err := definition.LoadSpecificationFromFile(filePath)
-		if (err == nil) && (spec != nil) {
-			log.Debug().Msg(fmt.Sprintf(logDebugSuccessfullyLoadedFile, filePath))
-			graph.CreateSpecification(session, *spec)
+			spec, err := definition.LoadSpecificationFromFile(filePath)
+			if (err == nil) && (spec != nil) {
+				log.Debug().Msg(fmt.Sprintf(logDebugSuccessfullyLoadedFile, filePath))
+				graph.CreateSpecification(session, *spec)
 
-		} else {
-			log.Warn().Msgf(logWarnSkippingFile, filePath, err)
-		}
+			} else {
+				log.Warn().Msgf(logWarnSkippingFile, filePath, err)
+			}
 
-		return nil
-	})
+			return nil
+		})
+	}
 
 	// ...then create the edges
-	definition.ProcessFiles(loadSourceDir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
-		log.Debug().Msg(fmt.Sprintf(logDebugAboutToLoadFile, filePath))
+	for _, dir := range loadSourceDir {
+		definition.ProcessFiles(dir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
+			log.Debug().Msg(fmt.Sprintf(logDebugAboutToLoadFile, filePath))
 
-		spec, err := definition.LoadSpecificationFromFile(filePath)
-		if (err == nil) && (spec != nil) {
-			log.Debug().Msg(fmt.Sprintf(logDebugSuccessfullyLoadedFile, filePath))
-			graph.CreateSpecificationEdge(session, *spec, nil)
+			spec, err := definition.LoadSpecificationFromFile(filePath)
+			if (err == nil) && (spec != nil) {
+				log.Debug().Msg(fmt.Sprintf(logDebugSuccessfullyLoadedFile, filePath))
+				graph.CreateSpecificationEdge(session, *spec, nil)
 
-		} else {
-			log.Warn().Msgf(logWarnSkippingFile, filePath, err)
-		}
+			} else {
+				log.Warn().Msgf(logWarnSkippingFile, filePath, err)
+			}
 
-		return nil
-	})
+			return nil
+		})
+	}
 }

@@ -22,7 +22,7 @@ import (
 
 const (
 	appName    = "yaml-graph"
-	appVersion = "0.3.0"
+	appVersion = "0.3.1"
 
 	commandRootUse      = appName
 	commandRootUseShort = appName + ": generate graphs from YAML definition files"
@@ -107,7 +107,8 @@ var (
 	jsonDefinition string
 
 	// variable for flagSourceName parameter
-	loadSourceDir string
+	// note: we allow multiple source directories to enable the union of two definition directories
+	loadSourceDir []string
 
 	// variable for flagReportDefinitionName parameter
 	reportDefinition string
