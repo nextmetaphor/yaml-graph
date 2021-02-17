@@ -116,22 +116,25 @@ func loadSpecification(s definition.Specification, d Dictionary, parentRef *defi
 }
 
 // LoadDictionary TODO
-func LoadDictionary(sourceDir, fileExtension string) Dictionary {
+func LoadDictionary(sourceDir []string, fileExtension string) Dictionary {
 	d := make(Dictionary)
-	definition.ProcessFiles(sourceDir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
-		log.Debug().Msg(fmt.Sprintf(logDebugAboutToParseFile, filePath))
 
-		spec, err := definition.LoadSpecificationFromFile(filePath)
-		if (err == nil) && (spec != nil) {
-			log.Debug().Msg(fmt.Sprintf(logDebugSuccessfullyParsedFile, filePath))
-			loadSpecification(*spec, d, nil)
+	for _, dir := range sourceDir {
+		definition.ProcessFiles(dir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
+			log.Debug().Msg(fmt.Sprintf(logDebugAboutToParseFile, filePath))
 
-		} else {
-			log.Warn().Msgf(logWarnSkippingFile, filePath, err)
-		}
+			spec, err := definition.LoadSpecificationFromFile(filePath)
+			if (err == nil) && (spec != nil) {
+				log.Debug().Msg(fmt.Sprintf(logDebugSuccessfullyParsedFile, filePath))
+				loadSpecification(*spec, d, nil)
 
-		return nil
-	})
+			} else {
+				log.Warn().Msgf(logWarnSkippingFile, filePath, err)
+			}
+
+			return nil
+		})
+	}
 
 	return d
 }

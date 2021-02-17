@@ -44,7 +44,7 @@ var (
 func init() {
 	rootCmd.AddCommand(loadCmd)
 
-	loadCmd.PersistentFlags().StringSliceVarP(&loadSourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault}, flagSourceUsage)
+	loadCmd.PersistentFlags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault}, flagSourceUsage)
 }
 
 func load(_ *cobra.Command, _ []string) {
@@ -62,7 +62,7 @@ func load(_ *cobra.Command, _ []string) {
 	graph.DeleteAll(session)
 
 	// First create the nodes...
-	for _, dir := range loadSourceDir {
+	for _, dir := range sourceDir {
 		definition.ProcessFiles(dir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
 			log.Debug().Msg(fmt.Sprintf(logDebugAboutToLoadFile, filePath))
 
@@ -80,7 +80,7 @@ func load(_ *cobra.Command, _ []string) {
 	}
 
 	// ...then create the edges
-	for _, dir := range loadSourceDir {
+	for _, dir := range sourceDir {
 		definition.ProcessFiles(dir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
 			log.Debug().Msg(fmt.Sprintf(logDebugAboutToLoadFile, filePath))
 

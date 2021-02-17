@@ -47,7 +47,7 @@ var (
 func init() {
 	rootCmd.AddCommand(validateCmd)
 
-	validateCmd.PersistentFlags().StringVarP(&validateSourceDir, flagSourceName, flagSourceShorthand, flagSourceDefault,
+	validateCmd.PersistentFlags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault},
 		flagSourceUsage)
 	validateCmd.PersistentFlags().StringVarP(&definitionFormatFile, flagDefinitionFormatName, flagDefinitionFormatShorthand,
 		"", flagDefinitionFormatUsage)
@@ -83,7 +83,7 @@ func validate(_ *cobra.Command, _ []string) {
 		}
 	}
 
-	d := parser.LoadDictionary(validateSourceDir, fileExtension)
+	d := parser.LoadDictionary(sourceDir, fileExtension)
 	if parser.ValidateDictionary(d, definitionFormat) != nil {
 		fmt.Println(outputValidationFailure)
 		os.Exit(exitCodeValidateCmdFailed)

@@ -44,13 +44,15 @@ var (
 func init() {
 	rootCmd.AddCommand(graphCmd)
 
-	graphCmd.PersistentFlags().StringVarP(&graphSourceDir, flagSourceName, flagSourceShorthand, flagSourceDefault, flagSourceUsage)
+	graphCmd.PersistentFlags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault},
+		flagSourceUsage)
+
 }
 
 func graphFunc(cmd *cobra.Command, args []string) {
 	zerolog.SetGlobalLevel(zerolog.Level(logLevel))
 
-	d := parser.LoadDictionary(graphSourceDir, fileExtension)
+	d := parser.LoadDictionary(sourceDir, fileExtension)
 
 	fmt.Print(nodeHeaderString)
 	firstElement := true

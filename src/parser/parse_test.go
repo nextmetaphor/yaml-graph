@@ -25,7 +25,7 @@ import (
 func Test_loadSpecification(t *testing.T) {
 	t.Run("MissingSpecification", func(t *testing.T) {
 
-		d := LoadDictionary("_test", "yaml")
+		d := LoadDictionary([]string{"_test"}, "yaml")
 
 		assert.Equal(t, d, Dictionary{
 			"MyClass": {
