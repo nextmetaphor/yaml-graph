@@ -47,6 +47,8 @@ func init() {
 	graphCmd.PersistentFlags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault},
 		flagSourceUsage)
 
+	// still under development - hide
+	graphCmd.Hidden = true
 }
 
 func graphFunc(cmd *cobra.Command, args []string) {

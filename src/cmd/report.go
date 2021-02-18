@@ -29,31 +29,31 @@ const (
 )
 
 var (
-	templateCmd = &cobra.Command{
-		Use:   commandTemplateUse,
-		Short: commandTemplateUseShort,
-		Run:   doTemplate,
+	reportCmd = &cobra.Command{
+		Use:   commandReportUse,
+		Short: commandReportUseShort,
+		Run:   doReport,
 	}
 )
 
 func init() {
-	rootCmd.AddCommand(templateCmd)
+	rootCmd.AddCommand(reportCmd)
 
-	templateCmd.PersistentFlags().StringVarP(&templateName, flagTemplateName, flagTemplateShorthand,
-		"", flagTemplateUsage)
-	templateCmd.MarkPersistentFlagRequired(flagTemplateName)
+	reportCmd.PersistentFlags().StringVarP(&templateName, flagReportTemplateFileName, flagReportTemplateFileShorthand,
+		"", flagReportTemplateFileUsage)
+	reportCmd.MarkPersistentFlagRequired(flagReportTemplateFileName)
 
-	templateCmd.PersistentFlags().StringVarP(&templateFormat, flagDefinitionFormatName, flagDefinitionFormatShorthand,
-		"", flagDefinitionFormatUsage)
-	templateCmd.MarkPersistentFlagRequired(flagDefinitionFormatName)
+	reportCmd.PersistentFlags().StringVarP(&templateFormat, flagReportFieldsFileName, flagReportFieldsFileShorthand,
+		"", flagReportFieldsFileUsage)
+	reportCmd.MarkPersistentFlagRequired(flagReportFieldsFileName)
 
-	templateCmd.PersistentFlags().BoolVarP(&loadDefinitions, flagLoadDefinitionsName, "", false, flagLoadDefinitionsUsage)
+	reportCmd.PersistentFlags().BoolVarP(&loadDefinitions, flagLoadDefinitionsName, "", false, flagLoadDefinitionsUsage)
 
-	templateCmd.PersistentFlags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault}, flagSourceUsage)
+	reportCmd.PersistentFlags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault}, flagSourceUsage)
 
 }
 
-func doTemplate(c *cobra.Command, s []string) {
+func doReport(c *cobra.Command, s []string) {
 	zerolog.SetGlobalLevel(zerolog.Level(logLevel))
 
 	if loadDefinitions {

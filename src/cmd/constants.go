@@ -22,7 +22,7 @@ import (
 
 const (
 	appName    = "yaml-graph"
-	appVersion = "0.3.2"
+	appVersion = "0.3.3"
 
 	commandRootUse      = appName
 	commandRootUseShort = appName + ": generate graphs from YAML definition files"
@@ -44,8 +44,8 @@ const (
 	commandJSONUse      = "json"
 	commandJSONUseShort = "generate JSON tree"
 
-	commandTemplateUse      = "template"
-	commandTemplateUseShort = "generate templated document"
+	commandReportUse      = "report"
+	commandReportUseShort = "Generate report from graph representation"
 
 	flagFileExtension          = "ext"
 	flagFileExtensionShorthand = "e"
@@ -77,17 +77,17 @@ const (
 	flagSourceUsage     = "Source directory to read definitions from (required)"
 	flagSourceDefault   = "definition"
 
-	flagDefinitionFormatName      = "format"
-	flagDefinitionFormatShorthand = "f"
-	flagDefinitionFormatUsage     = "Definition format file (required)"
+	flagReportFieldsFileName      = "fields"
+	flagReportFieldsFileShorthand = "f"
+	flagReportFieldsFileUsage     = "report fields file (required)"
 
 	flagJSONDefinitionName      = "json"
 	flagJSONDefinitionShorthand = "j"
 	flagJSONDefinitionUsage     = "JSON definition file (required)"
 
-	flagTemplateName      = "template"
-	flagTemplateShorthand = "t"
-	flagTemplateUsage     = "output template file (required)"
+	flagReportTemplateFileName      = "template"
+	flagReportTemplateFileShorthand = "t"
+	flagReportTemplateFileUsage     = "report template file (required)"
 
 	flagLoadDefinitionsName  = "load"
 	flagLoadDefinitionsUsage = "load definitions"
@@ -125,15 +125,15 @@ var (
 	// variable for flagLogLevelName parameter
 	logLevel int8
 
-	// variable for flagTemplateName parameter
+	// variable for flagReportTemplateFileName parameter
 	templateName string
 
-	// variable for flagDefinitionFormatName parameter
+	// variable for flagReportFieldsFileName parameter
 	templateFormat string
 
 	// variable for flagLoadDefinitionsName parameter
 	loadDefinitions bool
 
-	// variable for flagDefinitionFormatName parameter
+	// variable for flagReportFieldsFileName parameter
 	definitionFormatFile string
 )

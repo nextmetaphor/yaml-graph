@@ -84,6 +84,9 @@ func init() {
 	jsonCmd.PersistentFlags().StringVarP(&jsonDefinition, flagJSONDefinitionName, flagJSONDefinitionShorthand,
 		"", flagJSONDefinitionUsage)
 	jsonCmd.MarkPersistentFlagRequired(flagJSONDefinitionName)
+
+	// still under development - hide
+	jsonCmd.Hidden = true
 }
 
 func loadJSONConf(cfgPath string) (ms *JSONLevel, err error) {

@@ -49,8 +49,8 @@ func init() {
 
 	validateCmd.PersistentFlags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault},
 		flagSourceUsage)
-	validateCmd.PersistentFlags().StringVarP(&definitionFormatFile, flagDefinitionFormatName, flagDefinitionFormatShorthand,
-		"", flagDefinitionFormatUsage)
+	validateCmd.PersistentFlags().StringVarP(&definitionFormatFile, flagReportFieldsFileName, flagReportFieldsFileShorthand,
+		"", flagReportFieldsFileUsage)
 
 }
 
