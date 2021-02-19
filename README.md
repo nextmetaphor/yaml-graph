@@ -72,7 +72,7 @@ Use "yaml-graph [command] --help" for more information about a command.
 ### Validate Definitions
 To validate the YAML definitions, execute the following command:
 ```bash
-yaml-graph $ yaml-graph validate -s definition
+yaml-graph $ yaml-graph validate -f definition/definition-format.yml -s definition
 successfully validated definitions
 ```
 Note that multiple definition source directories can be supplied. This is useful, for example, if you are referencing a separate taxonomy that you want to reference, but it makes sense to control the definition files separately.

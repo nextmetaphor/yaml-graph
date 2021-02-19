@@ -55,6 +55,10 @@ type (
 	ClassFieldSelector struct {
 		// Class indicates the class of definition to select
 		Class string `yaml:"Class"`
+
+		// ClassAlias indicates an optional alias for the class being selected
+		ClassAlias string `yaml:"ClassAlias"`
+
 		// Fields indicates which fields should be retrieved
 		Fields []string `yaml:"Fields"`
 
@@ -103,16 +107,22 @@ func getOrderClause(section TemplateSection) (orderClause string) {
 func getCypherForSection(parentClass string, parentID string, section TemplateSection) string {
 	var matchClause, returnClause, orderClause string
 
-	sectionClass := section.SectionClass.Class
+	sectionClass := strings.TrimSpace(section.SectionClass.Class)
+	sectionClassAlias := strings.TrimSpace(section.SectionClass.ClassAlias)
+
+	// default to the class name if no alias is provided
+	if sectionClassAlias == "" {
+		sectionClassAlias = sectionClass
+	}
 	parentClass = strings.TrimSpace(parentClass)
 
-	returnClause = section.SectionClass.Class
+	returnClause = sectionClassAlias
 	orderClause = getOrderClause(section)
 
 	if parentClass == "" {
 		matchClause = fmt.Sprintf(rootCypherMatchClause, sectionClass, sectionClass)
 	} else {
-		matchClause = fmt.Sprintf(compositeCypherMatchClause, sectionClass, sectionClass,
+		matchClause = fmt.Sprintf(compositeCypherMatchClause, sectionClassAlias, sectionClass,
 			section.SectionClass.Relationship, parentClass, parentClass, strings.TrimSpace(parentID))
 	}
 
@@ -226,13 +236,16 @@ func recurseTemplateSection(session neo4j.Session, section TemplateSection, pare
 					} else {
 						log.Warn().Msg(logErrorNilDefinitionID)
 					}
-				}
 
-				if nodeClass == section.SectionClass.Class {
+					nodeClassAlias := strings.TrimSpace(section.SectionClass.ClassAlias)
+					if nodeClassAlias == "" {
+						nodeClassAlias = section.SectionClass.Class
+					}
+
 					for _, key := range section.SectionClass.Fields {
 						keyValue, keyOK := node.Props()[key].(string)
 						if keyOK {
-							definition.Fields[fmt.Sprintf(classFieldIdentifier, nodeClass, key)] = keyValue
+							definition.Fields[fmt.Sprintf(classFieldIdentifier, nodeClassAlias, key)] = keyValue
 						}
 					}
 				} else {
@@ -241,6 +254,7 @@ func recurseTemplateSection(session neo4j.Session, section TemplateSection, pare
 							for _, key := range a.Fields {
 								keyValue, keyOK := node.Props()[key].(string)
 								if keyOK {
+									// TODO need to use the alias for non-section class
 									definition.Fields[fmt.Sprintf(classFieldIdentifier, nodeClass, key)] = keyValue
 								}
 							}

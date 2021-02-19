@@ -22,7 +22,7 @@ import (
 
 const (
 	appName    = "yaml-graph"
-	appVersion = "0.3.3"
+	appVersion = "0.3.4"
 
 	commandRootUse      = appName
 	commandRootUseShort = appName + ": generate graphs from YAML definition files"
@@ -88,6 +88,10 @@ const (
 	flagReportTemplateFileName      = "template"
 	flagReportTemplateFileShorthand = "t"
 	flagReportTemplateFileUsage     = "report template file (required)"
+
+	flagDefinitionFormatName      = "format"
+	flagDefinitionFormatShorthand = "f"
+	flagDefinitionFormatUsage     = "Definition format file (required)"
 
 	flagLoadDefinitionsName  = "load"
 	flagLoadDefinitionsUsage = "load definitions"
