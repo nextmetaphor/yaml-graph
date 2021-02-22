@@ -48,6 +48,9 @@ type (
 
 		// Relationship TODO
 		Relationship string `yaml:"Relationship"`
+
+		// FromNotTo TODO
+		FromNotTo bool `yaml:"FromNotTo"`
 	}
 
 	// Fields TODO

@@ -33,6 +33,11 @@ const (
 		MATCH (n2:%s {ID:"%s"})
 		MERGE (n1)-[:%s]->(n2);`
 
+	reverseEdgeCypher = `
+		MATCH (n1:%s {ID:"%s"})
+		MATCH (n2:%s {ID:"%s"})
+		MERGE (n1)-[:%s]->(n2);`
+
 	logErrorCannotConnectToGraphDatabase = "cannot connect to graph database"
 	logErrorCannotCreateGraphSession     = "cannot create graph session"
 	logDebugCypherDetails                = "about to execute cypher [%s] with [%s]"
@@ -98,7 +103,10 @@ func getDefinitionCypherString(class string, fields definition.Fields) (cypher s
 }
 
 func getEdgeCypherString(class, ID string, refs definition.Reference) string {
-	return fmt.Sprintf(edgeCypher, class, ID, refs.Class, refs.ID, refs.Relationship)
+	if refs.FromNotTo {
+		return fmt.Sprintf(edgeCypher, class, ID, refs.Class, refs.ID, refs.Relationship)
+	}
+	return fmt.Sprintf(reverseEdgeCypher, class, ID, refs.Class, refs.ID, refs.Relationship)
 }
 
 // CreateSpecification TODO

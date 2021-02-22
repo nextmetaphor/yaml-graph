@@ -33,7 +33,7 @@ const (
 	orderClauseMultiple        = "%s,%s.%s"
 	baseTemplateCypher         = "match %s return %s order by %s"
 	rootCypherMatchClause      = "(%s:%s)"
-	compositeCypherMatchClause = "(%s:%s)-[:%s]-(%s:%s {ID:\"%s\"})"
+	compositeCypherMatchClause = "(%s:%s)<-[:%s]-(%s:%s {ID:\"%s\"})"
 	aggregateCypherMatchClause = " optional match (%s:%s)-[:%s]-(%s:%s)"
 	aggregateCypherOrderClause = ",%s"
 
