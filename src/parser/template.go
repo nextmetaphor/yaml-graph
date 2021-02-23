@@ -131,7 +131,7 @@ func getCypherForSection(parentClass string, parentID string, section TemplateSe
 	}
 
 	relationshipTo := ""
-	if section.SectionClass.RelationshipFrom {
+	if section.SectionClass.RelationshipTo {
 		relationshipTo = ">"
 	}
 
