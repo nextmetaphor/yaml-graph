@@ -43,7 +43,7 @@ From within the running container, use the `--help` flag to examine the various 
 | |_| | (_| | | | | | | |_____| (_| | | | (_| | |_) | | | |
  \__, |\__,_|_| |_| |_|_|      \__, |_|  \__,_| .__/|_| |_|
  |___/                         |___/          |_|
-version:0.3.3
+version:0.3.6
 
 yaml-graph $ yaml-graph --help
 Define data in YAML then generate graph representations to model relationships

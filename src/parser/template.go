@@ -33,7 +33,7 @@ const (
 	orderClauseMultiple        = "%s,%s.%s"
 	baseTemplateCypher         = "match %s return %s order by %s"
 	rootCypherMatchClause      = "(%s:%s)"
-	compositeCypherMatchClause = "(%s:%s)<-[:%s]-(%s:%s {ID:\"%s\"})"
+	compositeCypherMatchClause = "(%s:%s)%s-[:%s]-%s(%s:%s {ID:\"%s\"})"
 	aggregateCypherMatchClause = " optional match (%s:%s)-[:%s]-(%s:%s)"
 	aggregateCypherOrderClause = ",%s"
 
@@ -63,6 +63,12 @@ type (
 		Fields []string `yaml:"Fields"`
 
 		Relationship string `yaml:"Relationship,omitempty"`
+
+		// RelationshipFrom indicates whether we want the relationship to be directed from this class (defaults to false)
+		RelationshipFrom bool `yaml:"RelationshipFrom,omitempty"`
+
+		// RelationshipFrom indicates whether we want the relationship to be directed to this class (defaults to false)
+		RelationshipTo bool `yaml:"RelationshipTo,omitempty"`
 
 		// OrderField indicates the fields to order the classes retrieved
 		OrderFields []string `yaml:"OrderFields"`
@@ -119,11 +125,21 @@ func getCypherForSection(parentClass string, parentID string, section TemplateSe
 	returnClause = sectionClassAlias
 	orderClause = getOrderClause(section)
 
+	relationshipFrom := ""
+	if section.SectionClass.RelationshipFrom {
+		relationshipFrom = "<"
+	}
+
+	relationshipTo := ""
+	if section.SectionClass.RelationshipFrom {
+		relationshipTo = ">"
+	}
+
 	if parentClass == "" {
 		matchClause = fmt.Sprintf(rootCypherMatchClause, sectionClass, sectionClass)
 	} else {
 		matchClause = fmt.Sprintf(compositeCypherMatchClause, sectionClassAlias, sectionClass,
-			section.SectionClass.Relationship, parentClass, parentClass, strings.TrimSpace(parentID))
+			relationshipFrom, section.SectionClass.Relationship, relationshipTo, parentClass, parentClass, strings.TrimSpace(parentID))
 	}
 
 	for _, aggregateClass := range section.AggregateClasses {
