@@ -1,0 +1,41 @@
+Class: "Service"
+References: [
+  { Class: "Provider", ID: "azure", Relationship: "PROVIDED_BY" },
+  { Class: "Category", ID: "compute", Relationship: "TYPE_OF" }
+]
+Definitions:
+  app-service:
+    Fields:
+      Name: "App Service"
+      Description: "A fully managed platform for building, deploying and scaling your web apps"
+      Link: "https://azure.microsoft.com/en-gb/services/app-service/"
+
+  azure-function:
+    Fields:
+      Name: "Azure Function"
+      Description: "Azure Function"
+      Link: "https://azure.microsoft.com/en-gb/services/functions/"
+
+  azure-kubernetes-service:
+    Fields:
+      Name: "Azure Kubernetes Service (AKS)"
+      Description: "Azure Kubernetes Service"
+      Link: "https://azure.microsoft.com/en-gb/services/kubernetes-service/"
+
+  container-instance:
+    Fields:
+      Name: "Container Instance"
+      Description: "Azure Container Instance"
+      Link: "https://azure.microsoft.com/en-gb/services/container-instances/"
+
+  virtual-machine:
+    Fields:
+      Name: "Virtual Machine"
+      Description: "Azure Virtual Machine"
+      Link: "https://azure.microsoft.com/en-gb/services/virtual-machines/"
+
+  virtual-machine-scale-set:
+    Fields:
+      Name: "Virtual Machine Scale Set"
+      Description: "Azure Virtual Machine Scale Set"
+      Link: "https://azure.microsoft.com/en-gb/services/virtual-machine-scale-sets/"

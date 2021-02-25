@@ -70,7 +70,7 @@ func load(_ *cobra.Command, _ []string) {
 			spec, err := definition.LoadSpecificationFromFile(filePath)
 			if (err == nil) && (spec != nil) {
 				log.Debug().Msg(fmt.Sprintf(logDebugSuccessfullyLoadedFile, filePath))
-				graph.CreateSpecification(session, "", *spec)
+				graph.CreateSpecification(session, *spec)
 
 			} else {
 				log.Warn().Msgf(logWarnSkippingFile, filePath, err)

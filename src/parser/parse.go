@@ -34,6 +34,8 @@ const (
 	logWarnMandatoryFieldMissing    = "mandatory field [%s] missing in definition ID [%s] for class [%s]"
 	logWarnMandatoryFieldNotAString = "mandatory field [%s] is not a string in definition ID [%s] for class [%s]"
 	logWarnAdditionalFieldFound     = "field [%s] is not a valid field in definition ID [%s] for class [%s]"
+	logWarnDuplicateDefinitionFound = "duplicate ID [%s] for class [%s] found; only the most recent definition will be kept"
+	logWarnSubdefinitionErrorsFound = "errors loading subdefinitions for ID [%s] for class [%s]"
 
 	errorDefinitionErrorsFound = "there were %d error(s) found in the definition files"
 )
@@ -70,9 +72,10 @@ type (
 	}
 )
 
-func loadSpecification(s definition.Specification, d Dictionary, parentRef *definition.Reference) {
+func loadSpecification(s definition.Specification, d Dictionary, parentRef *definition.Reference) error {
+	errorsFound := 0
 	if d == nil {
-		return
+		return nil
 	}
 
 	if d[s.Class] == nil {
@@ -82,6 +85,13 @@ func loadSpecification(s definition.Specification, d Dictionary, parentRef *defi
 
 	// iterate through the definitions in this specification and add to the dictionary
 	for dfnID, dfn := range s.Definitions {
+		// check to see whether this class + ID combination already exists
+		if d[s.Class][dfnID] != nil {
+			// warn if this is the case
+			log.Warn().Msg(fmt.Sprintf(logWarnDuplicateDefinitionFound, dfnID, s.Class))
+			errorsFound++
+		}
+
 		d[s.Class][dfnID] = &DictionaryDefinition{
 			Fields:     dfn.Fields,
 			References: dfn.References,
@@ -106,13 +116,23 @@ func loadSpecification(s definition.Specification, d Dictionary, parentRef *defi
 	// TODO, recursion, really?
 	for dfnID, dfn := range s.Definitions {
 		for subDfnRelationship, subDfn := range dfn.SubDefinitions {
-			loadSpecification(subDfn, d, &definition.Reference{
+			if err := loadSpecification(subDfn, d, &definition.Reference{
 				Class:        s.Class,
 				ID:           dfnID,
 				Relationship: subDfnRelationship,
-			})
+			}); err != nil {
+				log.Warn().Msg(fmt.Sprintf(logWarnSubdefinitionErrorsFound, dfnID, s.Class))
+				errorsFound++
+			}
 		}
 	}
+
+	if errorsFound > 0 {
+		log.Error().Msg(fmt.Sprintf(errorDefinitionErrorsFound, errorsFound))
+		return fmt.Errorf(errorDefinitionErrorsFound, errorsFound)
+	}
+
+	return nil
 }
 
 // LoadDictionary TODO

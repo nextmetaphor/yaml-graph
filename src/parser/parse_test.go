@@ -22,10 +22,10 @@ import (
 	"testing"
 )
 
-func Test_loadSpecification(t *testing.T) {
+func Test_loadDictionary(t *testing.T) {
 	t.Run("MissingSpecification", func(t *testing.T) {
 
-		d := LoadDictionary([]string{"_test"}, "yaml")
+		d := LoadDictionary([]string{"_test/loadDictionary"}, "yaml")
 
 		assert.Equal(t, d, Dictionary{
 			"MyClass": {
@@ -479,5 +479,37 @@ func Test_validateDictionary(t *testing.T) {
 
 		e := ValidateDictionary(d, nil)
 		assert.NotNil(t, e)
+	})
+}
+
+func Test_loadSpecification(t *testing.T) {
+	t.Run("NonDuplicateDefinition", func(t *testing.T) {
+
+		d := LoadDictionary([]string{"_test/loadSpecification"}, "yaml")
+
+		err := loadSpecification(definition.Specification{
+			Class:      "Category",
+			References: nil,
+			Definitions: map[string]definition.Definition{
+				"machine-learning": {},
+			},
+		}, d, nil)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("DuplicateDefinition", func(t *testing.T) {
+
+		d := LoadDictionary([]string{"_test/loadSpecification"}, "yaml")
+
+		err := loadSpecification(definition.Specification{
+			Class:      "Category",
+			References: nil,
+			Definitions: map[string]definition.Definition{
+				"compute": {},
+			},
+		}, d, nil)
+
+		assert.NotNil(t, err)
 	})
 }

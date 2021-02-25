@@ -110,28 +110,17 @@ func getEdgeCypherString(class, ID string, refs definition.Reference) string {
 	return fmt.Sprintf(edgeCypher, class, ID, refs.Class, refs.ID, relationshipFrom, refs.Relationship, relationshipTo)
 }
 
-func getDefinitionID(parentID, ID string, dfn definition.Definition, spec definition.Specification) string {
-	if (dfn.PrependParentID != nil && *dfn.PrependParentID) || (spec.PrependParentID != nil && *spec.PrependParentID && dfn.PrependParentID == nil) {
-		return parentID + ID
-	}
-
-	return ID
-}
-
 // CreateSpecification TODO
-func CreateSpecification(session neo4j.Session, parentID string, spec definition.Specification) {
+func CreateSpecification(session neo4j.Session, spec definition.Specification) {
 	class := spec.Class
 	// iterate through the top-level (i.e. no parent ID) definitions...
-	for definitionID, dfn := range spec.Definitions {
-		// prepend the parent ID to the specification ID if required
-		graphDefinitionID := getDefinitionID(parentID, definitionID, dfn, spec)
-
+	for definitionID := range spec.Definitions {
 		definitionCypher := getDefinitionCypherString(class, spec.Definitions[definitionID].Fields)
 
 		if spec.Definitions[definitionID].Fields == nil {
-			ExecuteCypher(session, definitionCypher, map[string]interface{}{"ID": graphDefinitionID})
+			ExecuteCypher(session, definitionCypher, map[string]interface{}{"ID": definitionID})
 		} else {
-			spec.Definitions[definitionID].Fields["ID"] = graphDefinitionID
+			spec.Definitions[definitionID].Fields["ID"] = definitionID
 			ExecuteCypher(session, definitionCypher, spec.Definitions[definitionID].Fields)
 		}
 
@@ -139,7 +128,7 @@ func CreateSpecification(session neo4j.Session, parentID string, spec definition
 		// TODO - do we really want to use recursion for this?
 		if spec.Definitions[definitionID].SubDefinitions != nil {
 			for subdefinitionID := range spec.Definitions[definitionID].SubDefinitions {
-				CreateSpecification(session, graphDefinitionID, spec.Definitions[definitionID].SubDefinitions[subdefinitionID])
+				CreateSpecification(session, spec.Definitions[definitionID].SubDefinitions[subdefinitionID])
 			}
 		}
 	}

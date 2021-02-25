@@ -1,0 +1,26 @@
+Class: "Provider"
+Definitions:
+  alibaba: {
+    Fields:
+      { Name: "Alibaba", Description: "Alibaba Cloud" }
+  }
+  aws: {
+    Fields:
+      { Name: "AWS", Description: "Amazon Web Services" }
+  }
+  azure: {
+    Fields:
+      { Name: "Azure", Description: "Microsoft Azure" }
+  }
+  gcp: {
+    Fields:
+      { Name: "GCP", Description: "Google Cloud Platform" }
+  }
+  ibm: {
+    Fields:
+      { Name: "IBM", Description: "IBM" }
+  }
+  oracle: {
+    Fields:
+      { Name: "Oracle Cloud", Description: "Oracle Cloud" }
+  }

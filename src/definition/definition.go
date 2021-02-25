@@ -61,10 +61,6 @@ type (
 
 	// Definition TODO
 	Definition struct {
-		// PrependParentID will prepend the parent definition ID to any sub-definition if set to true
-		// to help to create a unique ID for the sub
-		PrependParentID *bool `yaml:"PrependParentID,omitempty"`
-
 		Fields         Fields                   `yaml:"Fields"`
 		References     []Reference              `yaml:"References"`
 		SubDefinitions map[string]Specification `yaml:"SubDefinitions"`
@@ -78,10 +74,6 @@ type (
 		// References allows relationships to other classes for all of the definitions within the document to be
 		// specified.
 		References []Reference `yaml:"References,omitempty"`
-
-		// PrependParentID will prepend the parent definition ID to any sub-definition if set to true
-		// to help to create a unique ID for the sub. This can be overridden at the Definition level if required
-		PrependParentID *bool `yaml:"PrependParentID,omitempty"`
 
 		// Definitions TODO
 		Definitions map[string]Definition `yaml:"Definitions,omitempty"`

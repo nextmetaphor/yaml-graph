@@ -123,13 +123,13 @@ func Test_getCypherForSelector(t *testing.T) {
 
 func Test_loadTemplateConf(t *testing.T) {
 	t.Run("Invalid", func(t *testing.T) {
-		tc, err := loadTemplateConf("_test/TemplateSection_invalid.yaml")
+		tc, err := loadTemplateConf("_test/loadTemplateConf/TemplateSection_invalid.yaml")
 		assert.NotNil(t, err)
 		assert.Nil(t, tc)
 	})
 
 	t.Run("Minimal_Valid", func(t *testing.T) {
-		tc, err := loadTemplateConf("_test/TemplateSection_minimal_valid.yaml")
+		tc, err := loadTemplateConf("_test/loadTemplateConf/TemplateSection_minimal_valid.yaml")
 		assert.Nil(t, err)
 		assert.Equal(t, &TemplateSection{
 			SectionClass: ClassFieldSelector{
@@ -144,7 +144,7 @@ func Test_loadTemplateConf(t *testing.T) {
 	})
 
 	t.Run("AggregateOnly_Valid", func(t *testing.T) {
-		tc, err := loadTemplateConf("_test/TemplateSection_aggregate_only_valid.yaml")
+		tc, err := loadTemplateConf("_test/loadTemplateConf/TemplateSection_aggregate_only_valid.yaml")
 		assert.Nil(t, err)
 		assert.Equal(t, &TemplateSection{
 			SectionClass: ClassFieldSelector{
@@ -172,7 +172,7 @@ func Test_loadTemplateConf(t *testing.T) {
 	})
 
 	t.Run("Aggregate_Composite_Valid", func(t *testing.T) {
-		tc, err := loadTemplateConf("_test/TemplateSection_aggregate_composite_valid.yaml")
+		tc, err := loadTemplateConf("_test/loadTemplateConf/TemplateSection_aggregate_composite_valid.yaml")
 		assert.Nil(t, err)
 		assert.Equal(t, &TemplateSection{
 			SectionClass: ClassFieldSelector{
@@ -226,7 +226,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 	t.Run("MinimalConfiguration", func(t *testing.T) {
 
 		// first load the template configuration
-		tc, err := loadTemplateConf("_test/template/TemplateSection_minimal_valid.yaml")
+		tc, err := loadTemplateConf("_test/recurseTemplateSection/TemplateSection_minimal_valid.yaml")
 		assert.Nil(t, err)
 
 		// then connect to the graph database
@@ -299,7 +299,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 	t.Run("MinimalAggregateConfiguration", func(t *testing.T) {
 
 		// first load the template configuration
-		tc, err := loadTemplateConf("_test/template/TemplateSection_minimal_aggregate_valid.yaml")
+		tc, err := loadTemplateConf("_test/recurseTemplateSection/TemplateSection_minimal_aggregate_valid.yaml")
 		assert.Nil(t, err)
 
 		// then connect to the graph database
@@ -459,7 +459,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 	t.Run("MinimalCompositeConfiguration", func(t *testing.T) {
 
 		// first load the template configuration
-		tc, err := loadTemplateConf("_test/template/TemplateSection_minimal_composite_valid.yaml")
+		tc, err := loadTemplateConf("_test/recurseTemplateSection/TemplateSection_minimal_composite_valid.yaml")
 		assert.Nil(t, err)
 
 		// then connect to the graph database
@@ -668,7 +668,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 	t.Run("MinimalCompositeAggregateConfiguration", func(t *testing.T) {
 
 		// first load the template configuration
-		tc, err := loadTemplateConf("_test/template/TemplateSection_minimal_composite_aggregate_valid.yaml")
+		tc, err := loadTemplateConf("_test/recurseTemplateSection/TemplateSection_minimal_composite_aggregate_valid.yaml")
 		assert.Nil(t, err)
 
 		// then connect to the graph database
@@ -896,10 +896,10 @@ func Test_parseTemplate(t *testing.T) {
 		var writer bytes.Buffer
 		bufferWriter := bufio.NewWriter(&writer)
 
-		err := ParseTemplate("bolt://localhost:7687", "username", "password", "_test/template/TemplateSection_minimal_composite_aggregate_valid.yaml", "_test/template/output-template.gotmpl", bufferWriter)
+		err := ParseTemplate("bolt://localhost:7687", "username", "password", "_test/recurseTemplateSection/TemplateSection_minimal_composite_aggregate_valid.yaml", "_test/recurseTemplateSection/output-template.gotmpl", bufferWriter)
 		assert.Nil(t, err)
 
-		expectedBytes, err := ioutil.ReadFile("_test/template/output-template.result")
+		expectedBytes, err := ioutil.ReadFile("_test/recurseTemplateSection/output-template.result")
 		assert.Nil(t, err)
 
 		bufferWriter.Flush()

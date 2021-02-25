@@ -1,0 +1,21 @@
+Class: "Category"
+Definitions:
+  compute:
+    Fields:
+      Name: "compute"
+      Description: "Compute"
+
+  database:
+    Fields:
+      Name: "database"
+      Description: "Database"
+
+  networking:
+    Fields:
+      Name: "networking"
+      Description: "Networking"
+
+  storage:
+    Fields:
+      Name: "storage"
+      Description: "Storage"
