@@ -24,6 +24,8 @@ import (
 	"strings"
 )
 
+type fieldType int
+
 const (
 	logDebugAboutToParseFile       = "about to parse file [%s]"
 	logDebugSuccessfullyParsedFile = "successfully parsed file [%s]"
@@ -38,6 +40,12 @@ const (
 	logWarnSubdefinitionErrorsFound = "errors loading subdefinitions for ID [%s] for class [%s]"
 
 	errorDefinitionErrorsFound = "there were %d error(s) found in the definition files"
+
+	// enum constants for field types
+	stringField fieldType = iota
+	intField
+	floatField
+	boolField
 )
 
 type (
@@ -159,6 +167,25 @@ func LoadDictionary(sourceDir []string, fileExtension string) Dictionary {
 	return d
 }
 
+func fieldTypeValid(f interface{}, ft fieldType) bool {
+	switch ft {
+	case stringField:
+		s, ok := f.(string)
+		return ok && !(strings.TrimSpace(s) == "")
+	case boolField:
+		_, ok := f.(bool)
+		return ok
+	case floatField:
+		_, ok := f.(float64)
+		return ok
+	case intField:
+		_, ok := f.(int)
+		return ok
+	}
+
+	return false
+}
+
 // ValidateDictionary TODO
 func ValidateDictionary(d Dictionary, df *DefinitionFormat) error {
 	errorsFound := 0
@@ -182,15 +209,20 @@ func ValidateDictionary(d Dictionary, df *DefinitionFormat) error {
 						log.Warn().Msg(fmt.Sprintf(logWarnMandatoryFieldMissing, f, dID, class))
 						errorsFound++
 					} else {
+						// mandatory field exists - now check its type is valid
+						// TODO add checking for other types
+						if !fieldTypeValid(definition.Fields[f], stringField) {
+							log.Warn().Msg(fmt.Sprintf(logWarnMandatoryFieldNotAString, f, dID, class))
+							errorsFound++
+						}
+
+						// additional 'empty string' check for mandatory string fields
 						s, ok := definition.Fields[f].(string)
 						if ok {
 							if strings.TrimSpace(s) == "" {
 								log.Warn().Msg(fmt.Sprintf(logWarnMandatoryFieldMissing, f, dID, class))
 								errorsFound++
 							}
-						} else {
-							log.Warn().Msg(fmt.Sprintf(logWarnMandatoryFieldNotAString, f, dID, class))
-							errorsFound++
 						}
 					}
 				}

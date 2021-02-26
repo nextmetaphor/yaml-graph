@@ -513,3 +513,36 @@ func Test_loadSpecification(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 }
+
+func Test_fieldTypeValid(t *testing.T) {
+	t.Run("StringType", func(t *testing.T) {
+		assert.True(t, fieldTypeValid("a string", stringField))
+		assert.False(t, fieldTypeValid(1, stringField))
+		assert.False(t, fieldTypeValid(nil, stringField))
+	})
+
+	t.Run("IntType", func(t *testing.T) {
+		assert.True(t, fieldTypeValid(1, intField))
+		assert.False(t, fieldTypeValid("1", intField))
+		assert.False(t, fieldTypeValid(1.5, intField))
+		assert.False(t, fieldTypeValid(nil, intField))
+	})
+
+	t.Run("BoolType", func(t *testing.T) {
+		assert.True(t, fieldTypeValid(true, boolField))
+		assert.True(t, fieldTypeValid(false, boolField))
+		assert.False(t, fieldTypeValid("1", boolField))
+		assert.False(t, fieldTypeValid(1.5, boolField))
+		assert.False(t, fieldTypeValid(nil, boolField))
+	})
+
+	t.Run("FloatType", func(t *testing.T) {
+		assert.True(t, fieldTypeValid(1.6, floatField))
+		assert.True(t, fieldTypeValid(0.0, floatField))
+		assert.False(t, fieldTypeValid("1", floatField))
+		assert.False(t, fieldTypeValid(1, floatField))
+		assert.False(t, fieldTypeValid(false, floatField))
+		assert.False(t, fieldTypeValid(nil, floatField))
+	})
+
+}
