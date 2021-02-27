@@ -1,0 +1,12 @@
+Class: "MyClass"
+Definitions:
+  dfn1:
+    Fields:
+      StringField1: String
+      StringField2: "String"
+      IntField1: 1
+      IntField2: -1
+      BoolField1: true
+      BoolField2: false
+      FloatField1: 1.1
+      FloatField2: -0.1

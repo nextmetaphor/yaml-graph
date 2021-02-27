@@ -23,9 +23,31 @@ import (
 )
 
 func Test_loadDictionary(t *testing.T) {
+	t.Run("MultipleTypes", func(t *testing.T) {
+
+		d := LoadDictionary([]string{"_test/loadDictionary/MultipleTypes"}, "yaml")
+
+		assert.Equal(t, Dictionary{
+			"MyClass": {
+				"dfn1": {
+					Fields: definition.Fields{
+						"StringField1": "String",
+						"StringField2": "String",
+						"IntField1":    1,
+						"IntField2":    -1,
+						"BoolField1":   true,
+						"BoolField2":   false,
+						"FloatField1":  1.1,
+						"FloatField2":  -0.1,
+					},
+				},
+			},
+		}, d)
+	})
+
 	t.Run("MissingSpecification", func(t *testing.T) {
 
-		d := LoadDictionary([]string{"_test/loadDictionary"}, "yaml")
+		d := LoadDictionary([]string{"_test/loadDictionary/MissingSpecification"}, "yaml")
 
 		assert.Equal(t, d, Dictionary{
 			"MyClass": {
@@ -153,7 +175,8 @@ func Test_loadDictionary(t *testing.T) {
 	})
 }
 
-func Test_validateDictionary(t *testing.T) {
+func
+Test_validateDictionary(t *testing.T) {
 	t.Run("ValidSpecification", func(t *testing.T) {
 		d := Dictionary{
 			"Band": {
@@ -482,7 +505,8 @@ func Test_validateDictionary(t *testing.T) {
 	})
 }
 
-func Test_loadSpecification(t *testing.T) {
+func
+Test_loadSpecification(t *testing.T) {
 	t.Run("NonDuplicateDefinition", func(t *testing.T) {
 
 		d := LoadDictionary([]string{"_test/loadSpecification"}, "yaml")
@@ -514,7 +538,8 @@ func Test_loadSpecification(t *testing.T) {
 	})
 }
 
-func Test_fieldTypeValid(t *testing.T) {
+func
+Test_fieldTypeValid(t *testing.T) {
 	t.Run("StringType", func(t *testing.T) {
 		assert.True(t, fieldTypeValid("a string", stringField))
 		assert.False(t, fieldTypeValid(1, stringField))
