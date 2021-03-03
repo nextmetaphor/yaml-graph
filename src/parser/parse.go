@@ -21,6 +21,7 @@ import (
 	"github.com/nextmetaphor/yaml-graph/definition"
 	"github.com/rs/zerolog/log"
 	"os"
+	"reflect"
 	"strings"
 )
 
@@ -29,6 +30,7 @@ type fieldType int
 const (
 	logDebugAboutToParseFile       = "about to parse file [%s]"
 	logDebugSuccessfullyParsedFile = "successfully parsed file [%s]"
+	logDebugInvalidFieldTypeFound  = "invalid field type [%v] found"
 	logWarnSkippingFile            = "skipping file [%s] due to error [%s]"
 
 	logWarnCannotFindClass          = "cannot find class [%s]"
@@ -173,9 +175,10 @@ func fieldTypeValid(f interface{}) bool {
 	}
 
 	switch f.(type) {
-	case string, bool, float64, int:
+	case string, bool, float64, int, int64:
 		return true
 	default:
+		log.Debug().Msgf(logDebugInvalidFieldTypeFound, reflect.TypeOf(f))
 		return false
 	}
 }
