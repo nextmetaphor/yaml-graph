@@ -20,6 +20,7 @@ import (
 	"github.com/nextmetaphor/yaml-graph/definition"
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"time"
 )
 
 func Test_loadDictionary(t *testing.T) {
@@ -175,8 +176,7 @@ func Test_loadDictionary(t *testing.T) {
 	})
 }
 
-func
-Test_validateDictionary(t *testing.T) {
+func Test_validateDictionary(t *testing.T) {
 	t.Run("ValidSpecification", func(t *testing.T) {
 		d := Dictionary{
 			"Band": {
@@ -505,8 +505,7 @@ Test_validateDictionary(t *testing.T) {
 	})
 }
 
-func
-Test_loadSpecification(t *testing.T) {
+func Test_loadSpecification(t *testing.T) {
 	t.Run("NonDuplicateDefinition", func(t *testing.T) {
 
 		d := LoadDictionary([]string{"_test/loadSpecification"}, "yaml")
@@ -538,36 +537,49 @@ Test_loadSpecification(t *testing.T) {
 	})
 }
 
-func
-Test_fieldTypeValid(t *testing.T) {
+func Test_fieldTypeValid(t *testing.T) {
 	t.Run("StringType", func(t *testing.T) {
-		assert.True(t, fieldTypeValid("a string", stringField))
-		assert.False(t, fieldTypeValid(1, stringField))
-		assert.False(t, fieldTypeValid(nil, stringField))
+		assert.True(t, fieldTypeValid("a string"))
+		assert.True(t, fieldTypeValid(true))
+		assert.True(t, fieldTypeValid(false))
+		assert.True(t, fieldTypeValid(1.1))
+		assert.True(t, fieldTypeValid(-1.2))
+		assert.True(t, fieldTypeValid(1))
+		assert.True(t, fieldTypeValid(0))
+		assert.False(t, fieldTypeValid(nil))
+		assert.False(t, fieldTypeValid(time.Now()))
+	})
+}
+
+func Test_fieldValidForType(t *testing.T) {
+	t.Run("StringType", func(t *testing.T) {
+		assert.True(t, fieldValidForType("a string", stringField))
+		assert.False(t, fieldValidForType(1, stringField))
+		assert.False(t, fieldValidForType(nil, stringField))
 	})
 
 	t.Run("IntType", func(t *testing.T) {
-		assert.True(t, fieldTypeValid(1, intField))
-		assert.False(t, fieldTypeValid("1", intField))
-		assert.False(t, fieldTypeValid(1.5, intField))
-		assert.False(t, fieldTypeValid(nil, intField))
+		assert.True(t, fieldValidForType(1, intField))
+		assert.False(t, fieldValidForType("1", intField))
+		assert.False(t, fieldValidForType(1.5, intField))
+		assert.False(t, fieldValidForType(nil, intField))
 	})
 
 	t.Run("BoolType", func(t *testing.T) {
-		assert.True(t, fieldTypeValid(true, boolField))
-		assert.True(t, fieldTypeValid(false, boolField))
-		assert.False(t, fieldTypeValid("1", boolField))
-		assert.False(t, fieldTypeValid(1.5, boolField))
-		assert.False(t, fieldTypeValid(nil, boolField))
+		assert.True(t, fieldValidForType(true, boolField))
+		assert.True(t, fieldValidForType(false, boolField))
+		assert.False(t, fieldValidForType("1", boolField))
+		assert.False(t, fieldValidForType(1.5, boolField))
+		assert.False(t, fieldValidForType(nil, boolField))
 	})
 
 	t.Run("FloatType", func(t *testing.T) {
-		assert.True(t, fieldTypeValid(1.6, floatField))
-		assert.True(t, fieldTypeValid(0.0, floatField))
-		assert.False(t, fieldTypeValid("1", floatField))
-		assert.False(t, fieldTypeValid(1, floatField))
-		assert.False(t, fieldTypeValid(false, floatField))
-		assert.False(t, fieldTypeValid(nil, floatField))
+		assert.True(t, fieldValidForType(1.6, floatField))
+		assert.True(t, fieldValidForType(0.0, floatField))
+		assert.False(t, fieldValidForType("1", floatField))
+		assert.False(t, fieldValidForType(1, floatField))
+		assert.False(t, fieldValidForType(false, floatField))
+		assert.False(t, fieldValidForType(nil, floatField))
 	})
 
 }

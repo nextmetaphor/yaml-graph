@@ -243,7 +243,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "aws",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "AWS",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Amazon Web Services",
 				},
@@ -252,7 +252,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "alibaba",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Alibaba",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Alibaba Cloud",
 				},
@@ -261,7 +261,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "azure",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Azure",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Microsoft Azure",
 				},
@@ -270,7 +270,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "gcp",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "GCP",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Google Cloud Platform",
 				},
@@ -279,7 +279,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "ibm",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "IBM",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "IBM",
 				},
@@ -288,7 +288,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "oracle",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Oracle Cloud",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Oracle Cloud",
 				},
@@ -318,7 +318,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Service",
 				ID:    "app-service",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 
 					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "App Service",
 					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
@@ -328,7 +328,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Service",
 				ID:    "application-gateway",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Application Gateway",
 					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
 				},
@@ -337,7 +337,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Service",
 				ID:    "archive-storage",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Archive Storage",
 					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
 				},
@@ -346,7 +346,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Service",
 				ID:    "azure-function",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Azure Function",
 					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
 				},
@@ -355,7 +355,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Service",
 				ID:    "azure-kubernetes-service",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Azure Kubernetes Service (AKS)",
 					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
 				},
@@ -364,7 +364,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Service",
 				ID:    "blob-storage",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Blob Storage",
 					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
 				},
@@ -373,7 +373,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Service",
 				ID:    "container-instance",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Container Instance",
 					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
 				},
@@ -382,7 +382,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Service",
 				ID:    "content-delivery-network",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Content Delivery Network",
 					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
 				},
@@ -391,7 +391,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Service",
 				ID:    "disk-storage",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Disk Storage",
 					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
 				},
@@ -400,7 +400,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Service",
 				ID:    "file-storage",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "File Storage",
 					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
 				},
@@ -409,7 +409,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Service",
 				ID:    "load-balancer",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Load Balancer",
 					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
 				},
@@ -418,7 +418,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Service",
 				ID:    "vpn-gateway",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "VPN Gateway",
 					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
 				},
@@ -427,7 +427,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Service",
 				ID:    "virtual-machine",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Virtual Machine",
 					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
 				},
@@ -436,7 +436,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Service",
 				ID:    "virtual-machine-scale-set",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Virtual Machine Scale Set",
 					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
 				},
@@ -445,7 +445,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Service",
 				ID:    "virtual-network",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Virtual Network",
 					fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
 				},
@@ -478,7 +478,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "aws",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "AWS",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Amazon Web Services",
 				},
@@ -489,7 +489,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "alibaba",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Alibaba",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Alibaba Cloud",
 				},
@@ -500,7 +500,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "azure",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Azure",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Microsoft Azure",
 				},
@@ -509,7 +509,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "app-service",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "App Service",
 							},
 							CompositeSectionDefinitions: map[string][]SectionDefinition{},
@@ -517,7 +517,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "application-gateway",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Application Gateway",
 							},
 							CompositeSectionDefinitions: map[string][]SectionDefinition{},
@@ -525,7 +525,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "archive-storage",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Archive Storage",
 							},
 							CompositeSectionDefinitions: map[string][]SectionDefinition{},
@@ -533,7 +533,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "azure-function",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Azure Function",
 							},
 							CompositeSectionDefinitions: map[string][]SectionDefinition{},
@@ -541,7 +541,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "azure-kubernetes-service",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Azure Kubernetes Service (AKS)",
 							},
 							CompositeSectionDefinitions: map[string][]SectionDefinition{},
@@ -549,7 +549,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "blob-storage",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Blob Storage",
 							},
 							CompositeSectionDefinitions: map[string][]SectionDefinition{},
@@ -557,7 +557,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "container-instance",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Container Instance",
 							},
 							CompositeSectionDefinitions: map[string][]SectionDefinition{},
@@ -565,7 +565,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "content-delivery-network",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Content Delivery Network",
 							},
 							CompositeSectionDefinitions: map[string][]SectionDefinition{},
@@ -573,7 +573,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "disk-storage",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Disk Storage",
 							},
 							CompositeSectionDefinitions: map[string][]SectionDefinition{},
@@ -581,7 +581,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "file-storage",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "File Storage",
 							},
 							CompositeSectionDefinitions: map[string][]SectionDefinition{},
@@ -589,7 +589,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "load-balancer",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Load Balancer",
 							},
 							CompositeSectionDefinitions: map[string][]SectionDefinition{},
@@ -597,7 +597,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "vpn-gateway",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "VPN Gateway",
 							},
 							CompositeSectionDefinitions: map[string][]SectionDefinition{},
@@ -605,7 +605,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "virtual-machine",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Virtual Machine",
 							},
 							CompositeSectionDefinitions: map[string][]SectionDefinition{},
@@ -613,7 +613,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "virtual-machine-scale-set",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Virtual Machine Scale Set",
 							},
 							CompositeSectionDefinitions: map[string][]SectionDefinition{},
@@ -621,7 +621,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "virtual-network",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"): "Virtual Network",
 							},
 							CompositeSectionDefinitions: map[string][]SectionDefinition{},
@@ -632,7 +632,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "gcp",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "GCP",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Google Cloud Platform",
 				},
@@ -643,7 +643,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "ibm",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "IBM",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "IBM",
 				},
@@ -654,7 +654,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "oracle",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Oracle Cloud",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Oracle Cloud",
 				},
@@ -687,7 +687,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "aws",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "AWS",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Amazon Web Services",
 				},
@@ -698,7 +698,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "alibaba",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Alibaba",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Alibaba Cloud",
 				},
@@ -709,7 +709,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "azure",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Azure",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Microsoft Azure",
 				},
@@ -718,7 +718,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "app-service",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "App Service",
 								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
 							},
@@ -727,7 +727,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "application-gateway",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Application Gateway",
 								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
 							},
@@ -736,7 +736,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "archive-storage",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Archive Storage",
 								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
 							},
@@ -745,7 +745,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "azure-function",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Azure Function",
 								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
 							},
@@ -754,7 +754,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "azure-kubernetes-service",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Azure Kubernetes Service (AKS)",
 								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
 							},
@@ -763,7 +763,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "blob-storage",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Blob Storage",
 								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
 							},
@@ -772,7 +772,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "container-instance",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Container Instance",
 								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
 							},
@@ -781,7 +781,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "content-delivery-network",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Content Delivery Network",
 								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
 							},
@@ -790,7 +790,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "disk-storage",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Disk Storage",
 								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
 							},
@@ -799,7 +799,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "file-storage",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "File Storage",
 								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "storage",
 							},
@@ -808,7 +808,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "load-balancer",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Load Balancer",
 								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
 							},
@@ -817,7 +817,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "vpn-gateway",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "VPN Gateway",
 								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
 							},
@@ -826,7 +826,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "virtual-machine",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Virtual Machine",
 								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
 							},
@@ -835,7 +835,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "virtual-machine-scale-set",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Virtual Machine Scale Set",
 								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "compute",
 							},
@@ -844,7 +844,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 						{
 							Class: "Service",
 							ID:    "virtual-network",
-							Fields: map[string]string{
+							Fields: map[string]interface{}{
 								fmt.Sprintf(classFieldIdentifier, "Service", "Name"):  "Virtual Network",
 								fmt.Sprintf(classFieldIdentifier, "Category", "Name"): "networking",
 							},
@@ -856,7 +856,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "gcp",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "GCP",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Google Cloud Platform",
 				},
@@ -867,7 +867,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "ibm",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "IBM",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "IBM",
 				},
@@ -878,7 +878,7 @@ func Test_recurseTemplateSection(t *testing.T) {
 			{
 				Class: "Provider",
 				ID:    "oracle",
-				Fields: map[string]string{
+				Fields: map[string]interface{}{
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Name"):        "Oracle Cloud",
 					fmt.Sprintf(classFieldIdentifier, "Provider", "Description"): "Oracle Cloud",
 				},

@@ -91,7 +91,7 @@ type (
 		Class string
 		ID    string
 		// Fields key must be in format Class.Field
-		Fields map[string]string
+		Fields map[string]interface{}
 
 		// CompositeSectionDefinitions is a map of definitions keyed by relationship
 		CompositeSectionDefinitions map[string][]SectionDefinition
@@ -233,7 +233,7 @@ func recurseTemplateSection(session neo4j.Session, section TemplateSection, pare
 		// create definition here: class+aggregate combinations are returned by the subsequent loop
 		definition := SectionDefinition{
 			Class:                       section.SectionClass.Class,
-			Fields:                      map[string]string{},
+			Fields:                      map[string]interface{}{},
 			CompositeSectionDefinitions: map[string][]SectionDefinition{},
 		}
 		for _, kv := range record.Values() {
@@ -259,19 +259,17 @@ func recurseTemplateSection(session neo4j.Session, section TemplateSection, pare
 					}
 
 					for _, key := range section.SectionClass.Fields {
-						keyValue, keyOK := node.Props()[key].(string)
-						if keyOK {
-							definition.Fields[fmt.Sprintf(classFieldIdentifier, nodeClassAlias, key)] = keyValue
+						if fieldTypeValid(node.Props()[key]) {
+							definition.Fields[fmt.Sprintf(classFieldIdentifier, nodeClassAlias, key)] = node.Props()[key]
 						}
 					}
 				} else {
 					for _, a := range section.AggregateClasses {
 						if nodeClass == a.Class {
 							for _, key := range a.Fields {
-								keyValue, keyOK := node.Props()[key].(string)
-								if keyOK {
+								if fieldTypeValid(node.Props()[key]) {
 									// TODO need to use the alias for non-section class
-									definition.Fields[fmt.Sprintf(classFieldIdentifier, nodeClass, key)] = keyValue
+									definition.Fields[fmt.Sprintf(classFieldIdentifier, nodeClass, key)] = node.Props()[key]
 								}
 							}
 						}

@@ -167,7 +167,20 @@ func LoadDictionary(sourceDir []string, fileExtension string) Dictionary {
 	return d
 }
 
-func fieldTypeValid(f interface{}, ft fieldType) bool {
+func fieldTypeValid(f interface{}) bool {
+	if f == nil {
+		return false
+	}
+
+	switch f.(type) {
+	case string, bool, float64, int:
+		return true
+	default:
+		return false
+	}
+}
+
+func fieldValidForType(f interface{}, ft fieldType) bool {
 	switch ft {
 	case stringField:
 		s, ok := f.(string)
@@ -211,7 +224,7 @@ func ValidateDictionary(d Dictionary, df *DefinitionFormat) error {
 					} else {
 						// mandatory field exists - now check its type is valid
 						// TODO add checking for other types
-						if !fieldTypeValid(definition.Fields[f], stringField) {
+						if !fieldValidForType(definition.Fields[f], stringField) {
 							log.Warn().Msg(fmt.Sprintf(logWarnMandatoryFieldNotAString, f, dID, class))
 							errorsFound++
 						}
