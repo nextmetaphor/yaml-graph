@@ -27,7 +27,7 @@ $ make docker-build
 ### Running
 When running a `yaml-graph` Docker container, we need to mount one or more directories on the host machine containing the YAML definitions within the container. In the example below, we mount host directory `$(PWD)/example-definitions/CloudTaxonomy` which is a sample directory provided in this repository for example purposes only. We will usually also mount a directory containing report definitions to allow us to build reports; in the example below this is set to  
 ```bash
-docker run -it -p7474:7474 -p7687:7687 -v $(PWD)/example-definition/CloudTaxonomy:/home/ymlgraph/definition -v $(PWD)/example-report:/home/ymlgraph/report nextmetaphor/yaml-graph
+docker run -it -p7474:7474 -p7687:7687 -v $(PWD)/example-definition:/home/ymlgraph/definition -v $(PWD)/example-report:/home/ymlgraph/report nextmetaphor/yaml-graph
 ```
 
 From within the Docker container, the definition directory provided will then be mounted at `/home/ymlgraph/definitions`. This directory will need to be specified for the majority of the `yaml-graph` operations, as demonstrated below. 

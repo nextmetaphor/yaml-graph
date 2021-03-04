@@ -1,0 +1,12 @@
+{{- range $record := . -}}
+    {{- $recordOrder := index $record.Fields "MultipleTypes.Order" -}}
+    {{- $recordFavourite := index $record.Fields "MultipleTypes.Favourite" -}}
+    {{- $recordDescription := index $record.Fields "MultipleTypes.Description" -}}
+    {{- $recordValue := index $record.Fields "MultipleTypes.Value" -}}
+    {{- $recordOptional := index $record.Fields "MultipleTypes.Optional" }}
+    {{ $recordOrder }}
+    {{ $recordFavourite }}
+    {{ $recordDescription }}
+    {{ $recordValue }}
+    {{ $recordOptional }}
+{{- end -}}

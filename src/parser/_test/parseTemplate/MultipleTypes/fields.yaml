@@ -1,0 +1,10 @@
+SectionClass:
+  Class: MultipleTypes
+  Fields:
+    - Order
+    - Favourite
+    - Description
+    - Value
+    - Optional
+  OrderFields:
+    - Order

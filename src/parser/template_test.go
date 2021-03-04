@@ -892,14 +892,29 @@ func Test_recurseTemplateSection(t *testing.T) {
 }
 
 func Test_parseTemplate(t *testing.T) {
+	t.Run("MultipleTypes", func(t *testing.T) {
+		var writer bytes.Buffer
+		bufferWriter := bufio.NewWriter(&writer)
+
+		err := ParseTemplate("bolt://localhost:7687", "username", "password", "_test/parseTemplate/MultipleTypes/fields.yaml", "_test/parseTemplate/MultipleTypes/template.gohtml", bufferWriter)
+		assert.Nil(t, err)
+
+		expectedBytes, err := ioutil.ReadFile("_test/parseTemplate/MultipleTypes/output.result")
+		assert.Nil(t, err)
+
+		bufferWriter.Flush()
+		assert.Equal(t, expectedBytes, writer.Bytes())
+	})
+
+
 	t.Run("ParseCompositeAggregateTemplate", func(t *testing.T) {
 		var writer bytes.Buffer
 		bufferWriter := bufio.NewWriter(&writer)
 
-		err := ParseTemplate("bolt://localhost:7687", "username", "password", "_test/recurseTemplateSection/TemplateSection_minimal_composite_aggregate_valid.yaml", "_test/recurseTemplateSection/output-template.gotmpl", bufferWriter)
+		err := ParseTemplate("bolt://localhost:7687", "username", "password", "_test/parseTemplate/CompositeAggregateTemplate/composite_aggregate_template.yaml", "_test/parseTemplate/CompositeAggregateTemplate/output-template.gotmpl", bufferWriter)
 		assert.Nil(t, err)
 
-		expectedBytes, err := ioutil.ReadFile("_test/recurseTemplateSection/output-template.result")
+		expectedBytes, err := ioutil.ReadFile("_test/parseTemplate/CompositeAggregateTemplate/output-template.result")
 		assert.Nil(t, err)
 
 		bufferWriter.Flush()

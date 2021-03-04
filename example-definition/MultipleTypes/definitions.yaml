@@ -1,0 +1,16 @@
+Class: MultipleTypes
+Definitions:
+  Definition1:
+    Fields:
+      Order: 1
+      Favourite: true
+      Description: "My First Definition"
+      Value: 42.2
+      Optional: here
+
+  Definition2:
+    Fields:
+      Order: -1
+      Favourite: false
+      Description: "My Second Definition"
+      Value: -37.7
