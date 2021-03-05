@@ -906,7 +906,6 @@ func Test_parseTemplate(t *testing.T) {
 		assert.Equal(t, expectedBytes, writer.Bytes())
 	})
 
-
 	t.Run("ParseCompositeAggregateTemplate", func(t *testing.T) {
 		var writer bytes.Buffer
 		bufferWriter := bufio.NewWriter(&writer)

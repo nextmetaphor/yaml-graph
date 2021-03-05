@@ -44,8 +44,8 @@ var (
 func init() {
 	rootCmd.AddCommand(loadCmd)
 
-	loadCmd.PersistentFlags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault}, flagSourceUsage)
-
+	loadCmd.Flags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault}, flagSourceUsage)
+	// default value provided so no need to mark flag as required
 }
 
 func load(_ *cobra.Command, _ []string) {

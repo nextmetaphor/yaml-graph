@@ -34,6 +34,7 @@ const (
 	logErrorCouldNotOpenDefinitionFormatConfiguration             = "could not open definition format configuration [%s]"
 	logErrorCouldNotUnmarshalDefinitionFormatConfiguration        = "could not unmarshal definition format configuration [%s]"
 	logDebugSuccessfullyUnmarshalledDefinitionFormatConfiguration = "successfully unmarshalled definition format configuration [%s]"
+	logErrorValidateFailed                                        = "validate failed"
 )
 
 var (
@@ -47,13 +48,16 @@ var (
 func init() {
 	rootCmd.AddCommand(validateCmd)
 
-	validateCmd.PersistentFlags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault},
+	validateCmd.Flags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault},
 		flagSourceUsage)
-	validateCmd.MarkPersistentFlagRequired(flagSourceName)
+	// default value provided so no need to mark flag as required
 
-	validateCmd.PersistentFlags().StringVarP(&definitionFormatFile, flagDefinitionFormatName, flagDefinitionFormatShorthand,
+	validateCmd.Flags().StringVarP(&definitionFormatFile, flagDefinitionFormatName, flagDefinitionFormatShorthand,
 		"", flagDefinitionFormatUsage)
-	validateCmd.MarkPersistentFlagRequired(flagDefinitionFormatName)
+	if err := validateCmd.MarkFlagRequired(flagDefinitionFormatName); err != nil {
+		log.Error().Err(err).Msg(logErrorValidateFailed)
+		os.Exit(exitCodeValidateCmdFailed)
+	}
 }
 
 func loadDefinitionFormatConf(cfgPath string) (definitionFormat *parser.DefinitionFormat, err error) {

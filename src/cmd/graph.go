@@ -44,7 +44,7 @@ var (
 func init() {
 	rootCmd.AddCommand(graphCmd)
 
-	graphCmd.PersistentFlags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault},
+	graphCmd.Flags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault},
 		flagSourceUsage)
 
 	// still under development - hide

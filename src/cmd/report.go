@@ -20,12 +20,14 @@ import (
 	"fmt"
 	"github.com/nextmetaphor/yaml-graph/parser"
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"os"
 )
 
 const (
 	outputTemplateFailure = "failed to generate template"
+	logErrorReportFailed  = "report failed"
 )
 
 var (
@@ -39,18 +41,24 @@ var (
 func init() {
 	rootCmd.AddCommand(reportCmd)
 
-	reportCmd.PersistentFlags().StringVarP(&templateName, flagReportTemplateFileName, flagReportTemplateFileShorthand,
+	reportCmd.Flags().StringVarP(&templateName, flagReportTemplateFileName, flagReportTemplateFileShorthand,
 		"", flagReportTemplateFileUsage)
-	reportCmd.MarkPersistentFlagRequired(flagReportTemplateFileName)
+	if err := reportCmd.MarkFlagRequired(flagReportTemplateFileName); err != nil {
+		log.Error().Err(err).Msg(logErrorReportFailed)
+		os.Exit(exitCodeTemplateCmdFailed)
+	}
 
-	reportCmd.PersistentFlags().StringVarP(&templateFormat, flagReportFieldsFileName, flagReportFieldsFileShorthand,
+	reportCmd.Flags().StringVarP(&templateFormat, flagReportFieldsFileName, flagReportFieldsFileShorthand,
 		"", flagReportFieldsFileUsage)
-	reportCmd.MarkPersistentFlagRequired(flagReportFieldsFileName)
+	if err := reportCmd.MarkFlagRequired(flagReportFieldsFileName); err != nil {
+		log.Error().Err(err).Msg(logErrorReportFailed)
+		os.Exit(exitCodeTemplateCmdFailed)
+	}
 
-	reportCmd.PersistentFlags().BoolVarP(&loadDefinitions, flagLoadDefinitionsName, "", false, flagLoadDefinitionsUsage)
+	reportCmd.Flags().BoolVarP(&loadDefinitions, flagLoadDefinitionsName, "", false, flagLoadDefinitionsUsage)
 
-	reportCmd.PersistentFlags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault}, flagSourceUsage)
-
+	reportCmd.Flags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault}, flagSourceUsage)
+	// default value provided so no need to mark flag as required
 }
 
 func doReport(c *cobra.Command, s []string) {
