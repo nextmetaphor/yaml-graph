@@ -47,6 +47,9 @@ const (
 	commandReportUse      = "report"
 	commandReportUseShort = "Generate report from graph representation"
 
+	commandConsoleUse      = "console"
+	commandConsoleUseShort = "Start a console to navigate the graph"
+
 	flagFileExtension          = "ext"
 	flagFileExtensionShorthand = "e"
 	flagFileExtensionDefault   = "yaml"
@@ -65,7 +68,6 @@ const (
 	flagPasswordName      = "password"
 	flagPasswordShorthand = "p"
 	flagPasswordDefault   = "password"
-	flagPasswordUsage     = "password for graph database"
 
 	flagLogLevelName      = "logLevel"
 	flagLogLevelShorthand = "l"
@@ -74,7 +76,7 @@ const (
 
 	flagSourceName      = "source"
 	flagSourceShorthand = "s"
-	flagSourceUsage     = "Source directory to read definitions from (required)"
+	flagSourceUsage     = "Source directories to read definitions from (required)"
 	flagSourceDefault   = "definition"
 
 	flagReportFieldsFileName      = "fields"
