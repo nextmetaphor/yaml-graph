@@ -22,7 +22,7 @@ import (
 
 const (
 	appName    = "yaml-graph"
-	appVersion = "0.3.13"
+	appVersion = "0.3.14"
 
 	commandRootUse      = appName
 	commandRootUseShort = appName + ": generate graphs from YAML definition files"
@@ -94,6 +94,7 @@ const (
 	flagDefinitionFormatName      = "format"
 	flagDefinitionFormatShorthand = "f"
 	flagDefinitionFormatUsage     = "Definition format file (required)"
+	flagDefinitionFormatDefault   = "definition/format.yml"
 
 	flagLoadDefinitionsName  = "load"
 	flagLoadDefinitionsUsage = "load definitions"
@@ -140,6 +141,7 @@ var (
 	// variable for flagLoadDefinitionsName parameter
 	loadDefinitions bool
 
-	// variable for flagReportFieldsFileName parameter
-	definitionFormatFile string
+	// variable for flagDefinitionFormatName parameter
+	// note: we allow multiple definition format files to enable multiple source directories
+	definitionFormatFile []string
 )

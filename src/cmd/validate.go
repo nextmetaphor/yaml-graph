@@ -17,6 +17,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"github.com/nextmetaphor/yaml-graph/parser"
 	"github.com/rs/zerolog"
@@ -30,9 +31,11 @@ import (
 const (
 	outputValidationSuccess = "successfully validated definitions"
 	outputValidationFailure = "failed to validate definitions"
+	definitionFormatFailure = "failed to build definition format"
 
 	logErrorCouldNotOpenDefinitionFormatConfiguration             = "could not open definition format configuration [%s]"
 	logErrorCouldNotUnmarshalDefinitionFormatConfiguration        = "could not unmarshal definition format configuration [%s]"
+	logErrorCouldNotBuildDefinitionFormat                         = "could not build definition format"
 	logDebugSuccessfullyUnmarshalledDefinitionFormatConfiguration = "successfully unmarshalled definition format configuration [%s]"
 	logErrorValidateFailed                                        = "validate failed"
 )
@@ -52,12 +55,27 @@ func init() {
 		flagSourceUsage)
 	// default value provided so no need to mark flag as required
 
-	validateCmd.Flags().StringVarP(&definitionFormatFile, flagDefinitionFormatName, flagDefinitionFormatShorthand,
-		"", flagDefinitionFormatUsage)
+	validateCmd.Flags().StringSliceVarP(&definitionFormatFile, flagDefinitionFormatName, flagDefinitionFormatShorthand,
+		[]string{flagDefinitionFormatDefault}, flagDefinitionFormatUsage)
 	if err := validateCmd.MarkFlagRequired(flagDefinitionFormatName); err != nil {
 		log.Error().Err(err).Msg(logErrorValidateFailed)
 		os.Exit(exitCodeValidateCmdFailed)
 	}
+}
+
+func mergeDefinitionFormat(current, new *parser.DefinitionFormat) (err error) {
+	if current == nil || new == nil {
+		return errors.New("neither current or new formats objects can be nil")
+	}
+
+	for dfnClass, dfnValue := range new.ClassFormat {
+		if current.ClassFormat[dfnClass] != nil {
+			return errors.New("class " + dfnClass + " has already been declared")
+		}
+		current.ClassFormat[dfnClass] = dfnValue
+	}
+
+	return nil
 }
 
 func loadDefinitionFormatConf(cfgPath string) (definitionFormat *parser.DefinitionFormat, err error) {
@@ -79,18 +97,28 @@ func loadDefinitionFormatConf(cfgPath string) (definitionFormat *parser.Definiti
 func validate(_ *cobra.Command, _ []string) {
 	zerolog.SetGlobalLevel(zerolog.Level(logLevel))
 
-	var definitionFormat *parser.DefinitionFormat
-	if definitionFormatFile != "" {
-		var err error
-		definitionFormat, err = loadDefinitionFormatConf(definitionFormatFile)
-		if err != nil {
-			fmt.Println(outputValidationFailure)
-			os.Exit(exitCodeValidateCmdFailed)
+	overallDefinitionFormat := parser.DefinitionFormat{
+		ClassFormat: map[string]*parser.ClassDefinitionFormat{},
+	}
+	for _, dfnFile := range definitionFormatFile {
+		if dfnFile != "" {
+			definitionFormat, err := loadDefinitionFormatConf(dfnFile)
+			if err != nil {
+				fmt.Println(outputValidationFailure)
+				os.Exit(exitCodeValidateCmdFailed)
+			}
+
+			err = mergeDefinitionFormat(&overallDefinitionFormat, definitionFormat)
+			if err != nil {
+				log.Error().Err(err).Msgf(logErrorCouldNotBuildDefinitionFormat)
+				fmt.Println(definitionFormatFailure)
+				os.Exit(exitCodeValidateCmdFailed)
+			}
 		}
 	}
 
 	d := parser.LoadDictionary(sourceDir, fileExtension)
-	if parser.ValidateDictionary(d, definitionFormat) != nil {
+	if parser.ValidateDictionary(d, &overallDefinitionFormat) != nil {
 		fmt.Println(outputValidationFailure)
 		os.Exit(exitCodeValidateCmdFailed)
 	} else {
