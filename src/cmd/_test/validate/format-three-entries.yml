@@ -1,0 +1,23 @@
+Class:
+  Provider:
+    MandatoryFields:
+      Name:
+      Description:
+    OptionalFields:
+      Test1:
+
+  Service:
+    MandatoryFields:
+      Name:
+      Description:
+      Link:
+    OptionalFields:
+      Test1:
+      Test2:
+
+  Tenancy:
+    MandatoryFields:
+    OptionalFields:
+      Name:
+      Description:
+        Description: "here is the description of the description"

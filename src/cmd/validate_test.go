@@ -113,5 +113,98 @@ func Test_mergeDefinitionFormat(t *testing.T) {
 
 		assert.NotNil(t, err)
 	})
+}
+
+func Test_loadDefinitionFormatConf(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
+		_, err := loadDefinitionFormatConf("_test/validate/format-invalid.yml")
+
+		assert.NotNil(t, err)
+	})
+
+	t.Run("Empty", func(t *testing.T) {
+		fmt, err := loadDefinitionFormatConf("_test/validate/format-no-entries.yml")
+
+		assert.Nil(t, err)
+		assert.Equal(t, &parser.DefinitionFormat{ClassFormat: nil}, fmt)
+	})
+
+	t.Run("Single", func(t *testing.T) {
+		fmt, err := loadDefinitionFormatConf("_test/validate/format-single-entry.yml")
+
+		assert.Nil(t, err)
+		assert.Equal(t, &parser.DefinitionFormat{ClassFormat: map[string]*parser.ClassDefinitionFormat{
+			"Attribute": {
+				Description: "",
+				MandatoryFields: map[string]parser.ClassField{
+					"Name":        {Description: ""},
+					"Description": {Description: ""},
+				},
+				OptionalFields: nil,
+			},
+		}}, fmt)
+	})
+
+	t.Run("Two", func(t *testing.T) {
+		fmt, err := loadDefinitionFormatConf("_test/validate/format-two-entries.yml")
+
+		assert.Nil(t, err)
+		assert.Equal(t, &parser.DefinitionFormat{ClassFormat: map[string]*parser.ClassDefinitionFormat{
+			"Capability": {
+				Description: "",
+				MandatoryFields: map[string]parser.ClassField{
+					"Name":        {Description: ""},
+					"Description": {Description: ""},
+				},
+				OptionalFields: nil,
+			},
+			"Category": {
+				Description: "",
+				MandatoryFields: map[string]parser.ClassField{
+					"Name":        {Description: ""},
+					"Description": {Description: ""},
+				},
+				OptionalFields: nil,
+			},
+		}}, fmt)
+	})
+
+	t.Run("Three", func(t *testing.T) {
+		fmt, err := loadDefinitionFormatConf("_test/validate/format-three-entries.yml")
+
+		assert.Nil(t, err)
+		assert.Equal(t, &parser.DefinitionFormat{ClassFormat: map[string]*parser.ClassDefinitionFormat{
+			"Provider": {
+				Description: "",
+				MandatoryFields: map[string]parser.ClassField{
+					"Name":        {Description: ""},
+					"Description": {Description: ""},
+				},
+				OptionalFields: map[string]parser.ClassField{
+					"Test1": {Description: ""},
+				},
+			},
+			"Service": {
+				Description: "",
+				MandatoryFields: map[string]parser.ClassField{
+					"Name":        {Description: ""},
+					"Description": {Description: ""},
+					"Link":        {Description: ""},
+				},
+				OptionalFields: map[string]parser.ClassField{
+					"Test1": {Description: ""},
+					"Test2": {Description: ""},
+				},
+			},
+			"Tenancy": {
+				Description:     "",
+				MandatoryFields: nil,
+				OptionalFields: map[string]parser.ClassField{
+					"Name":        {Description: ""},
+					"Description": {Description: "here is the description of the description"},
+				},
+			},
+		}}, fmt)
+	})
 
 }

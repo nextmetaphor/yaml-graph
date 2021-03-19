@@ -1,0 +1,12 @@
+Class:
+  Capability:
+    MandatoryFields:
+      Name:
+      Description:
+    OptionalFields:
+
+  Category:
+    MandatoryFields:
+      Name:
+      Description:
+    OptionalFields:
