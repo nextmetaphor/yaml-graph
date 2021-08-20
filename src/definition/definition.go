@@ -17,6 +17,7 @@
 package definition
 
 import (
+	"encoding/base64"
 	"fmt"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v2"
@@ -32,6 +33,7 @@ const (
 	logDebugCannotParseYAMLFile          = "cannot parse YAML file [%s]"
 	logDebugNoDefinitionsFoundInYAMLFile = "no definitions found in YAML file [%s]"
 	logErrorCannotProcessFiles           = "cannot process files in root directory [%s]"
+	logErrorCannotEncodeFile             = "cannot encode file [%s]"
 	logWarnCannotProcessFile             = "cannot process files in directory [%s]"
 	logDebugProcessingFile               = "processing file [%s] in directory [%s]"
 	logDebugIgnoringFile                 = "ignoring file [%s] in directory [%s]"
@@ -59,9 +61,13 @@ type (
 	// Fields TODO
 	Fields map[string]interface{}
 
+	// FileFields TODO
+	FileFields map[string]interface{}
+
 	// Definition TODO
 	Definition struct {
 		Fields         Fields                   `yaml:"Fields"`
+		FileFields     FileFields               `yaml:"FileFields"`
 		References     []Reference              `yaml:"References"`
 		SubDefinitions map[string]Specification `yaml:"SubDefinitions"`
 	}
@@ -82,6 +88,27 @@ type (
 	processFileFuncType = func(filePath string, fileInfo os.FileInfo) (err error)
 )
 
+// simple function to base64 encode the contents of a file and return as a pointer to a string
+func getFileFieldAsBase64(fileName string) (*string, error) {
+	dat, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		return nil, err
+	}
+	encoded := base64.StdEncoding.EncodeToString(dat)
+	return &encoded, nil
+}
+
+func getFileFields(dfn *Definition) {
+	for fieldName, filename := range dfn.FileFields {
+		b64Str, err := getFileFieldAsBase64(filename.(string))
+		if err != nil {
+			log.Debug().Err(err).Msg(fmt.Sprintf(logErrorCannotEncodeFile, filename))
+		} else {
+			dfn.Fields[fieldName] = *b64Str
+		}
+	}
+}
+
 // LoadSpecificationFromFile TODO
 func LoadSpecificationFromFile(filename string) (*Specification, error) {
 	yamlFile, err := ioutil.ReadFile(filename)
@@ -98,7 +125,7 @@ func LoadSpecificationFromFile(filename string) (*Specification, error) {
 		return nil, err
 	}
 
-	// if no definitions are found, return an error and an nil Specification
+	// if no definitions are found, return an error and a nil Specification
 	if len(spec.Definitions) == 0 {
 		log.Debug().Err(err).Msg(fmt.Sprintf(logDebugNoDefinitionsFoundInYAMLFile, filename))
 		return nil, fmt.Errorf(logDebugNoDefinitionsFoundInYAMLFile, filename)
