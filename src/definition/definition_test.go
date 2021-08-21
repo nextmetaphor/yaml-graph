@@ -152,24 +152,32 @@ func Test_processFiles(t *testing.T) {
 
 func Test_getFileFieldAsBase64(t *testing.T) {
 	t.Run("MissingFile", func(t *testing.T) {
-		str, err := getFileFieldAsBase64("./_test/NotThere")
+		str, err := getFileFieldAsBase64(FileDefinition{Path: "./_test/NotThere"})
 		assert.Nil(t, str)
 		assert.NotNil(t, err)
 	})
 
 	t.Run("ValidFile", func(t *testing.T) {
-		str, err := getFileFieldAsBase64("./_test/Base64/simple-file.txt")
+		str, err := getFileFieldAsBase64(FileDefinition{Path: "./_test/Base64/simple-file.txt"})
 		assert.Nil(t, err)
 
 		simpleFileBase64Str := "c2ltcGxlIGZpbGUgdG8gYjY0IGVuY29kZQ=="
+		assert.Equal(t, str, &simpleFileBase64Str)
+	})
+
+	t.Run("ValidFileWithPrefix", func(t *testing.T) {
+		str, err := getFileFieldAsBase64(FileDefinition{Path: "./_test/Base64/simple-file.txt", Prefix: "data:image;base64,"})
+		assert.Nil(t, err)
+
+		simpleFileBase64Str := "data:image;base64,c2ltcGxlIGZpbGUgdG8gYjY0IGVuY29kZQ=="
 		assert.Equal(t, str, &simpleFileBase64Str)
 	})
 }
 
 func Test_getFileFields(t *testing.T) {
 	dfn := Definition{
-		Fields:     map[string]interface{}{"Name": "Definition1_Name", "Description": "Definition1_Description"},
-		FileFields: map[string]interface{}{"ImgSrc": "./_test/Base64/simple-file.txt"},
+		Fields:     Fields{"Name": "Definition1_Name", "Description": "Definition1_Description"},
+		FileFields: FileFields{"ImgSrc": {Path: "./_test/Base64/simple-file.txt"}},
 		References: nil,
 	}
 
@@ -178,4 +186,3 @@ func Test_getFileFields(t *testing.T) {
 		assert.Equal(t, Fields{"Name": "Definition1_Name", "ImgSrc": "c2ltcGxlIGZpbGUgdG8gYjY0IGVuY29kZQ==", "Description": "Definition1_Description"}, dfn.Fields)
 	})
 }
-

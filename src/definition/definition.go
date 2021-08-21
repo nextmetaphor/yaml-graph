@@ -61,8 +61,14 @@ type (
 	// Fields TODO
 	Fields map[string]interface{}
 
+	// FileDefinition TODO
+	FileDefinition struct {
+		Path   string
+		Prefix string
+	}
+
 	// FileFields TODO
-	FileFields map[string]interface{}
+	FileFields map[string]FileDefinition
 
 	// Definition TODO
 	Definition struct {
@@ -89,20 +95,21 @@ type (
 )
 
 // simple function to base64 encode the contents of a file and return as a pointer to a string
-func getFileFieldAsBase64(fileName string) (*string, error) {
-	dat, err := ioutil.ReadFile(fileName)
+func getFileFieldAsBase64(fileDefn FileDefinition) (*string, error) {
+	dat, err := ioutil.ReadFile(fileDefn.Path)
 	if err != nil {
 		return nil, err
 	}
-	encoded := base64.StdEncoding.EncodeToString(dat)
+	encoded := fileDefn.Prefix + base64.StdEncoding.EncodeToString(dat)
+
 	return &encoded, nil
 }
 
 func getFileFields(dfn *Definition) {
-	for fieldName, filename := range dfn.FileFields {
-		b64Str, err := getFileFieldAsBase64(filename.(string))
+	for fieldName, fileDefn := range dfn.FileFields {
+		b64Str, err := getFileFieldAsBase64(fileDefn)
 		if err != nil {
-			log.Debug().Err(err).Msg(fmt.Sprintf(logErrorCannotEncodeFile, filename))
+			log.Debug().Err(err).Msg(fmt.Sprintf(logErrorCannotEncodeFile, fileDefn))
 		} else {
 			dfn.Fields[fieldName] = *b64Str
 		}

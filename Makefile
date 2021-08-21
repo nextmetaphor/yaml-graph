@@ -13,7 +13,7 @@ build:	## build yaml-graph using a docker build container
 	cp src/yaml-graph docker/opt/yaml-graph
 
 test:	## test yaml-graph using a docker test container
-	docker run --rm $(docker_dir_args) golang:latest ./test.sh
+	docker run --rm $(docker_dir_args) ./test.sh
 
 docker-build: build	## build yaml-graph docker image
 	docker build --tag nextmetaphor/yaml-graph:latest docker
