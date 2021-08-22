@@ -63,8 +63,8 @@ type (
 
 	// FileDefinition TODO
 	FileDefinition struct {
-		Path   string
-		Prefix string
+		Path   string `yaml:"Path"`
+		Prefix string `yaml:"Prefix"`
 	}
 
 	// FileFields TODO
@@ -95,8 +95,9 @@ type (
 )
 
 // simple function to base64 encode the contents of a file and return as a pointer to a string
-func getFileFieldAsBase64(fileDefn FileDefinition) (*string, error) {
-	dat, err := ioutil.ReadFile(fileDefn.Path)
+func getFileFieldAsBase64(path string, fileDefn FileDefinition) (*string, error) {
+	log.Debug().Err(nil).Msg(path + string(filepath.Separator) + fileDefn.Path)
+	dat, err := ioutil.ReadFile(path + string(filepath.Separator) + fileDefn.Path)
 	if err != nil {
 		return nil, err
 	}
@@ -105,9 +106,12 @@ func getFileFieldAsBase64(fileDefn FileDefinition) (*string, error) {
 	return &encoded, nil
 }
 
-func getFileFields(dfn *Definition) {
+func getFileFields(path string, dfn *Definition) {
 	for fieldName, fileDefn := range dfn.FileFields {
-		b64Str, err := getFileFieldAsBase64(fileDefn)
+		log.Debug().Err(nil).Msg(fieldName)
+		log.Debug().Err(nil).Msg(fileDefn.Prefix)
+		log.Debug().Err(nil).Msg(fileDefn.Path)
+		b64Str, err := getFileFieldAsBase64(path, fileDefn)
 		if err != nil {
 			log.Debug().Err(err).Msg(fmt.Sprintf(logErrorCannotEncodeFile, fileDefn))
 		} else {
@@ -136,6 +140,11 @@ func LoadSpecificationFromFile(filename string) (*Specification, error) {
 	if len(spec.Definitions) == 0 {
 		log.Debug().Err(err).Msg(fmt.Sprintf(logDebugNoDefinitionsFoundInYAMLFile, filename))
 		return nil, fmt.Errorf(logDebugNoDefinitionsFoundInYAMLFile, filename)
+	}
+
+	// load any files into the definition that are explicitly referenced in FileFields
+	for _, d := range spec.Definitions {
+		getFileFields(filepath.Dir(filename), &d)
 	}
 
 	// TODO debug
