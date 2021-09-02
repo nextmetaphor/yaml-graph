@@ -8,5 +8,6 @@ require (
 	github.com/rs/zerolog v1.20.0
 	github.com/spf13/cobra v1.1.1
 	github.com/stretchr/testify v1.6.1
+	github.com/yuin/goldmark v1.4.0
 	gopkg.in/yaml.v2 v2.2.8
 )

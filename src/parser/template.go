@@ -17,18 +17,23 @@
 package parser
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 	"github.com/nextmetaphor/yaml-graph/graph"
 	"github.com/rs/zerolog/log"
+	"github.com/yuin/goldmark"
 	"gopkg.in/yaml.v2"
 	"html/template"
 	"io"
 	"io/ioutil"
+	"path/filepath"
 	"strings"
 )
 
 const (
+	funcMarkdown = "markdown"
+
 	orderClauseSingular        = "%s.%s"
 	orderClauseMultiple        = "%s,%s.%s"
 	baseTemplateCypher         = "match %s return %s order by %s"
@@ -170,6 +175,21 @@ func loadTemplateConf(cfgPath string) (ms *TemplateSection, err error) {
 	return ms, nil
 }
 
+func fromMarkdown(inputString string) template.HTML {
+	var buf bytes.Buffer
+	if err := goldmark.Convert([]byte(inputString), &buf); err != nil {
+		panic(err)
+	}
+
+	return template.HTML(buf.String())
+}
+
+func getTemplateFuncs() template.FuncMap {
+	return template.FuncMap{
+		funcMarkdown: fromMarkdown,
+	}
+}
+
 // ParseTemplate TODO
 func ParseTemplate(dbURL, username, password, templateConf, templatePath string, writer io.Writer) error {
 	// first load the template configuration
@@ -196,7 +216,7 @@ func ParseTemplate(dbURL, username, password, templateConf, templatePath string,
 		return err
 	}
 
-	template := template.Must(template.ParseFiles(templatePath))
+	template := template.Must(template.New(filepath.Base(templatePath)).Funcs(getTemplateFuncs()).ParseFiles(templatePath))
 	return template.Execute(writer, definitions)
 }
 
