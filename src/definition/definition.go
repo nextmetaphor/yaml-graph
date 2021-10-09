@@ -107,6 +107,18 @@ func getFileFieldAsBase64(path string, fileDefn FileDefinition) (*string, error)
 }
 
 func getFileFields(path string, dfn *Definition) {
+	// first recurse through sub-definitions
+	// TODO do we really want to be using recursion here?
+	if dfn.SubDefinitions != nil {
+		for _, spec := range dfn.SubDefinitions {
+			if spec.Definitions != nil {
+				for _, subDef := range spec.Definitions {
+					getFileFields(path, &subDef)
+				}
+			}
+		}
+	}
+
 	for fieldName, fileDefn := range dfn.FileFields {
 		log.Debug().Err(nil).Msg(fieldName)
 		log.Debug().Err(nil).Msg(fileDefn.Prefix)

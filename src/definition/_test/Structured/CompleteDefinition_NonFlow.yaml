@@ -19,6 +19,11 @@ Definitions:
             Fields:
               Name: ChildClass1
               Description: ChildClassDescription1
+              ImgSrc: "data:image;base64,c2ltcGxlIGZpbGUgdG8gYjY0IGVuY29kZQ=="
+            FileFields:
+              ImgSrc:
+                Prefix: "data:image;base64,"
+                Path: "simple-file.txt"
   Definition2_ID:
     Fields:
       Name: Definition2_Name

@@ -103,7 +103,8 @@ func Test_loadSpecificationFromFile(t *testing.T) {
 						Class:      "ChildClass",
 						References: nil,
 						Definitions: map[string]Definition{"ChildClass1": {
-							Fields:         map[string]interface{}{"Name": "ChildClass1", "Description": "ChildClassDescription1"},
+							Fields:         map[string]interface{}{"Name": "ChildClass1", "Description": "ChildClassDescription1", "ImgSrc": "data:image;base64,c2ltcGxlIGZpbGUgdG8gYjY0IGVuY29kZQ=="},
+							FileFields:     FileFields{"ImgSrc": FileDefinition{Path: "simple-file.txt", Prefix: "data:image;base64,"}},
 							References:     nil,
 							SubDefinitions: nil,
 						}},
@@ -180,10 +181,19 @@ func Test_getFileFields(t *testing.T) {
 		Fields:     Fields{"Name": "Definition1_Name", "Description": "Definition1_Description"},
 		FileFields: FileFields{"ImgSrc": {Path: "simple-file.txt"}},
 		References: nil,
+		SubDefinitions: map[string]Specification{"child_of": {
+			Class:      "ChildClass",
+			References: nil,
+			Definitions: map[string]Definition{"ChildClass1": {
+				Fields:     map[string]interface{}{"Name": "ChildClass1", "Description": "ChildClassDescription1"},
+				FileFields: FileFields{"ImgSrc": FileDefinition{Path: "simple-file.txt", Prefix: "data:image;base64,"}},
+			}},
+		}},
 	}
 
 	t.Run("ValidFile", func(t *testing.T) {
 		getFileFields("./_test/Base64/", &dfn)
 		assert.Equal(t, Fields{"Name": "Definition1_Name", "ImgSrc": "c2ltcGxlIGZpbGUgdG8gYjY0IGVuY29kZQ==", "Description": "Definition1_Description"}, dfn.Fields)
+		assert.Equal(t, Fields{"Name": "ChildClass1", "ImgSrc": "data:image;base64,c2ltcGxlIGZpbGUgdG8gYjY0IGVuY29kZQ==", "Description": "ChildClassDescription1"}, dfn.SubDefinitions["child_of"].Definitions["ChildClass1"].Fields)
 	})
 }
