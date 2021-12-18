@@ -77,7 +77,7 @@ func Test_loadSpecificationFromFile(t *testing.T) {
 							Relationship: "LINKED_CLASS",
 						},
 					},
-					FileFields: FileFields{"ImgSrc": FileDefinition{Path: "simple-file.txt", Prefix: "data:image;base64,"}},
+					FileFields: FileFields{"ImgSrc": FileDefinition{Path: "simple-file.txt", Prefix: "data:image;base64,", Encoding: "base64"}},
 				},
 			},
 		}, spec)
@@ -104,7 +104,7 @@ func Test_loadSpecificationFromFile(t *testing.T) {
 						References: nil,
 						Definitions: map[string]Definition{"ChildClass1": {
 							Fields:         map[string]interface{}{"Name": "ChildClass1", "Description": "ChildClassDescription1", "ImgSrc": "data:image;base64,c2ltcGxlIGZpbGUgdG8gYjY0IGVuY29kZQ=="},
-							FileFields:     FileFields{"ImgSrc": FileDefinition{Path: "simple-file.txt", Prefix: "data:image;base64,"}},
+							FileFields:     FileFields{"ImgSrc": FileDefinition{Path: "simple-file.txt", Prefix: "data:image;base64,", Encoding: "base64"}},
 							References:     nil,
 							SubDefinitions: nil,
 						}},
@@ -152,23 +152,31 @@ func Test_processFiles(t *testing.T) {
 	})
 }
 
-func Test_getFileFieldAsBase64(t *testing.T) {
+func Test_getFileField(t *testing.T) {
 	t.Run("MissingFile", func(t *testing.T) {
 		str, err := getFileFieldAsBase64("./_test/", FileDefinition{Path: "NotThere"})
 		assert.Nil(t, str)
 		assert.NotNil(t, err)
 	})
 
-	t.Run("ValidFile", func(t *testing.T) {
-		str, err := getFileFieldAsBase64("./_test/Base64/", FileDefinition{Path: "simple-file.txt"})
+	t.Run("ValidFile_base64", func(t *testing.T) {
+		str, err := getFileFieldAsBase64("./_test/Base64/", FileDefinition{Path: "simple-file.txt", Encoding: "base64"})
 		assert.Nil(t, err)
 
 		simpleFileBase64Str := "c2ltcGxlIGZpbGUgdG8gYjY0IGVuY29kZQ=="
 		assert.Equal(t, str, &simpleFileBase64Str)
 	})
 
+	t.Run("ValidFile_text", func(t *testing.T) {
+		str, err := getFileFieldAsString("./_test/Base64/", FileDefinition{Path: "simple-file.txt"})
+		assert.Nil(t, err)
+
+		simpleFileStr := "simple file to b64 encode"
+		assert.Equal(t, str, &simpleFileStr)
+	})
+
 	t.Run("ValidFileWithPrefix", func(t *testing.T) {
-		str, err := getFileFieldAsBase64("./_test/Base64/", FileDefinition{Path: "simple-file.txt", Prefix: "data:image;base64,"})
+		str, err := getFileFieldAsBase64("./_test/Base64/", FileDefinition{Path: "simple-file.txt", Prefix: "data:image;base64,", Encoding: "base64"})
 		assert.Nil(t, err)
 
 		simpleFileBase64Str := "data:image;base64,c2ltcGxlIGZpbGUgdG8gYjY0IGVuY29kZQ=="
@@ -186,14 +194,14 @@ func Test_getFileFields(t *testing.T) {
 			References: nil,
 			Definitions: map[string]Definition{"ChildClass1": {
 				Fields:     map[string]interface{}{"Name": "ChildClass1", "Description": "ChildClassDescription1"},
-				FileFields: FileFields{"ImgSrc": FileDefinition{Path: "simple-file.txt", Prefix: "data:image;base64,"}},
+				FileFields: FileFields{"ImgSrc": FileDefinition{Path: "simple-file.txt", Prefix: "data:image;base64,", Encoding: "base64"}},
 			}},
 		}},
 	}
 
 	t.Run("ValidFile", func(t *testing.T) {
 		getFileFields("./_test/Base64/", &dfn)
-		assert.Equal(t, Fields{"Name": "Definition1_Name", "ImgSrc": "c2ltcGxlIGZpbGUgdG8gYjY0IGVuY29kZQ==", "Description": "Definition1_Description"}, dfn.Fields)
+		assert.Equal(t, Fields{"Name": "Definition1_Name", "ImgSrc": "simple file to b64 encode", "Description": "Definition1_Description"}, dfn.Fields)
 		assert.Equal(t, Fields{"Name": "ChildClass1", "ImgSrc": "data:image;base64,c2ltcGxlIGZpbGUgdG8gYjY0IGVuY29kZQ==", "Description": "ChildClassDescription1"}, dfn.SubDefinitions["child_of"].Definitions["ChildClass1"].Fields)
 	})
 }

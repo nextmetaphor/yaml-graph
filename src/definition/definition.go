@@ -29,6 +29,7 @@ import (
 
 const (
 	definitionFormat                     = ".%s"
+	encodingBase64                       = "base64"
 	logDebugCannotLoadYAMLFile           = "cannot load YAML file [%s]"
 	logDebugCannotParseYAMLFile          = "cannot parse YAML file [%s]"
 	logDebugNoDefinitionsFoundInYAMLFile = "no definitions found in YAML file [%s]"
@@ -63,8 +64,9 @@ type (
 
 	// FileDefinition TODO
 	FileDefinition struct {
-		Path   string `yaml:"Path"`
-		Prefix string `yaml:"Prefix"`
+		Path     string `yaml:"Path"`
+		Prefix   string `yaml:"Prefix"`
+		Encoding string `yaml:"Encoding"`
 	}
 
 	// FileFields TODO
@@ -95,6 +97,18 @@ type (
 )
 
 // simple function to base64 encode the contents of a file and return as a pointer to a string
+func getFileFieldAsString(path string, fileDefn FileDefinition) (*string, error) {
+	log.Debug().Err(nil).Msg(path + string(filepath.Separator) + fileDefn.Path)
+	dat, err := ioutil.ReadFile(path + string(filepath.Separator) + fileDefn.Path)
+	if err != nil {
+		return nil, err
+	}
+	encoded := fileDefn.Prefix + string(dat[:])
+
+	return &encoded, nil
+}
+
+// simple function to base64 encode the contents of a file and return as a pointer to a string
 func getFileFieldAsBase64(path string, fileDefn FileDefinition) (*string, error) {
 	log.Debug().Err(nil).Msg(path + string(filepath.Separator) + fileDefn.Path)
 	dat, err := ioutil.ReadFile(path + string(filepath.Separator) + fileDefn.Path)
@@ -123,7 +137,16 @@ func getFileFields(path string, dfn *Definition) {
 		log.Debug().Err(nil).Msg(fieldName)
 		log.Debug().Err(nil).Msg(fileDefn.Prefix)
 		log.Debug().Err(nil).Msg(fileDefn.Path)
-		b64Str, err := getFileFieldAsBase64(path, fileDefn)
+
+		var b64Str *string
+		var err error
+
+		switch fileDefn.Encoding {
+		case encodingBase64:
+			b64Str, err = getFileFieldAsBase64(path, fileDefn)
+		default:
+			b64Str, err = getFileFieldAsString(path, fileDefn)
+		}
 		if err != nil {
 			log.Debug().Err(err).Msg(fmt.Sprintf(logErrorCannotEncodeFile, fileDefn))
 		} else {

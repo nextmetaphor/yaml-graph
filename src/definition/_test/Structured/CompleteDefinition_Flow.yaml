@@ -5,4 +5,4 @@ References: [
 ]
 Definitions:
   Definition1_ID: { Fields: { Name: "Definition1_Name", Description: "Definition1_Description" } }
-  Definition2_ID: { Fields: { Name: "Definition2_Name", Description: "Definition2_Description" }, FileFields: { ImgSrc: { Prefix: "data:image;base64,", Path: "simple-file.txt" } }, References: [ { Class: "MyClass", ID: "Definition1_ID", Relationship: "LINKED_CLASS" } ] }
+  Definition2_ID: { Fields: { Name: "Definition2_Name", Description: "Definition2_Description" }, FileFields: { ImgSrc: { Prefix: "data:image;base64,", Path: "simple-file.txt", Encoding: "base64" } }, References: [ { Class: "MyClass", ID: "Definition1_ID", Relationship: "LINKED_CLASS" } ] }

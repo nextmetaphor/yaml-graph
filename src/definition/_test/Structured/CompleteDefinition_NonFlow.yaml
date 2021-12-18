@@ -24,6 +24,7 @@ Definitions:
               ImgSrc:
                 Prefix: "data:image;base64,"
                 Path: "simple-file.txt"
+                Encoding: "base64"
   Definition2_ID:
     Fields:
       Name: Definition2_Name
