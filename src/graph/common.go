@@ -27,11 +27,12 @@ const (
 	deleteAllCypher   = `MATCH (n) DETACH DELETE(n);`
 	mergeCypherPrefix = `MERGE (n:%s {ID:$ID})`
 	mergeCypherField  = `n.%s=$%s`
+	edgeCypherField   = `%s: "%s"`
 
 	edgeCypher = `
 		MATCH (n1:%s {ID:"%s"})
 		MATCH (n2:%s {ID:"%s"})
-		MERGE (n1)%s-[:%s]-%s(n2);`
+		MERGE (n1)%s-[:%s %s]-%s(n2);`
 
 	logErrorCannotConnectToGraphDatabase = "cannot connect to graph database"
 	logErrorCannotCreateGraphSession     = "cannot create graph session"
@@ -107,7 +108,24 @@ func getEdgeCypherString(class, ID string, refs definition.Reference) string {
 		relationshipTo = ">"
 	}
 
-	return fmt.Sprintf(edgeCypher, class, ID, refs.Class, refs.ID, relationshipFrom, refs.Relationship, relationshipTo)
+	edgeFields := ""
+	if (refs.Fields != nil) && len(refs.Fields) > 0 {
+		edgeFields = "{"
+
+		firstValue := true
+		for fieldName := range refs.Fields {
+			if !firstValue {
+				edgeFields = edgeFields + ","
+			} else {
+				firstValue = false
+			}
+
+			edgeFields = edgeFields + fmt.Sprintf(edgeCypherField, fieldName, refs.Fields[fieldName])
+		}
+		edgeFields = edgeFields + "}"
+	}
+
+	return fmt.Sprintf(edgeCypher, class, ID, refs.Class, refs.ID, relationshipFrom, refs.Relationship, edgeFields, relationshipTo)
 }
 
 // CreateSpecification TODO

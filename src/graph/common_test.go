@@ -74,3 +74,106 @@ func Test_getDefinitionCypherString(t *testing.T) {
 		assert.True(t, strings.Contains(cypher, "n.name3=$name3"))
 	})
 }
+
+func Test_getEdgeCypherString(t *testing.T) {
+
+	t.Run("FromOnly", func(t *testing.T) {
+		ref := definition.Reference{
+			Class:            "class1",
+			ID:               "ID1",
+			Relationship:     "IS_A",
+			RelationshipFrom: true,
+			RelationshipTo:   false,
+			Fields:           nil,
+		}
+
+		cypher := getEdgeCypherString("class2", "ID2", ref)
+		assert.Equal(t, fmt.Sprintf(edgeCypher, "class2", "ID2", ref.Class, ref.ID, "<", ref.Relationship, "", ""), cypher)
+	})
+
+	t.Run("ToOnly", func(t *testing.T) {
+		ref := definition.Reference{
+			Class:            "class1",
+			ID:               "ID1",
+			Relationship:     "IS_A",
+			RelationshipFrom: false,
+			RelationshipTo:   true,
+			Fields:           nil,
+		}
+
+		cypher := getEdgeCypherString("class2", "ID2", ref)
+		assert.Equal(t, fmt.Sprintf(edgeCypher, "class2", "ID2", ref.Class, ref.ID, "", ref.Relationship, "", ">"), cypher)
+	})
+
+	t.Run("NeitherFromTo", func(t *testing.T) {
+		ref := definition.Reference{
+			Class:            "class1",
+			ID:               "ID1",
+			Relationship:     "IS_A",
+			RelationshipFrom: false,
+			RelationshipTo:   false,
+			Fields:           nil,
+		}
+
+		cypher := getEdgeCypherString("class2", "ID2", ref)
+		assert.Equal(t, fmt.Sprintf(edgeCypher, "class2", "ID2", ref.Class, ref.ID, "", ref.Relationship, "", ""), cypher)
+	})
+
+	t.Run("BothFromTo", func(t *testing.T) {
+		ref := definition.Reference{
+			Class:            "class1",
+			ID:               "ID1",
+			Relationship:     "IS_A",
+			RelationshipFrom: true,
+			RelationshipTo:   true,
+			Fields:           nil,
+		}
+
+		cypher := getEdgeCypherString("class2", "ID2", ref)
+		assert.Equal(t, fmt.Sprintf(edgeCypher, "class2", "ID2", ref.Class, ref.ID, "<", ref.Relationship, "", ">"), cypher)
+	})
+
+	t.Run("BothFromToEmptyFields", func(t *testing.T) {
+		ref := definition.Reference{
+			Class:            "class1",
+			ID:               "ID1",
+			Relationship:     "IS_A",
+			RelationshipFrom: true,
+			RelationshipTo:   true,
+			Fields:           definition.Fields{},
+		}
+
+		cypher := getEdgeCypherString("class2", "ID2", ref)
+		assert.Equal(t, fmt.Sprintf(edgeCypher, "class2", "ID2", ref.Class, ref.ID, "<", ref.Relationship, "", ">"), cypher)
+	})
+
+	t.Run("BothFromToSingleField", func(t *testing.T) {
+		ref := definition.Reference{
+			Class:            "class1",
+			ID:               "ID1",
+			Relationship:     "IS_A",
+			RelationshipFrom: true,
+			RelationshipTo:   true,
+			Fields:           definition.Fields{"name1": "value1"},
+		}
+
+		cypher := getEdgeCypherString("class2", "ID2", ref)
+		assert.Equal(t, fmt.Sprintf(edgeCypher, "class2", "ID2", ref.Class, ref.ID, "<", ref.Relationship, "{name1: \"value1\"}", ">"), cypher)
+	})
+
+	t.Run("BothFromToMultipleFields", func(t *testing.T) {
+		ref := definition.Reference{
+			Class:            "class1",
+			ID:               "ID1",
+			Relationship:     "IS_A",
+			RelationshipFrom: true,
+			RelationshipTo:   true,
+			Fields:           definition.Fields{"name1": "value1", "name2": "value2", "name3": "value3"},
+		}
+
+		cypher := getEdgeCypherString("class2", "ID2", ref)
+		// TODO need RegEx check here - order not guaranteed
+		assert.Equal(t, fmt.Sprintf(edgeCypher, "class2", "ID2", ref.Class, ref.ID, "<", ref.Relationship, "{name1: \"value1\",name2: \"value2\",name3: \"value3\"}", ">"), cypher)
+	})
+
+}

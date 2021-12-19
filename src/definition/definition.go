@@ -41,6 +41,9 @@ const (
 )
 
 type (
+	// Fields TODO
+	Fields map[string]interface{}
+
 	// Reference TODO
 	Reference struct {
 		// Class TODO
@@ -57,10 +60,10 @@ type (
 
 		// RelationshipTo TODO
 		RelationshipTo bool `yaml:"RelationshipTo"`
-	}
 
-	// Fields TODO
-	Fields map[string]interface{}
+		// Fields TODO
+		Fields Fields `yaml:"Fields"`
+	}
 
 	// FileDefinition TODO
 	FileDefinition struct {
