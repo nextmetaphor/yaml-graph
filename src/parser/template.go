@@ -24,11 +24,12 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/yuin/goldmark"
 	"gopkg.in/yaml.v2"
-	"html/template"
+	htmltemplate "html/template"
 	"io"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
+	texttemplate "text/template"
 )
 
 const (
@@ -175,17 +176,17 @@ func loadTemplateConf(cfgPath string) (ms *TemplateSection, err error) {
 	return ms, nil
 }
 
-func fromMarkdown(inputString string) template.HTML {
+func fromMarkdown(inputString string) htmltemplate.HTML {
 	var buf bytes.Buffer
 	if err := goldmark.Convert([]byte(inputString), &buf); err != nil {
 		panic(err)
 	}
 
-	return template.HTML(buf.String())
+	return htmltemplate.HTML(buf.String())
 }
 
-func getTemplateFuncs() template.FuncMap {
-	return template.FuncMap{
+func getTemplateFuncs() texttemplate.FuncMap {
+	return texttemplate.FuncMap{
 		funcMarkdown: fromMarkdown,
 	}
 }
@@ -216,7 +217,7 @@ func ParseTemplate(dbURL, username, password, templateConf, templatePath string,
 		return err
 	}
 
-	template := template.Must(template.New(filepath.Base(templatePath)).Funcs(getTemplateFuncs()).ParseFiles(templatePath))
+	template := texttemplate.Must(texttemplate.New(filepath.Base(templatePath)).Funcs(getTemplateFuncs()).ParseFiles(templatePath))
 	return template.Execute(writer, definitions)
 }
 
