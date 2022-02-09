@@ -226,9 +226,7 @@ func ParseTemplate(dbURL, username, password, templateConf, templatePath string,
 		return err
 	}
 
-	fmt.Println("here")
 	template := texttemplate.Must(texttemplate.New(filepath.Base(templatePath)).Option("missingkey=zero").Funcs(getTemplateFuncs()).ParseFiles(templatePath))
-	fmt.Println("and here")
 	return template.Execute(writer, definitions)
 }
 
