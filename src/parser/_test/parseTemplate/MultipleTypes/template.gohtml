@@ -3,7 +3,7 @@
     {{- $recordFavourite := index $record.Fields "MultipleTypes.Favourite" -}}
     {{- $recordDescription := index $record.Fields "MultipleTypes.Description" -}}
     {{- $recordValue := index $record.Fields "MultipleTypes.Value" -}}
-    {{- $recordOptional := index $record.Fields "MultipleTypes.Optional" }}
+    {{- $recordOptional := index $record.Fields "MultipleTypes.Optional" | nilToStr}}
     {{ $recordOrder }}
     {{ $recordFavourite }}
     {{ $recordDescription }}

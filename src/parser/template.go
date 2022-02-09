@@ -34,6 +34,7 @@ import (
 
 const (
 	funcMarkdown = "markdown"
+	funcNilToStr = "nilToStr"
 
 	orderClauseSingular        = "%s.%s"
 	orderClauseMultiple        = "%s,%s.%s"
@@ -185,9 +186,17 @@ func fromMarkdown(inputString string) htmltemplate.HTML {
 	return htmltemplate.HTML(buf.String())
 }
 
+func nilToStr(v interface{}) interface{} {
+	if v == nil {
+		return ""
+	}
+	return v
+}
+
 func getTemplateFuncs() texttemplate.FuncMap {
 	return texttemplate.FuncMap{
 		funcMarkdown: fromMarkdown,
+		funcNilToStr: nilToStr,
 	}
 }
 
@@ -217,7 +226,9 @@ func ParseTemplate(dbURL, username, password, templateConf, templatePath string,
 		return err
 	}
 
-	template := texttemplate.Must(texttemplate.New(filepath.Base(templatePath)).Funcs(getTemplateFuncs()).ParseFiles(templatePath))
+	fmt.Println("here")
+	template := texttemplate.Must(texttemplate.New(filepath.Base(templatePath)).Option("missingkey=zero").Funcs(getTemplateFuncs()).ParseFiles(templatePath))
+	fmt.Println("and here")
 	return template.Execute(writer, definitions)
 }
 
