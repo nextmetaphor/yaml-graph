@@ -1,5 +1,7 @@
 # yaml-graph
-golang-based utility to help define, build and build reports on graph representations of data models from simple YAML files.
+`yaml-graph` is a golang-based utility which enables graph-orientated data structures to be defined in simple `yaml` files. These can then be quickly validated, parsed and converted into a graph representation. `yaml-graph` also provides functionality to produce simple reports from the resulting graph using [go template](https://pkg.go.dev/text/template) syntax. This is typically used to produce `html` or `json` summaries of specific subsets of the data.
+
+`yaml-graph` currently uses the [neo4j community edition](https://github.com/neo4j/neo4j) for the graph database implementation.
 
 *Note: this utility is currently still in development and is subject to breaking changes.*  
 
@@ -10,7 +12,7 @@ golang-based utility to help define, build and build reports on graph representa
 * Local [make](https://www.gnu.org/software/make/) installation: a `makefile` is used to co-ordinate the activities listed above
 
 ### Building
-`yaml-graph` is compiled and packaged into a Docker container, complete with a [neo4j](https://neo4j.com) installation for ease as follows:
+`yaml-graph` is compiled and packaged into a Docker container, complete with a [neo4j community edition database](https://neo4j.com) installation for ease as follows:
 ```bash
 # clone the yaml-graph repository
 $ git clone git@github.com:nextmetaphor/yaml-graph.git
@@ -25,7 +27,7 @@ $ make docker-build
 ## Usage
 
 ### Running
-When running a `yaml-graph` Docker container, we need to mount one or more directories on the host machine containing the YAML definitions within the container. In the example below, we mount host directory `$(PWD)/example-definitions/CloudTaxonomy` which is a sample directory provided in this repository for example purposes only. We will usually also mount a directory containing report definitions to allow us to build reports; in the example below this is set to  
+When running a `yaml-graph` Docker container, we need to mount one or more directories on the host machine containing the `yaml` definitions within the container. In the example below, we mount host directory `$(PWD)/example-definitions/CloudTaxonomy` which is a sample directory provided in this repository for example purposes only. We will usually also mount a directory containing report definitions to allow us to build reports; in the example below this is set to  
 ```bash
 docker run -it -p7474:7474 -p7687:7687 -v $(PWD)/example-definition:/home/ymlgraph/definition -v $(PWD)/example-report:/home/ymlgraph/report nextmetaphor/yaml-graph
 ```
@@ -78,7 +80,7 @@ successfully validated definitions
 Note that multiple definition source directories can be supplied. This is useful, for example, if you are referencing a separate taxonomy that you want to reference, but it makes sense to control the definition files separately.
 ```bash
 # note: example only
-yaml-graph $ yaml-graph validate -s BASE_DEFINITION_DIRECTORY -s ADDITIONAL_DEFINITION_DIRECTORY
+yaml-graph $ yaml-graph validate -s <<BASE_DEFINITION_DIRECTORY>> -s <<ADDITIONAL_DEFINITION_DIRECTORY>>
 successfully validated definitions
 ```
 
