@@ -1,5 +1,7 @@
 # yaml-graph
-`yaml-graph` is a golang-based utility which enables graph-orientated data structures to be defined in simple `yaml` files. These can then be quickly validated, parsed and converted into a graph representation. `yaml-graph` also provides functionality to produce simple reports from the resulting graph using [go template](https://pkg.go.dev/text/template) syntax. This is typically used to produce `html` or `json` summaries of specific subsets of the data.
+`yaml-graph` is a golang-based utility which enables graph-orientated data structures to be defined in simple `yaml` files. These definition files can be stored within a source code management system, allowing graph-based models to be controlled using standard development workflows, notably including authentication & authorisation-based controls, and implicit auditability. `yaml-graph` provides the ability for definition files to be quickly validated, parsed and converted into a graph representation. 
+
+`yaml-graph` also provides functionality to produce simple reports from the resulting graph using [go template](https://pkg.go.dev/text/template) syntax. This is typically used to produce `html` or `json` summaries of specific subsets of the data.
 
 `yaml-graph` currently uses the [neo4j community edition](https://github.com/neo4j/neo4j) for the graph database implementation.
 
