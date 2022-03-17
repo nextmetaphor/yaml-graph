@@ -2,7 +2,7 @@
 Each `yaml` file is used to specify `0..x` definitions of a particular type, referred to as a `Class`.  
 
 The top-level elements of each such `yaml` file are as follows:
-```json
+```yaml
 Class: "class_name"
 References: [{reference_object_1}, {reference_object_2}, ...]
 Definitions: [{definition_object_1}, {definition_object_2}, ...]
