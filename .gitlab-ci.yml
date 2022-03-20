@@ -1,0 +1,20 @@
+image: golang:1.18
+cache:
+  paths:
+    - /go
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script:
+    - cd src
+    - ./build.sh
+
+test:
+  stage: test
+  script:
+    - cd src
+    - ./test.sh
