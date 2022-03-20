@@ -1,9 +1,4 @@
 image: golang:1.18
-cache:
-  paths:
-    - /go
-    - $GOPATH/pkg
-
 stages:
   - build
   - test
