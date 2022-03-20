@@ -2,6 +2,7 @@ image: golang:1.18
 cache:
   paths:
     - /go
+    - $GOPATH/pkg
 
 stages:
   - build
@@ -12,9 +13,14 @@ build:
   script:
     - cd src
     - ./build.sh
+  artifacts:
+    paths:
+      - src/yaml-graph
 
 test:
   stage: test
+  dependencies:
+    - build
   script:
     - cd src
     - ./test.sh
