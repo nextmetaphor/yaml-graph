@@ -1,4 +1,4 @@
-# Specification
+ # Specification
 Each `yaml` file is used to specify `0..x` definitions of a particular type, referred to as a `Class`.  
 
 The top-level elements of each such `yaml` file are as follows:
@@ -14,7 +14,7 @@ With regard to 'standard' graph database terminology:
 
 Each of these top-level elements are discussed in the sections below.
 
-## Top-Level Elements
+## Root-Level Elements
 ### `Class` Element
 There must be **a single** `Class` element per file, and must be a `string`. All subsequent `Definitions` within the file will be of this `Class`.
 
