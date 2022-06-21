@@ -7,6 +7,11 @@
 
 *Note: this utility is currently still in development and is subject to breaking changes.*  
 
+### Example Repository & Report
+Refer to [https://gitlab.com/nextmetaphor/cloud-taxonomy](https://gitlab.com/nextmetaphor/cloud-taxonomy) for an example repository of `yaml-graph` definitions; [https://nextmetaphor.gitlab.io/cloud-taxonomy/](https://nextmetaphor.gitlab.io/cloud-taxonomy/) shows a tabular representation of these definitions (below).
+
+![Cloud Taxonomy generated from yaml-graph definitions](cloud-taxonomy.jpg)
+
 ## Install
 
 ### Prerequisites
