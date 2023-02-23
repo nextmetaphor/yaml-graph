@@ -19,17 +19,18 @@ package parser
 import (
 	"bytes"
 	"fmt"
-	"github.com/neo4j/neo4j-go-driver/neo4j"
-	"github.com/nextmetaphor/yaml-graph/graph"
-	"github.com/rs/zerolog/log"
-	"github.com/yuin/goldmark"
-	"gopkg.in/yaml.v2"
 	htmltemplate "html/template"
 	"io"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 	texttemplate "text/template"
+
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+	"github.com/nextmetaphor/yaml-graph/graph"
+	"github.com/rs/zerolog/log"
+	"github.com/yuin/goldmark"
+	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -162,14 +163,17 @@ func getCypherForSection(parentClass string, parentID string, section TemplateSe
 }
 
 func loadTemplateConf(cfgPath string) (ms *TemplateSection, err error) {
-	yamlFile, err := ioutil.ReadFile(cfgPath)
+	yamlFile, err := os.Open(cfgPath)
 	if err != nil {
 		log.Error().Err(err).Msgf(logErrorCouldNotOpenTemplateConfiguration, cfgPath)
 		return nil, err
 	}
-	err = yaml.UnmarshalStrict(yamlFile, &ms)
-	if err != nil {
-		log.Error().Err(err).Msgf(logErrorCouldNotUnmarshalTemplateConfiguration, cfgPath)
+
+	defer yamlFile.Close()
+	d := yaml.NewDecoder(yamlFile)
+	d.KnownFields(true)
+	if err := d.Decode(&ms); err != nil {
+		log.Error().Err(err).Msgf(logErrorCouldNotOpenTemplateConfiguration, cfgPath)
 		return nil, err
 	}
 
@@ -266,15 +270,15 @@ func recurseTemplateSection(session neo4j.Session, section TemplateSection, pare
 			Fields:                      map[string]interface{}{},
 			CompositeSectionDefinitions: map[string][]SectionDefinition{},
 		}
-		for _, kv := range record.Values() {
+		for _, kv := range record.Values {
 			node, isNode := kv.(neo4j.Node)
 			if isNode {
 				// TODO dangerous - refactor
-				nodeClass := node.Labels()[0]
+				nodeClass := node.Labels[0]
 
 				if nodeClass == section.SectionClass.Class {
-					if node.Props()["ID"] != nil {
-						if definitionID, ok := node.Props()["ID"].(string); ok {
+					if node.Props["ID"] != nil {
+						if definitionID, ok := node.Props["ID"].(string); ok {
 							definition.ID = definitionID
 						} else {
 							log.Warn().Msg(logErrorNonStringDefinitionID)
@@ -289,17 +293,17 @@ func recurseTemplateSection(session neo4j.Session, section TemplateSection, pare
 					}
 
 					for _, key := range section.SectionClass.Fields {
-						if fieldTypeValid(node.Props()[key]) {
-							definition.Fields[fmt.Sprintf(classFieldIdentifier, nodeClassAlias, key)] = node.Props()[key]
+						if fieldTypeValid(node.Props[key]) {
+							definition.Fields[fmt.Sprintf(classFieldIdentifier, nodeClassAlias, key)] = node.Props[key]
 						}
 					}
 				} else {
 					for _, a := range section.AggregateClasses {
 						if nodeClass == a.Class {
 							for _, key := range a.Fields {
-								if fieldTypeValid(node.Props()[key]) {
+								if fieldTypeValid(node.Props[key]) {
 									// TODO need to use the alias for non-section class
-									definition.Fields[fmt.Sprintf(classFieldIdentifier, nodeClass, key)] = node.Props()[key]
+									definition.Fields[fmt.Sprintf(classFieldIdentifier, nodeClass, key)] = node.Props[key]
 								}
 							}
 						}
