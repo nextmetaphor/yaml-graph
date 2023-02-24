@@ -10,7 +10,7 @@ build:	## build yaml-graph using a docker build container
 	docker run --rm $(docker_dir_args) ./build.sh $(GOOS) $(GOARCH)
 
 	# copy the built binary to the docker installation files
-	cp src/yaml-graph docker/utils
+	cp src/yaml-graph docker/opt/yaml-graph
 
 test:	## test yaml-graph using a docker test container
 	docker run --rm $(docker_dir_args) ./test.sh
