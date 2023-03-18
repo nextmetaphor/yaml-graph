@@ -18,9 +18,11 @@
 package cui
 
 import (
+	"errors"
 	"fmt"
-	"github.com/awesome-gocui/gocui"
 	"log"
+
+	"github.com/awesome-gocui/gocui"
 )
 
 const (
@@ -61,7 +63,7 @@ func nextView(g *gocui.Gui, v *gocui.View) error {
 func layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
 	if v, err := g.SetView(treeView, 0, 0, maxX/4-1, maxY-1, 0); err != nil {
-		if !gocui.IsUnknownView(err) {
+		if !errors.Is(err, gocui.ErrUnknownView) {
 			return err
 		}
 		v.Title = "definitions"
@@ -74,7 +76,7 @@ func layout(g *gocui.Gui) error {
 	}
 
 	if v, err := g.SetView(definitionView, maxX/4, 0, maxX-1, maxY/2-1, 0); err != nil {
-		if !gocui.IsUnknownView(err) {
+		if !errors.Is(err, gocui.ErrUnknownView) {
 			return err
 		}
 		v.Title = "definition"
@@ -110,7 +112,7 @@ func OpenConsole(dbURL, dbUsername, dbPassword string) {
 		log.Panicln(err)
 	}
 
-	if err := g.MainLoop(); err != nil && !gocui.IsQuit(err) {
+	if err := g.MainLoop(); err != nil && !errors.Is(err, gocui.ErrQuit) {
 		log.Panicln(err)
 	}
 }

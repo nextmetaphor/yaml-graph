@@ -1,7 +1,5 @@
 Class: "Capability"
-References: [
-  {Class: "Category", ID: "compute", Relationship: "TYPE_OF"},
-]
+References: [{ Class: "Category", ID: "compute", Relationship: "TYPE_OF" }]
 Definitions:
   bare-metal-server:
     Fields:

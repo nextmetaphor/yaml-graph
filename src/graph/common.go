@@ -18,7 +18,8 @@ package graph
 
 import (
 	"fmt"
-	"github.com/neo4j/neo4j-go-driver/neo4j"
+
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/nextmetaphor/yaml-graph/definition"
 	"github.com/rs/zerolog/log"
 )
@@ -47,17 +48,13 @@ func DeleteAll(session neo4j.Session) (neo4j.Result, error) {
 
 // Init TODO
 func Init(dbURL, username, password string) (driver neo4j.Driver, session neo4j.Session, err error) {
-	configForNeo4j40 := func(conf *neo4j.Config) {
-		conf.Encrypted = false
-	}
-
-	driver, err = neo4j.NewDriver(dbURL, neo4j.BasicAuth(username, password, ""), configForNeo4j40)
+	driver, err = neo4j.NewDriver(dbURL, neo4j.BasicAuth(username, password, ""))
 	if err != nil {
 		log.Error().Err(err).Msg(logErrorCannotConnectToGraphDatabase)
 		return
 	}
 
-	session, err = driver.Session(neo4j.AccessModeWrite)
+	session = driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		log.Error().Err(err).Msg(logErrorCannotCreateGraphSession)
 		return

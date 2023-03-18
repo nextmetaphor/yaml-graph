@@ -19,12 +19,13 @@ package definition
 import (
 	"encoding/base64"
 	"fmt"
-	"github.com/rs/zerolog/log"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/rs/zerolog/log"
+	"gopkg.in/yaml.v3"
 )
 
 const (

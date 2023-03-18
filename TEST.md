@@ -1,27 +1,31 @@
 # `yaml-graph` Unit Test Instructions
+
 ### Build `yaml-graph` Image
-```bash
+
+```shell
 # Execute from the root of the yaml-graph git repository
 yaml-graph $ make docker-build
 ...
-[+] Building 0.8s (11/11) FINISHED  
-````
+[+] Building 0.8s (11/11) FINISHED
+```
 
 ### Start the `yaml-graph` Container
-```bash
+
+```shell
 # Execute from the root of the yaml-graph git repository
-yaml-graph $ docker run -it -p7474:7474 -p7687:7687 -v $(PWD)/example-definition:/home/ymlgraph/definition -v $(PWD)/example-report:/home/ymlgraph/report nextmetaphor/yaml-graph 
+yaml-graph $ docker run -it -p7474:7474 -p7687:7687 -v $(PWD)/example-definition:/home/ymlgraph/definition -v $(PWD)/example-report:/home/ymlgraph/report nextmetaphor/yaml-graph
                         _                             _
  _   _  __ _ _ __ ___ | |       __ _ _ __ __ _ _ __ | |__
 | | | |/ _` | '_ ` _ \| |_____ / _` | '__/ _` | '_ \| '_ \
 | |_| | (_| | | | | | | |_____| (_| | | | (_| | |_) | | | |
  \__, |\__,_|_| |_| |_|_|      \__, |_|  \__,_| .__/|_| |_|
  |___/                         |___/          |_|
-version:0.3.22
+version:0.4.0
 ```
 
-### Validate and Load the Test Definitions 
-```bash
+### Validate and Load the Test Definitions
+
+```shell
 # Execute from within the yaml-graph container:
 yaml-graph $ yaml-graph validate -f definition/CloudTaxonomy/definition-format.yml -s definition
 successfully validated definitions
@@ -30,10 +34,11 @@ yaml-graph $ yaml-graph load -s definition
 ```
 
 ### Execute the Unit Tests
-```bash
+
+```shell
 # Execute from outside of the container, in the root of the yaml-graph git repository:
 yaml-graph $ cd src
-src $ ./test.sh 
+src $ ./test.sh
 
 ### go test ###
 ?       github.com/nextmetaphor/yaml-graph      [no test files]

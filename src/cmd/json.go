@@ -19,14 +19,14 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/neo4j/neo4j-go-driver/neo4j"
+	"os"
+
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/nextmetaphor/yaml-graph/graph"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v2"
-	"io/ioutil"
-	"os"
+	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -90,14 +90,17 @@ func init() {
 }
 
 func loadJSONConf(cfgPath string) (ms *JSONLevel, err error) {
-	yamlFile, err := ioutil.ReadFile(cfgPath)
+	yamlFile, err := os.Open(cfgPath)
 	if err != nil {
 		log.Error().Err(err).Msgf(logErrorCouldNotOpenJSONConfiguration, cfgPath)
 		return nil, err
 	}
-	err = yaml.UnmarshalStrict(yamlFile, &ms)
-	if err != nil {
-		log.Error().Err(err).Msgf(logErrorCouldNotUnmarshalJSONConfiguration, cfgPath)
+
+	defer yamlFile.Close()
+	d := yaml.NewDecoder(yamlFile)
+	d.KnownFields(true)
+	if err := d.Decode(&ms); err != nil {
+		log.Error().Err(err).Msgf(logErrorCouldNotUnmarshalDefinitionFormatConfiguration, cfgPath)
 		return nil, err
 	}
 
@@ -159,14 +162,14 @@ func recurseLevel(session neo4j.Session, level JSONLevel, parentClass, parentID 
 
 	for res.Next() {
 		record := res.Record()
-		for _, kv := range record.Values() {
+		for _, kv := range record.Values {
 			node, isNode := kv.(neo4j.Node)
 			if isNode {
 				jNode := new(jsonNode)
 				nodes = append(nodes, jNode)
 				jNode.Class = level.Class
-				if node.Props()[level.NameField] != nil {
-					jNode.Name = node.Props()[level.NameField].(string)
+				if node.Props[level.NameField] != nil {
+					jNode.Name = node.Props[level.NameField].(string)
 				}
 				jNode.Colour = level.Colour
 				jNode.Size = level.Size
@@ -174,14 +177,14 @@ func recurseLevel(session neo4j.Session, level JSONLevel, parentClass, parentID 
 				jNode.Children = []*jsonNode{}
 
 				for _, detailField := range level.DetailFields {
-					if node.Props()[detailField] != nil {
-						jNode.DetailFields[detailField] = node.Props()[detailField].(string)
+					if node.Props[detailField] != nil {
+						jNode.DetailFields[detailField] = node.Props[detailField].(string)
 					}
 				}
 
 				// TODO recursion, really?
 				for _, childLevel := range level.ChildLevel {
-					nodeID := node.Props()["ID"].(string)
+					nodeID := node.Props["ID"].(string)
 					childNodes, err := recurseLevel(session, childLevel, &(level.Class), &nodeID)
 					if err != nil {
 						log.Error().Err(err).Msgf(logErrorExecutingJSONCypher)

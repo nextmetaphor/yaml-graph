@@ -1,1 +1,529 @@
-{"nodes": [{"id": "Category-compute","class": "Category","description": "compute"},{"id": "Category-database","class": "Category","description": "database"},{"id": "Category-networking","class": "Category","description": "networking"},{"id": "Category-storage","class": "Category","description": "storage"},{"id": "Provider-oracle","class": "Provider","description": "Oracle Cloud"},{"id": "Provider-alibaba","class": "Provider","description": "Alibaba"},{"id": "Provider-aws","class": "Provider","description": "AWS"},{"id": "Provider-azure","class": "Provider","description": "Azure"},{"id": "Provider-gcp","class": "Provider","description": "GCP"},{"id": "Provider-ibm","class": "Provider","description": "IBM"},{"id": "Service-vpn-gateway","class": "Service","description": "VPN Gateway"},{"id": "Service-blob-storage","class": "Service","description": "Blob Storage"},{"id": "Service-file-storage","class": "Service","description": "File Storage"},{"id": "Service-container-instance","class": "Service","description": "Container Instance"},{"id": "Service-virtual-machine","class": "Service","description": "Virtual Machine"},{"id": "Service-app-service","class": "Service","description": "App Service"},{"id": "Service-azure-function","class": "Service","description": "Azure Function"},{"id": "Service-application-gateway","class": "Service","description": "Application Gateway"},{"id": "Service-load-balancer","class": "Service","description": "Load Balancer"},{"id": "Service-virtual-machine-scale-set","class": "Service","description": "Virtual Machine Scale Set"},{"id": "Service-disk-storage","class": "Service","description": "Disk Storage"},{"id": "Service-azure-kubernetes-service","class": "Service","description": "Azure Kubernetes Service (AKS)"},{"id": "Service-content-delivery-network","class": "Service","description": "Content Delivery Network"},{"id": "Service-virtual-network","class": "Service","description": "Virtual Network"},{"id": "Service-archive-storage","class": "Service","description": "Archive Storage"},{"id": "Tenancy-serverless","class": "Tenancy","description": "Serverless"},{"id": "Tenancy-unmanaged-hosted","class": "Tenancy","description": "Unmanaged Hosted"},{"id": "Tenancy-managed-hosted","class": "Tenancy","description": "Managed Hosted"},{"id": "Tenancy-saas","class": "Tenancy","description": "Saas"},{"id": "Attribute-observability","class": "Attribute","description": "Observability"},{"id": "Attribute-repeatability","class": "Attribute","description": "repeatability"},{"id": "Attribute-scalabilty","class": "Attribute","description": "Scalability"},{"id": "Attribute-agility","class": "Attribute","description": "agility"},{"id": "Attribute-disaster-recovery","class": "Attribute","description": "Disaster Recovery"},{"id": "Attribute-efficiency","class": "Attribute","description": "efficiency"},{"id": "Attribute-global-presence","class": "Attribute","description": "Global Presence"},{"id": "Attribute-security","class": "Attribute","description": "Security"},{"id": "Attribute-fault-tolerant","class": "Attribute","description": "Fault Tolerant"},{"id": "Attribute-elasticity","class": "Attribute","description": "elasticity"},{"id": "Attribute-managed-services","class": "Attribute","description": "Managed Services"},{"id": "Attribute-high-availability","class": "Attribute","description": "High Availability"},{"id": "Capability-bare-metal-server","class": "Capability","description": "Bare Metal Server"},{"id": "Capability-dedicated-virtual-server","class": "Capability","description": "Dedicated Virtual Server"},{"id": "Capability-shared-virtual-server","class": "Capability","description": "Shared Virtual Server"}],"links": [{"source": "Capability-bare-metal-server","target": "Category-compute", "relationship": "TYPE_OF"},{"source": "Capability-dedicated-virtual-server","target": "Category-compute", "relationship": "TYPE_OF"},{"source": "Capability-shared-virtual-server","target": "Category-compute", "relationship": "TYPE_OF"},{"source": "Service-azure-kubernetes-service","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-azure-kubernetes-service","target": "Category-compute", "relationship": "TYPE_OF"},{"source": "Service-azure-kubernetes-service","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-azure-kubernetes-service","target": "Category-networking", "relationship": "TYPE_OF"},{"source": "Service-azure-kubernetes-service","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-azure-kubernetes-service","target": "Category-storage", "relationship": "TYPE_OF"},{"source": "Service-content-delivery-network","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-content-delivery-network","target": "Category-networking", "relationship": "TYPE_OF"},{"source": "Service-content-delivery-network","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-content-delivery-network","target": "Category-storage", "relationship": "TYPE_OF"},{"source": "Service-virtual-network","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-virtual-network","target": "Category-networking", "relationship": "TYPE_OF"},{"source": "Service-virtual-network","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-virtual-network","target": "Category-storage", "relationship": "TYPE_OF"},{"source": "Service-archive-storage","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-archive-storage","target": "Category-storage", "relationship": "TYPE_OF"},{"source": "Service-blob-storage","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-blob-storage","target": "Category-storage", "relationship": "TYPE_OF"},{"source": "Service-file-storage","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-file-storage","target": "Category-storage", "relationship": "TYPE_OF"},{"source": "Service-container-instance","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-container-instance","target": "Category-compute", "relationship": "TYPE_OF"},{"source": "Service-container-instance","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-container-instance","target": "Category-networking", "relationship": "TYPE_OF"},{"source": "Service-container-instance","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-container-instance","target": "Category-storage", "relationship": "TYPE_OF"},{"source": "Service-virtual-machine","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-virtual-machine","target": "Category-compute", "relationship": "TYPE_OF"},{"source": "Service-virtual-machine","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-virtual-machine","target": "Category-networking", "relationship": "TYPE_OF"},{"source": "Service-virtual-machine","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-virtual-machine","target": "Category-storage", "relationship": "TYPE_OF"},{"source": "Service-app-service","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-app-service","target": "Category-compute", "relationship": "TYPE_OF"},{"source": "Service-app-service","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-app-service","target": "Category-networking", "relationship": "TYPE_OF"},{"source": "Service-app-service","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-app-service","target": "Category-storage", "relationship": "TYPE_OF"},{"source": "Service-azure-function","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-azure-function","target": "Category-compute", "relationship": "TYPE_OF"},{"source": "Service-azure-function","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-azure-function","target": "Category-networking", "relationship": "TYPE_OF"},{"source": "Service-azure-function","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-azure-function","target": "Category-storage", "relationship": "TYPE_OF"},{"source": "Service-vpn-gateway","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-vpn-gateway","target": "Category-networking", "relationship": "TYPE_OF"},{"source": "Service-vpn-gateway","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-vpn-gateway","target": "Category-storage", "relationship": "TYPE_OF"},{"source": "Service-application-gateway","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-application-gateway","target": "Category-networking", "relationship": "TYPE_OF"},{"source": "Service-application-gateway","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-application-gateway","target": "Category-storage", "relationship": "TYPE_OF"},{"source": "Service-load-balancer","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-load-balancer","target": "Category-networking", "relationship": "TYPE_OF"},{"source": "Service-load-balancer","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-load-balancer","target": "Category-storage", "relationship": "TYPE_OF"},{"source": "Service-virtual-machine-scale-set","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-virtual-machine-scale-set","target": "Category-compute", "relationship": "TYPE_OF"},{"source": "Service-virtual-machine-scale-set","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-virtual-machine-scale-set","target": "Category-networking", "relationship": "TYPE_OF"},{"source": "Service-virtual-machine-scale-set","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-virtual-machine-scale-set","target": "Category-storage", "relationship": "TYPE_OF"},{"source": "Service-disk-storage","target": "Provider-azure", "relationship": "PROVIDED_BY"},{"source": "Service-disk-storage","target": "Category-storage", "relationship": "TYPE_OF"}]}
+{
+  "nodes": [
+    { "id": "Category-compute", "class": "Category", "description": "compute" },
+    {
+      "id": "Category-database",
+      "class": "Category",
+      "description": "database"
+    },
+    {
+      "id": "Category-networking",
+      "class": "Category",
+      "description": "networking"
+    },
+    { "id": "Category-storage", "class": "Category", "description": "storage" },
+    {
+      "id": "Provider-oracle",
+      "class": "Provider",
+      "description": "Oracle Cloud"
+    },
+    { "id": "Provider-alibaba", "class": "Provider", "description": "Alibaba" },
+    { "id": "Provider-aws", "class": "Provider", "description": "AWS" },
+    { "id": "Provider-azure", "class": "Provider", "description": "Azure" },
+    { "id": "Provider-gcp", "class": "Provider", "description": "GCP" },
+    { "id": "Provider-ibm", "class": "Provider", "description": "IBM" },
+    {
+      "id": "Service-vpn-gateway",
+      "class": "Service",
+      "description": "VPN Gateway"
+    },
+    {
+      "id": "Service-blob-storage",
+      "class": "Service",
+      "description": "Blob Storage"
+    },
+    {
+      "id": "Service-file-storage",
+      "class": "Service",
+      "description": "File Storage"
+    },
+    {
+      "id": "Service-container-instance",
+      "class": "Service",
+      "description": "Container Instance"
+    },
+    {
+      "id": "Service-virtual-machine",
+      "class": "Service",
+      "description": "Virtual Machine"
+    },
+    {
+      "id": "Service-app-service",
+      "class": "Service",
+      "description": "App Service"
+    },
+    {
+      "id": "Service-azure-function",
+      "class": "Service",
+      "description": "Azure Function"
+    },
+    {
+      "id": "Service-application-gateway",
+      "class": "Service",
+      "description": "Application Gateway"
+    },
+    {
+      "id": "Service-load-balancer",
+      "class": "Service",
+      "description": "Load Balancer"
+    },
+    {
+      "id": "Service-virtual-machine-scale-set",
+      "class": "Service",
+      "description": "Virtual Machine Scale Set"
+    },
+    {
+      "id": "Service-disk-storage",
+      "class": "Service",
+      "description": "Disk Storage"
+    },
+    {
+      "id": "Service-azure-kubernetes-service",
+      "class": "Service",
+      "description": "Azure Kubernetes Service (AKS)"
+    },
+    {
+      "id": "Service-content-delivery-network",
+      "class": "Service",
+      "description": "Content Delivery Network"
+    },
+    {
+      "id": "Service-virtual-network",
+      "class": "Service",
+      "description": "Virtual Network"
+    },
+    {
+      "id": "Service-archive-storage",
+      "class": "Service",
+      "description": "Archive Storage"
+    },
+    {
+      "id": "Tenancy-serverless",
+      "class": "Tenancy",
+      "description": "Serverless"
+    },
+    {
+      "id": "Tenancy-unmanaged-hosted",
+      "class": "Tenancy",
+      "description": "Unmanaged Hosted"
+    },
+    {
+      "id": "Tenancy-managed-hosted",
+      "class": "Tenancy",
+      "description": "Managed Hosted"
+    },
+    { "id": "Tenancy-saas", "class": "Tenancy", "description": "Saas" },
+    {
+      "id": "Attribute-observability",
+      "class": "Attribute",
+      "description": "Observability"
+    },
+    {
+      "id": "Attribute-repeatability",
+      "class": "Attribute",
+      "description": "repeatability"
+    },
+    {
+      "id": "Attribute-scalabilty",
+      "class": "Attribute",
+      "description": "Scalability"
+    },
+    {
+      "id": "Attribute-agility",
+      "class": "Attribute",
+      "description": "agility"
+    },
+    {
+      "id": "Attribute-disaster-recovery",
+      "class": "Attribute",
+      "description": "Disaster Recovery"
+    },
+    {
+      "id": "Attribute-efficiency",
+      "class": "Attribute",
+      "description": "efficiency"
+    },
+    {
+      "id": "Attribute-global-presence",
+      "class": "Attribute",
+      "description": "Global Presence"
+    },
+    {
+      "id": "Attribute-security",
+      "class": "Attribute",
+      "description": "Security"
+    },
+    {
+      "id": "Attribute-fault-tolerant",
+      "class": "Attribute",
+      "description": "Fault Tolerant"
+    },
+    {
+      "id": "Attribute-elasticity",
+      "class": "Attribute",
+      "description": "elasticity"
+    },
+    {
+      "id": "Attribute-managed-services",
+      "class": "Attribute",
+      "description": "Managed Services"
+    },
+    {
+      "id": "Attribute-high-availability",
+      "class": "Attribute",
+      "description": "High Availability"
+    },
+    {
+      "id": "Capability-bare-metal-server",
+      "class": "Capability",
+      "description": "Bare Metal Server"
+    },
+    {
+      "id": "Capability-dedicated-virtual-server",
+      "class": "Capability",
+      "description": "Dedicated Virtual Server"
+    },
+    {
+      "id": "Capability-shared-virtual-server",
+      "class": "Capability",
+      "description": "Shared Virtual Server"
+    }
+  ],
+  "links": [
+    {
+      "source": "Capability-bare-metal-server",
+      "target": "Category-compute",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Capability-dedicated-virtual-server",
+      "target": "Category-compute",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Capability-shared-virtual-server",
+      "target": "Category-compute",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-azure-kubernetes-service",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-azure-kubernetes-service",
+      "target": "Category-compute",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-azure-kubernetes-service",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-azure-kubernetes-service",
+      "target": "Category-networking",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-azure-kubernetes-service",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-azure-kubernetes-service",
+      "target": "Category-storage",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-content-delivery-network",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-content-delivery-network",
+      "target": "Category-networking",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-content-delivery-network",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-content-delivery-network",
+      "target": "Category-storage",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-virtual-network",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-virtual-network",
+      "target": "Category-networking",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-virtual-network",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-virtual-network",
+      "target": "Category-storage",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-archive-storage",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-archive-storage",
+      "target": "Category-storage",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-blob-storage",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-blob-storage",
+      "target": "Category-storage",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-file-storage",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-file-storage",
+      "target": "Category-storage",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-container-instance",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-container-instance",
+      "target": "Category-compute",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-container-instance",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-container-instance",
+      "target": "Category-networking",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-container-instance",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-container-instance",
+      "target": "Category-storage",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-virtual-machine",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-virtual-machine",
+      "target": "Category-compute",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-virtual-machine",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-virtual-machine",
+      "target": "Category-networking",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-virtual-machine",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-virtual-machine",
+      "target": "Category-storage",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-app-service",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-app-service",
+      "target": "Category-compute",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-app-service",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-app-service",
+      "target": "Category-networking",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-app-service",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-app-service",
+      "target": "Category-storage",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-azure-function",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-azure-function",
+      "target": "Category-compute",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-azure-function",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-azure-function",
+      "target": "Category-networking",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-azure-function",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-azure-function",
+      "target": "Category-storage",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-vpn-gateway",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-vpn-gateway",
+      "target": "Category-networking",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-vpn-gateway",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-vpn-gateway",
+      "target": "Category-storage",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-application-gateway",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-application-gateway",
+      "target": "Category-networking",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-application-gateway",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-application-gateway",
+      "target": "Category-storage",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-load-balancer",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-load-balancer",
+      "target": "Category-networking",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-load-balancer",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-load-balancer",
+      "target": "Category-storage",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-virtual-machine-scale-set",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-virtual-machine-scale-set",
+      "target": "Category-compute",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-virtual-machine-scale-set",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-virtual-machine-scale-set",
+      "target": "Category-networking",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-virtual-machine-scale-set",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-virtual-machine-scale-set",
+      "target": "Category-storage",
+      "relationship": "TYPE_OF"
+    },
+    {
+      "source": "Service-disk-storage",
+      "target": "Provider-azure",
+      "relationship": "PROVIDED_BY"
+    },
+    {
+      "source": "Service-disk-storage",
+      "target": "Category-storage",
+      "relationship": "TYPE_OF"
+    }
+  ]
+}

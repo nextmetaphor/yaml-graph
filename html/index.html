@@ -1,57 +1,61 @@
 <!--based on a number of examples from https://github.com/vasturiano/3d-force-graph -->
 
 <head>
-    <style> body {
-        margin: 0;
-    } </style>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
 
-    <script src="//unpkg.com/three"></script>
-    <script src="//unpkg.com/three-spritetext"></script>
-    <script src="//unpkg.com/3d-force-graph"></script>
+  <script src="//unpkg.com/three"></script>
+  <script src="//unpkg.com/three-spritetext"></script>
+  <script src="//unpkg.com/3d-force-graph"></script>
 </head>
 
 <body>
+  <div id="3d-graph"></div>
 
-<div id="3d-graph"></div>
-
-<script>
-    const elem = document.getElementById('3d-graph');
+  <script>
+    const elem = document.getElementById("3d-graph");
 
     const Graph = ForceGraph3D()(elem)
-        // load dataset
-        .jsonUrl('dataset.json')
-        // colour by class of definition
-        .nodeAutoColorBy('class')
-        // allow re-organisation of nodes
-        .onNodeDragEnd(node => {
-            node.fx = node.x;
-            node.fy = node.y;
-            node.fz = node.z;
-        })
-        // add a text label to each node
-        .nodeThreeObjectExtend(true)
-        .nodeThreeObject(node => {
-            // extend node with text sprite
-            const sprite = new SpriteText(`${node.class}:\n${node.description}`);
-            sprite.color = 'lightgrey';
-            sprite.textHeight = 1.0;
-            return sprite;
-        })
-        // show the relationship betweem nodes
-        .linkLabel('relationship')
+      // load dataset
+      .jsonUrl("dataset.json")
+      // colour by class of definition
+      .nodeAutoColorBy("class")
+      // allow re-organisation of nodes
+      .onNodeDragEnd((node) => {
+        node.fx = node.x;
+        node.fy = node.y;
+        node.fz = node.z;
+      })
+      // add a text label to each node
+      .nodeThreeObjectExtend(true)
+      .nodeThreeObject((node) => {
+        // extend node with text sprite
+        const sprite = new SpriteText(`${node.class}:\n${node.description}`);
+        sprite.color = "lightgrey";
+        sprite.textHeight = 1.0;
+        return sprite;
+      })
+      // show the relationship betweem nodes
+      .linkLabel("relationship")
 
-        // focus on clicked nodes
-        .onNodeClick(node => {
-            // Aim at node from outside it
-            const distance = 40;
-            const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
+      // focus on clicked nodes
+      .onNodeClick((node) => {
+        // Aim at node from outside it
+        const distance = 40;
+        const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
 
-            Graph.cameraPosition(
-                { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }, // new position
-                node, // lookAt ({ x, y, z })
-                3000  // ms transition duration
-            );
-        })
-        ;
-</script>
+        Graph.cameraPosition(
+          {
+            x: node.x * distRatio,
+            y: node.y * distRatio,
+            z: node.z * distRatio,
+          }, // new position
+          node, // lookAt ({ x, y, z })
+          3000 // ms transition duration
+        );
+      });
+  </script>
 </body>

@@ -1,4 +1,5 @@
 # `yaml-graph` Definition Quick Reference
+
 This document provides a definitive reference as to the structure of the definition files used by `yaml-graph`.
 Refer to the [detailed documentation](README.md) to understand the purpose of each field and structure, and for
 examples. The applicable source code is [here](../src/definition/definition.go).
@@ -6,6 +7,7 @@ examples. The applicable source code is [here](../src/definition/definition.go).
 Each definition file must contain an implementation of the `Specification` schema as detailed below.
 
 ## `Specification` Schema
+
 ```yaml
 # MANDATORY field which represents the class of all definitions within this file.
 Class: string
@@ -20,6 +22,7 @@ References: []Reference
 ```
 
 ## `Definition` Schema
+
 ```yaml
 # OPTIONAL field which represents the fields of the definition, keyed by field name.
 Fields: map[string]string
@@ -37,6 +40,7 @@ SubDefinitions: map[string]Specification
 ```
 
 ## `FileDefinition` Schema
+
 ```yaml
 # MANDATORY field which specifies the path to the file.
 Path: string
@@ -49,6 +53,7 @@ Encoding: string
 ```
 
 ## `Reference` Schema
+
 ```yaml
 # MANDATORY field which represents the class of the field to which a reference is being made.
 Class: string
