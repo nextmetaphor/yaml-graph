@@ -1,4 +1,4 @@
-FROM neo4j:latest
+FROM neo4j:5.5.0-community
 
 ENV NEO4J_AUTH=none
 
@@ -10,7 +10,7 @@ RUN useradd --no-log-init -r -m ymlgraph && \
 COPY --chown=ymlgraph:ymlgraph ./utils/* /opt/yaml-graph/
 
 # create symlink in /usr/bin to the yaml-graph binary
-RUN ln -s /opt/yaml-graph/yaml-graph /usr/bin/yaml-graph
+RUN ln -s /opt/yaml-graph/yaml-graph /usr/bin/yaml-graph && chmod u+x /opt/yaml-graph/docker-entrypoint.sh
 
 USER ymlgraph
 
