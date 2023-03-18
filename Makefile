@@ -1,5 +1,5 @@
 # variable for common working directory and build cache arguments
-docker_dir_args = -v $(PWD)/src:/usr/src/yaml-graph -v $(PWD)/.buildcache:/go -w /usr/src/yaml-graph golang:latest
+docker_dir_args = -v $(PWD)/src:/usr/src/yaml-graph -v $(PWD)/.buildcache:/go -w /usr/src/yaml-graph golang:1.20.2-bullseye
 
 .PHONY: help
 help:	## show makefile help

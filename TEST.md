@@ -20,7 +20,7 @@ yaml-graph $ docker run -it -p7474:7474 -p7687:7687 -v $(PWD)/example-definition
 | |_| | (_| | | | | | | |_____| (_| | | | (_| | |_) | | | |
  \__, |\__,_|_| |_| |_|_|      \__, |_|  \__,_| .__/|_| |_|
  |___/                         |___/          |_|
-version:0.4.0
+version:0.4.1
 ```
 
 ### Validate and Load the Test Definitions
