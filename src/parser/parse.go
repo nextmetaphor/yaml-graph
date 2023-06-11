@@ -36,7 +36,7 @@ const (
 	logWarnCannotFindClass          = "cannot find class [%s]"
 	logWarnCannotFindDefinition     = "cannot find definition ID [%s] for class [%s]"
 	logWarnMandatoryFieldMissing    = "mandatory field [%s] missing in definition ID [%s] for class [%s]"
-	logWarnMandatoryFieldNotAString = "mandatory field [%s] is not a string in definition ID [%s] for class [%s]"
+	logWarnFieldNotAString          = "field [%s] is not a string in definition ID [%s] for class [%s]"
 	logWarnAdditionalFieldFound     = "field [%s] is not a valid field in definition ID [%s] for class [%s]"
 	logWarnDuplicateDefinitionFound = "duplicate ID [%s] for class [%s] found; only the most recent definition will be kept"
 	logWarnSubdefinitionErrorsFound = "errors loading subdefinitions for ID [%s] for class [%s]"
@@ -63,15 +63,35 @@ type (
 )
 
 type (
-	// DefinitionFormat TODO
-	DefinitionFormat struct {
-		// ClassFormat is a map of classes keyed by class name; the value is format of each class
-		ClassFormat map[string]*ClassDefinitionFormat `yaml:"Class"`
+	// ClassSchema TODO
+	ClassSchema struct {
+		Description string                    `yaml:"Description,omitempty"`
+		Fields      map[string]ClassField     `yaml:"Fields"`
+		References  map[string]ClassReference `yaml:"References"`
 	}
 
 	// ClassField TODO
 	ClassField struct {
 		Description string `yaml:"Description,omitempty"`
+		Mandatory   bool   `yaml:"Mandatory"`
+	}
+
+	// ClassReference TODO
+	ClassReference struct {
+		Description     string `yaml:"Description,omitempty"`
+		AssociatedClass string `yaml:"AssociatedClass"`
+	}
+
+	// ClassSchemaMap TODO
+	ClassSchemaMap struct {
+		// ClassSchemaMap is a map of class schemas keyed by class name
+		ClassSchema map[string]*ClassSchema `yaml:"ClassSchema"`
+	}
+
+	// DefinitionFormat TODO
+	DefinitionFormat struct {
+		// ClassFormat is a map of classes keyed by class name; the value is format of each class
+		ClassFormat map[string]*ClassDefinitionFormat `yaml:"Class"`
 	}
 
 	// ClassDefinitionFormat TODO
@@ -228,7 +248,7 @@ func ValidateDictionary(d Dictionary, df *DefinitionFormat) error {
 						// mandatory field exists - now check its type is valid
 						// TODO add checking for other types
 						if !fieldValidForType(definition.Fields[f], stringField) {
-							log.Warn().Msg(fmt.Sprintf(logWarnMandatoryFieldNotAString, f, dID, class))
+							log.Warn().Msg(fmt.Sprintf(logWarnFieldNotAString, f, dID, class))
 							errorsFound++
 						}
 
@@ -239,6 +259,81 @@ func ValidateDictionary(d Dictionary, df *DefinitionFormat) error {
 								log.Warn().Msg(fmt.Sprintf(logWarnMandatoryFieldMissing, f, dID, class))
 								errorsFound++
 							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// for each definition in the dictionary, ensure that the references are valid
+	for _, definitions := range d {
+		for _, definition := range definitions {
+			for _, ref := range definition.References {
+				if d[ref.Class] == nil {
+					log.Warn().Msg(fmt.Sprintf(logWarnCannotFindClass, ref.Class))
+					errorsFound++
+				} else if d[ref.Class][ref.ID] == nil {
+					log.Warn().Msg(fmt.Sprintf(logWarnCannotFindDefinition, ref.ID, ref.Class))
+					errorsFound++
+				}
+			}
+		}
+	}
+
+	if errorsFound > 0 {
+		log.Error().Msg(fmt.Sprintf(errorDefinitionErrorsFound, errorsFound))
+		return fmt.Errorf(errorDefinitionErrorsFound, errorsFound)
+	}
+
+	return nil
+}
+
+func ValidateDictionaryAgainstSchema(d Dictionary, classSchemaMap *ClassSchemaMap) error {
+	errorsFound := 0
+
+	if classSchemaMap != nil {
+		for class, classSchema := range classSchemaMap.ClassSchema {
+			for dID, definition := range d[class] {
+				// first check that each field in the definition is either a mandatory or optional field...
+				for defField := range definition.Fields {
+					_, fieldInSchema := classSchema.Fields[defField]
+					if !fieldInSchema {
+						log.Warn().Msg(fmt.Sprintf(logWarnAdditionalFieldFound, defField, dID, class))
+						errorsFound++
+					}
+				}
+
+				// ...then validate each of the mandatory fields exists within the definition
+				for f, fDef := range classSchema.Fields {
+					if fDef.Mandatory {
+						if definition.Fields[f] == nil {
+							log.Warn().Msg(fmt.Sprintf(logWarnMandatoryFieldMissing, f, dID, class))
+							errorsFound++
+						} else {
+							// mandatory field exists - now check its type is valid
+							// TODO add checking for other types
+							if !fieldValidForType(definition.Fields[f], stringField) {
+								log.Warn().Msg(fmt.Sprintf(logWarnFieldNotAString, f, dID, class))
+								errorsFound++
+							}
+
+							// additional 'empty string' check for mandatory string fields
+							s, ok := definition.Fields[f].(string)
+							if ok {
+								if strings.TrimSpace(s) == "" {
+									log.Warn().Msg(fmt.Sprintf(logWarnMandatoryFieldMissing, f, dID, class))
+									errorsFound++
+								}
+							}
+						}
+					} else {
+						// optional field - check its type is valid
+						// TODO add checking for other types
+						// TODO merge with mandatory field check too - don't duplicate
+						if !fieldValidForType(definition.Fields[f], stringField) {
+							log.Warn().Msg(fmt.Sprintf(logWarnFieldNotAString, f, dID, class))
+							errorsFound++
 						}
 					}
 				}
