@@ -30,7 +30,7 @@ var (
 )
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&fileExtension, flagFileExtension, flagFileExtensionShorthand, flagFileExtensionDefault, flagFileExtensionUsage)
+	rootCmd.PersistentFlags().StringVarP(&fileExtension, flagFileExtensionName, flagFileExtensionShorthand, flagFileExtensionDefault, flagFileExtensionUsage)
 	rootCmd.PersistentFlags().StringVarP(&dbURL, flagDBURLName, flagDBURLShorthand, flagDBURLDefault, flagDBURLUsage)
 	rootCmd.PersistentFlags().StringVarP(&username, flagUsernameName, flagUsernameShorthand, flagUsernameDefault, flagUsernameUsage)
 	rootCmd.PersistentFlags().StringVarP(&password, flagPasswordName, flagPasswordShorthand, flagPasswordDefault, flagPasswordDefault)

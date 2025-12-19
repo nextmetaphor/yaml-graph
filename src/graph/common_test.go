@@ -172,8 +172,65 @@ func Test_getEdgeCypherString(t *testing.T) {
 		}
 
 		cypher := getEdgeCypherString("class2", "ID2", ref)
-		// TODO need RegEx check here - order not guaranteed
-		assert.Equal(t, fmt.Sprintf(edgeCypher, "class2", "ID2", ref.Class, ref.ID, "<", ref.Relationship, "{name1: \"value1\",name2: \"value2\",name3: \"value3\"}", ">"), cypher)
+
+		assert.Contains(t, cypher, "MATCH (n1:class2 {ID:\"ID2\"})")
+		assert.Contains(t, cypher, "MATCH (n2:class1 {ID:\"ID1\"})")
+		assert.Contains(t, cypher, "MERGE (n1)<-[:IS_A {")
+		assert.Contains(t, cypher, "}]->(n2);")
+
+		assert.Contains(t, cypher, "name1: \"value1\"")
+		assert.Contains(t, cypher, "name2: \"value2\"")
+		assert.Contains(t, cypher, "name3: \"value3\"")
 	})
 
+}
+
+func Test_AddSpecification(t *testing.T) {
+	t.Run("AddSpecification", func(t *testing.T) {
+		bc := NewBatchConfig()
+		spec := definition.Specification{
+			Class: "Class1",
+			Definitions: map[string]definition.Definition{
+				"ID1": {
+					Fields: definition.Fields{"name": "value1"},
+					SubDefinitions: map[string]definition.Specification{
+						"SubRel": {
+							Class: "Class2",
+							Definitions: map[string]definition.Definition{
+								"ID2": {
+									Fields: definition.Fields{"name": "value2"},
+								},
+							},
+						},
+					},
+				},
+			},
+			References: []definition.Reference{
+				{
+					Class:        "ClassRef",
+					ID:           "IDRef",
+					Relationship: "REL",
+				},
+			},
+		}
+		bc.AddSpecification(spec, nil)
+
+		assert.Len(t, bc.Nodes["Class1"], 1)
+		assert.Equal(t, "ID1", bc.Nodes["Class1"][0]["ID"])
+		assert.Equal(t, "value1", bc.Nodes["Class1"][0]["name"])
+
+		assert.Len(t, bc.Nodes["Class2"], 1)
+		assert.Equal(t, "ID2", bc.Nodes["Class2"][0]["ID"])
+		assert.Equal(t, "value2", bc.Nodes["Class2"][0]["name"])
+
+		// 1 from spec.References, 1 from parentReference (ID2 -> ID1)
+		assert.Len(t, bc.Edges["Class1"], 1)
+		assert.Equal(t, "ID1", bc.Edges["Class1"][0].ID1)
+		assert.Equal(t, "IDRef", bc.Edges["Class1"][0].ID2)
+
+		assert.Len(t, bc.Edges["Class2"], 1)
+		assert.Equal(t, "ID2", bc.Edges["Class2"][0].ID1)
+		assert.Equal(t, "ID1", bc.Edges["Class2"][0].ID2)
+		assert.Equal(t, "SubRel", bc.Edges["Class2"][0].Relationship)
+	})
 }

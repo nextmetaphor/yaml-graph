@@ -18,12 +18,15 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"time"
+
 	"github.com/nextmetaphor/yaml-graph/definition"
 	"github.com/nextmetaphor/yaml-graph/graph"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/schollz/progressbar/v3"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 const (
@@ -51,6 +54,8 @@ func init() {
 func load(_ *cobra.Command, _ []string) {
 	zerolog.SetGlobalLevel(zerolog.Level(logLevel))
 
+	start := time.Now()
+
 	driver, session, err := graph.Init(dbURL, username, password)
 	if err != nil {
 		log.Error().Err(err).Msg(logErrorGraphDatabaseConnectionFailed)
@@ -61,16 +66,28 @@ func load(_ *cobra.Command, _ []string) {
 	defer session.Close()
 
 	graph.DeleteAll(session)
+	batchConfig := graph.NewBatchConfig()
 
-	// First create the nodes...
+	fileCount := 0
 	for _, dir := range sourceDir {
 		definition.ProcessFiles(dir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
+			fileCount++
+			return nil
+		})
+	}
+
+	fmt.Println("Loading definitions...")
+	fileBar := progressbar.Default(int64(fileCount), "loading")
+
+	for _, dir := range sourceDir {
+		definition.ProcessFiles(dir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
+			fileBar.Add(1)
 			log.Debug().Msg(fmt.Sprintf(logDebugAboutToLoadFile, filePath))
 
 			spec, err := definition.LoadSpecificationFromFile(filePath)
 			if (err == nil) && (spec != nil) {
 				log.Debug().Msg(fmt.Sprintf(logDebugSuccessfullyLoadedFile, filePath))
-				graph.CreateSpecification(session, *spec)
+				batchConfig.AddSpecification(*spec, nil)
 
 			} else {
 				log.Warn().Msgf(logWarnSkippingFile, filePath, err)
@@ -79,22 +96,37 @@ func load(_ *cobra.Command, _ []string) {
 			return nil
 		})
 	}
+	fileBar.Finish()
+	fmt.Println()
 
-	// ...then create the edges
-	for _, dir := range sourceDir {
-		definition.ProcessFiles(dir, fileExtension, func(filePath string, _ os.FileInfo) (err error) {
-			log.Debug().Msg(fmt.Sprintf(logDebugAboutToLoadFile, filePath))
+	nodeClassCount := len(batchConfig.Nodes)
+	fmt.Println("Creating definitions...")
+	nodeBar := progressbar.Default(int64(nodeClassCount), "creating nodes")
+	batchConfig.CreateNodes(session, func() { nodeBar.Add(1) })
+	nodeBar.Finish()
+	fmt.Println()
 
-			spec, err := definition.LoadSpecificationFromFile(filePath)
-			if (err == nil) && (spec != nil) {
-				log.Debug().Msg(fmt.Sprintf(logDebugSuccessfullyLoadedFile, filePath))
-				graph.CreateSpecificationEdge(session, *spec, nil)
-
-			} else {
-				log.Warn().Msgf(logWarnSkippingFile, filePath, err)
-			}
-
-			return nil
-		})
+	edgeCount := 0
+	for class := range batchConfig.Edges {
+		edgeCount += len(batchConfig.Edges[class])
 	}
+
+	fmt.Println("Creating references")
+	// We'll call progress for each edge in CreateEdges
+	edgeBar := progressbar.Default(int64(edgeCount), "creating edges")
+	batchConfig.CreateEdges(session, func() { edgeBar.Add(1) })
+	edgeBar.Finish()
+	fmt.Println()
+
+	duration := time.Since(start)
+	nodeCount := 0
+	for class := range batchConfig.Nodes {
+		nodeCount += len(batchConfig.Nodes[class])
+	}
+
+	fmt.Printf("Summary:\n")
+	fmt.Printf("- Definition files loaded: %d\n", fileCount)
+	fmt.Printf("- Definitions created:    %d\n", nodeCount)
+	fmt.Printf("- References created:     %d\n", edgeCount)
+	fmt.Printf("- Total time taken:       %v\n", duration)
 }

@@ -22,7 +22,7 @@ import (
 
 const (
 	appName    = "yaml-graph"
-	appVersion = "0.4.2"
+	appVersion = "0.5.1"
 
 	commandRootUse      = appName
 	commandRootUseShort = appName + ": generate graphs from YAML definition files"
@@ -41,6 +41,9 @@ const (
 	commandValidateUse      = "validate"
 	commandValidateUseShort = "Validate definition files"
 
+	commandSchemaValidateUse      = "schema_validate"
+	commandSchemaValidateUseShort = "Validate definition files against a schema"
+
 	commandJSONUse      = "json"
 	commandJSONUseShort = "generate JSON tree"
 
@@ -49,11 +52,6 @@ const (
 
 	commandConsoleUse      = "console"
 	commandConsoleUseShort = "Start a console to navigate the graph"
-
-	flagFileExtension          = "ext"
-	flagFileExtensionShorthand = "e"
-	flagFileExtensionDefault   = "yaml"
-	flagFileExtensionUsage     = "file extension for definitions"
 
 	flagDBURLName      = "dbURL"
 	flagDBURLShorthand = "d"
@@ -78,6 +76,11 @@ const (
 	flagSourceShorthand = "s"
 	flagSourceUsage     = "Source directories to read definitions from (required)"
 	flagSourceDefault   = "definition"
+
+	flagFileExtensionName      = "extension"
+	flagFileExtensionShorthand = "e"
+	flagFileExtensionDefault   = "yaml"
+	flagFileExtensionUsage     = "File extension for definitions"
 
 	flagReportFieldsFileName      = "fields"
 	flagReportFieldsFileShorthand = "f"

@@ -1,4 +1,4 @@
-FROM neo4j:5.5.0-community
+FROM neo4j:5.26.19-community
 
 ENV NEO4J_AUTH=none
 

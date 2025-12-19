@@ -41,6 +41,176 @@ const (
 	logErrorCannotRunCypher              = "error when running cypher"
 )
 
+type (
+	// ProgressFunc is a callback function to report progress
+	ProgressFunc func()
+
+	// BatchConfig TODO
+	BatchConfig struct {
+		// Nodes is a map of class to a list of node fields
+		Nodes map[string][]definition.Fields
+		// Edges is a map of class to a list of edge definitions
+		Edges map[string][]batchEdge
+	}
+
+	batchEdge struct {
+		ID1          string
+		ID2          string
+		Class2       string
+		Relationship string
+		From         bool
+		To           bool
+		Fields       definition.Fields
+	}
+)
+
+// NewBatchConfig TODO
+func NewBatchConfig() *BatchConfig {
+	return &BatchConfig{
+		Nodes: make(map[string][]definition.Fields),
+		Edges: make(map[string][]batchEdge),
+	}
+}
+
+// AddSpecification TODO
+func (c *BatchConfig) AddSpecification(spec definition.Specification, parentReference *definition.Reference) {
+	class := spec.Class
+
+	for definitionID, def := range spec.Definitions {
+		// Add node
+		fields := make(definition.Fields)
+		for k, v := range def.Fields {
+			fields[k] = v
+		}
+		fields["ID"] = definitionID
+		c.Nodes[class] = append(c.Nodes[class], fields)
+
+		// Add edges from Specification-scoped references
+		for _, ref := range spec.References {
+			c.Edges[class] = append(c.Edges[class], batchEdge{
+				ID1:          definitionID,
+				ID2:          ref.ID,
+				Class2:       ref.Class,
+				Relationship: ref.Relationship,
+				From:         ref.RelationshipFrom,
+				To:           ref.RelationshipTo,
+				Fields:       ref.Fields,
+			})
+		}
+
+		// Add edges from Definition-scoped references
+		for _, ref := range def.References {
+			c.Edges[class] = append(c.Edges[class], batchEdge{
+				ID1:          definitionID,
+				ID2:          ref.ID,
+				Class2:       ref.Class,
+				Relationship: ref.Relationship,
+				From:         ref.RelationshipFrom,
+				To:           ref.RelationshipTo,
+				Fields:       ref.Fields,
+			})
+		}
+
+		// Add edge from parentReference if it exists
+		if parentReference != nil {
+			c.Edges[class] = append(c.Edges[class], batchEdge{
+				ID1:          definitionID,
+				ID2:          parentReference.ID,
+				Class2:       parentReference.Class,
+				Relationship: parentReference.Relationship,
+				From:         parentReference.RelationshipFrom,
+				To:           parentReference.RelationshipTo,
+				Fields:       parentReference.Fields,
+			})
+		}
+
+		// Recurse through sub-definitions
+		if def.SubDefinitions != nil {
+			for subdefRelationship, subSpec := range def.SubDefinitions {
+				c.AddSpecification(subSpec, &definition.Reference{
+					Class:        class,
+					ID:           definitionID,
+					Relationship: subdefRelationship,
+				})
+			}
+		}
+	}
+}
+
+// CreateNodes TODO
+func (c *BatchConfig) CreateNodes(session neo4j.Session, progress ProgressFunc) {
+	for class, nodes := range c.Nodes {
+		if progress != nil {
+			progress()
+		}
+		if len(nodes) == 0 {
+			continue
+		}
+
+		// We need to build the Cypher query for this class.
+		// Since all nodes in the same class might have different fields,
+		// but Cypher's SET n += propertyMap is very efficient.
+		cypher := fmt.Sprintf("UNWIND $props AS properties MERGE (n:%s {ID: properties.ID}) SET n += properties", class)
+		ExecuteCypher(session, cypher, map[string]interface{}{"props": nodes})
+	}
+}
+
+// CreateEdges TODO
+func (c *BatchConfig) CreateEdges(session neo4j.Session, progress ProgressFunc) {
+	type edgeKey struct {
+		class1       string
+		class2       string
+		relationship string
+		from         bool
+		to           bool
+	}
+
+	groups := make(map[edgeKey][]map[string]interface{})
+	for class1, edges := range c.Edges {
+		for _, e := range edges {
+			key := edgeKey{
+				class1:       class1,
+				class2:       e.Class2,
+				relationship: e.Relationship,
+				from:         e.From,
+				to:           e.To,
+			}
+			groups[key] = append(groups[key], map[string]interface{}{
+				"ID1":    e.ID1,
+				"ID2":    e.ID2,
+				"Fields": e.Fields,
+			})
+		}
+	}
+
+	for key, edgeList := range groups {
+		relationshipFrom := ""
+		if key.from {
+			relationshipFrom = "<"
+		}
+		relationshipTo := ""
+		if key.to {
+			relationshipTo = ">"
+		}
+
+		cypher := fmt.Sprintf(`
+			UNWIND $props AS edge
+			MATCH (n1:%s {ID: edge.ID1})
+			MATCH (n2:%s {ID: edge.ID2})
+			MERGE (n1)%s-[r:%s]-%s(n2)
+			SET r += edge.Fields`,
+			key.class1, key.class2, relationshipFrom, key.relationship, relationshipTo)
+
+		ExecuteCypher(session, cypher, map[string]interface{}{"props": edgeList})
+
+		if progress != nil {
+			for range edgeList {
+				progress()
+			}
+		}
+	}
+}
+
 // DeleteAll TODO
 func DeleteAll(session neo4j.Session) (neo4j.Result, error) {
 	return ExecuteCypher(session, deleteAllCypher, nil)
