@@ -151,7 +151,7 @@ func getCypherForSection(parentClass string, parentID string, section TemplateSe
 	}
 
 	for _, aggregateClass := range section.AggregateClasses {
-		aggregateMatchClause := fmt.Sprintf(aggregateCypherMatchClause, sectionClass, sectionClass,
+		aggregateMatchClause := fmt.Sprintf(aggregateCypherMatchClause, sectionClassAlias, sectionClass,
 			aggregateClass.Relationship, aggregateClass.Class, aggregateClass.Class)
 		matchClause = matchClause + aggregateMatchClause
 
