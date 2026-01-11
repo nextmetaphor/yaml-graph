@@ -50,9 +50,6 @@ const (
 	commandReportUse      = "report"
 	commandReportUseShort = "Generate report from graph representation"
 
-	commandConsoleUse      = "console"
-	commandConsoleUseShort = "Start a console to navigate the graph"
-
 	flagDBURLName      = "dbURL"
 	flagDBURLShorthand = "d"
 	flagDBURLDefault   = "bolt://localhost:7687"
@@ -121,9 +118,6 @@ var (
 	// variable for flagSourceName parameter
 	// note: we allow multiple source directories to enable the union of two definition directories
 	sourceDir []string
-
-	// variable for flagReportDefinitionName parameter
-	reportDefinition string
 
 	// variable for flagFileExtension parameter
 	fileExtension string

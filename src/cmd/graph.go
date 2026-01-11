@@ -54,7 +54,7 @@ func init() {
 	graphCmd.Hidden = true
 }
 
-func graphFunc(cmd *cobra.Command, args []string) {
+func graphFunc(_ *cobra.Command, _ []string) {
 	zerolog.SetGlobalLevel(zerolog.Level(logLevel))
 
 	d := parser.LoadDictionary(sourceDir, fileExtension)
