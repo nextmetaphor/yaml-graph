@@ -18,6 +18,7 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/nextmetaphor/yaml-graph/parser"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
@@ -46,6 +47,8 @@ func init() {
 
 	graphCmd.Flags().StringSliceVarP(&sourceDir, flagSourceName, flagSourceShorthand, []string{flagSourceDefault},
 		flagSourceUsage)
+	graphCmd.Flags().StringSliceVarP(&graphFields, flagGraphFieldsName, flagGraphFieldsShorthand, []string{flagGraphFieldsDefault},
+		flagGraphFieldsUsage)
 
 	// still under development - hide
 	graphCmd.Hidden = true
@@ -60,10 +63,20 @@ func graphFunc(cmd *cobra.Command, args []string) {
 	firstElement := true
 	for class, definitions := range d {
 		for id, definition := range definitions {
+			var name interface{}
+			for _, fieldName := range graphFields {
+				if definition.Fields[fieldName] != nil {
+					name = definition.Fields[fieldName]
+					break
+				}
+			}
+			if name == nil {
+				name = id
+			}
 			if firstElement {
-				fmt.Print(fmt.Sprintf(perNodeStringFirst, class, id, class, definition.Fields["Name"]))
+				fmt.Print(fmt.Sprintf(perNodeStringFirst, class, id, class, name))
 			} else {
-				fmt.Print(fmt.Sprintf(perNodeStringNotFirst, class, id, class, definition.Fields["Name"]))
+				fmt.Print(fmt.Sprintf(perNodeStringNotFirst, class, id, class, name))
 			}
 			firstElement = false
 		}

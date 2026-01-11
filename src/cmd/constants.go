@@ -82,6 +82,11 @@ const (
 	flagFileExtensionDefault   = "yaml"
 	flagFileExtensionUsage     = "File extension for definitions"
 
+	flagGraphFieldsName      = "fields"
+	flagGraphFieldsShorthand = "f"
+	flagGraphFieldsDefault   = "Name"
+	flagGraphFieldsUsage     = "Field names to use for node description (order of preference)"
+
 	flagReportFieldsFileName      = "fields"
 	flagReportFieldsFileShorthand = "f"
 	flagReportFieldsFileUsage     = "report fields file (required)"
@@ -147,4 +152,7 @@ var (
 	// variable for flagDefinitionFormatName parameter
 	// note: we allow multiple definition format files to enable multiple source directories
 	definitionFormatFile []string
+
+	// variable for flagGraphFieldsName parameter
+	graphFields []string
 )
