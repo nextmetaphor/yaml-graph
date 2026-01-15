@@ -17,21 +17,22 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 
-	"github.com/nextmetaphor/yaml-graph/parser"
+	"os"
+
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+	"github.com/nextmetaphor/yaml-graph/graph"
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
 const (
-	nodeHeaderString      = "{\"nodes\": ["
-	perNodeStringFirst    = "{\"id\": \"%s-%s\",\"class\": \"%s\",\"description\": \"%s\"}"
-	perNodeStringNotFirst = ",{\"id\": \"%s-%s\",\"class\": \"%s\",\"description\": \"%s\"}"
-	linkHeaderString      = "],\"links\": ["
-	perLinkStringFirst    = "{\"source\": \"%s-%s\",\"target\": \"%s-%s\", \"relationship\": \"%s\"}"
-	perLinkStringNotFirst = ",{\"source\": \"%s-%s\",\"target\": \"%s-%s\", \"relationship\": \"%s\"}"
-	linkFooterString      = "]}"
+	nodeHeaderString = "{\"nodes\": ["
+	linkHeaderString = "],\"links\": ["
+	linkFooterString = "]}"
 )
 
 var (
@@ -57,16 +58,32 @@ func init() {
 func graphFunc(_ *cobra.Command, _ []string) {
 	zerolog.SetGlobalLevel(zerolog.Level(logLevel))
 
-	d := parser.LoadDictionary(sourceDir, fileExtension)
+	driver, session, err := graph.Init(dbURL, username, password)
+	if err != nil {
+		log.Error().Err(err).Msg(logErrorGraphDatabaseConnectionFailed)
+		os.Exit(exitCodeLoadCmdFailed)
+	}
+
+	defer driver.Close()
+	defer session.Close()
 
 	fmt.Print(nodeHeaderString)
 	firstElement := true
-	for class, definitions := range d {
-		for id, definition := range definitions {
+
+	res, err := graph.ExecuteCypher(session, "MATCH (n) RETURN n, labels(n)[0] as class", nil)
+	if err == nil {
+		for res.Next() {
+			record := res.Record()
+			n, _ := record.Get("n")
+			node := n.(neo4j.Node)
+			c, _ := record.Get("class")
+			class := c.(string)
+			id := node.Props["ID"].(string)
+
 			var name interface{}
 			for _, fieldName := range graphFields {
-				if definition.Fields[fieldName] != nil {
-					name = definition.Fields[fieldName]
+				if node.Props[fieldName] != nil {
+					name = node.Props[fieldName]
 					break
 				}
 			}
@@ -74,26 +91,49 @@ func graphFunc(_ *cobra.Command, _ []string) {
 				name = id
 			}
 			if firstElement {
-				fmt.Print(fmt.Sprintf(perNodeStringFirst, class, id, class, name))
+				firstElement = false
 			} else {
-				fmt.Print(fmt.Sprintf(perNodeStringNotFirst, class, id, class, name))
+				fmt.Print(",")
 			}
-			firstElement = false
+
+			nodeData := map[string]string{
+				"id":          fmt.Sprintf("%s-%s", class, id),
+				"class":       class,
+				"description": fmt.Sprintf("%v", name),
+			}
+			jb, _ := json.Marshal(nodeData)
+			fmt.Print(string(jb))
 		}
 	}
+
 	fmt.Print(linkHeaderString)
 	firstElement = true
-	for class, definitions := range d {
-		for id, definition := range definitions {
-			for _, ref := range definition.References {
-				if firstElement {
-					fmt.Print(fmt.Sprintf(perLinkStringFirst, class, id, ref.Class, ref.ID, ref.Relationship))
-				} else {
-					fmt.Print(fmt.Sprintf(perLinkStringNotFirst, class, id, ref.Class, ref.ID, ref.Relationship))
-				}
+
+	res, err = graph.ExecuteCypher(session, "MATCH (n1)-[r]->(n2) RETURN n1.ID as sourceID, labels(n1)[0] as sourceClass, n2.ID as targetID, labels(n2)[0] as targetClass, type(r) as relationship", nil)
+	if err == nil {
+		for res.Next() {
+			record := res.Record()
+			sourceID, _ := record.Get("sourceID")
+			sourceClass, _ := record.Get("sourceClass")
+			targetID, _ := record.Get("targetID")
+			targetClass, _ := record.Get("targetClass")
+			relationship, _ := record.Get("relationship")
+
+			if firstElement {
 				firstElement = false
+			} else {
+				fmt.Print(",")
 			}
+
+			linkData := map[string]string{
+				"source":       fmt.Sprintf("%s-%v", sourceClass, sourceID),
+				"target":       fmt.Sprintf("%s-%v", targetClass, targetID),
+				"relationship": fmt.Sprintf("%v", relationship),
+			}
+			jb, _ := json.Marshal(linkData)
+			fmt.Print(string(jb))
 		}
 	}
+
 	fmt.Print(linkFooterString)
 }

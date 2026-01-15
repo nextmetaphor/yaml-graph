@@ -107,11 +107,16 @@ type (
 )
 
 func getOrderClause(section TemplateSection) (orderClause string) {
+	sectionClassAlias := strings.TrimSpace(section.SectionClass.ClassAlias)
+	if sectionClassAlias == "" {
+		sectionClassAlias = strings.TrimSpace(section.SectionClass.Class)
+	}
+
 	for i, field := range section.SectionClass.OrderFields {
 		if i == 0 {
-			orderClause = fmt.Sprintf(orderClauseSingular, section.SectionClass.Class, field)
+			orderClause = fmt.Sprintf(orderClauseSingular, sectionClassAlias, field)
 		} else {
-			orderClause = fmt.Sprintf(orderClauseMultiple, orderClause, section.SectionClass.Class, field)
+			orderClause = fmt.Sprintf(orderClauseMultiple, orderClause, sectionClassAlias, field)
 		}
 	}
 
@@ -144,18 +149,23 @@ func getCypherForSection(parentClass string, parentID string, section TemplateSe
 	}
 
 	if parentClass == "" {
-		matchClause = fmt.Sprintf(rootCypherMatchClause, sectionClass, sectionClass)
+		matchClause = fmt.Sprintf(rootCypherMatchClause, sectionClassAlias, sectionClass)
 	} else {
 		matchClause = fmt.Sprintf(compositeCypherMatchClause, sectionClassAlias, sectionClass,
 			relationshipFrom, section.SectionClass.Relationship, relationshipTo, parentClass, parentClass, strings.TrimSpace(parentID))
 	}
 
 	for _, aggregateClass := range section.AggregateClasses {
+		aggregateClassAlias := strings.TrimSpace(aggregateClass.ClassAlias)
+		if aggregateClassAlias == "" {
+			aggregateClassAlias = strings.TrimSpace(aggregateClass.Class)
+		}
+
 		aggregateMatchClause := fmt.Sprintf(aggregateCypherMatchClause, sectionClassAlias, sectionClass,
-			aggregateClass.Relationship, aggregateClass.Class, aggregateClass.Class)
+			aggregateClass.Relationship, aggregateClassAlias, aggregateClass.Class)
 		matchClause = matchClause + aggregateMatchClause
 
-		aggregateReturnClause := fmt.Sprintf(aggregateCypherOrderClause, aggregateClass.Class)
+		aggregateReturnClause := fmt.Sprintf(aggregateCypherOrderClause, aggregateClassAlias)
 		returnClause = returnClause + aggregateReturnClause
 	}
 
