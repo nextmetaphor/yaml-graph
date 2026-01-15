@@ -22,7 +22,7 @@ import (
 
 const (
 	appName    = "yaml-graph"
-	appVersion = "0.5.2"
+	appVersion = "0.5.5"
 
 	commandRootUse      = appName
 	commandRootUseShort = appName + ": generate graphs from YAML definition files"
